@@ -1,16 +1,47 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth-service';
-import { environment } from '../../../../environments/environment';
-import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  template: `<button (click)="loginWithGoogle()">Sign in with Google</button>`
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  templateUrl: './login.html',
+  styleUrls: ['./login.css']
 })
-export class Login {
-  constructor(private auth: AuthService) { }
+export class Login implements OnInit {
+  form!: FormGroup;
+  loading = false;
+  error: string | null = null;
 
-  loginWithGoogle() {
-    window.location.href = `${environment.apiBaseUrl}/Auth/google-login`;
+  constructor(private fb: FormBuilder, private auth: AuthService) { }
+
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      username: ['', [Validators.minLength(0)]],
+      password: ['', [Validators.minLength(0)]],
+      remember: [false]
+    });
   }
+
+  get f() {
+    return this.form.controls;
+  }
+
+  // Sign in with Google
+  loginWithGoogle(): void {
+    this.auth.loginWithGoogle();
+  }
+
+  // UI-only submit (placeholder)
+  onSubmit(): void {
+    this.error = null;
+    this.form.markAllAsTouched();
+    this.error = 'Username/password login not implemented in this demo.';
+  }
+
+  // Placeholder for forgot password
+  onForgot(): void { }
 }
