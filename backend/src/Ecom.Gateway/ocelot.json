@@ -1,0 +1,19 @@
+//{
+//  "Routes": [
+//    {
+//      "DownstreamPathTemplate": "/api/Auth/{everything}",
+//      "DownstreamScheme": "https",
+//      "DownstreamHostAndPorts": [
+//        {
+//          "Host": "localhost",
+//          "Port": 7024
+//        }
+//      ],
+//      "UpstreamPathTemplate": "/auth/{everything}",
+//      "UpstreamHttpMethod": [ "GET", "POST" ]
+//    }
+//  ],
+//  "GlobalConfiguration": {
+//    "BaseUrl": "https://localhost:7024"
+//  }
+//}
