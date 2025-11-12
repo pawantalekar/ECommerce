@@ -7,7 +7,7 @@ export interface User {
   accessToken: string;
   refreshToken?: string;
   expires?: string;
-  // add other fields returned by backend (name, email) if needed
+  
 }
 
 @Injectable({ providedIn: 'root' })

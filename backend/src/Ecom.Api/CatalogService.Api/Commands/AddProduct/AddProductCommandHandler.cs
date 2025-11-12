@@ -1,27 +1,99 @@
-﻿//using Ecom.Application.CatalogService.Application.Interfaces;
-//using MediatR;
+﻿using Ecom.Application.CatalogService.Application.Interfaces;
+using Ecom.Domain.Entities;
+using MediatR;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
-//namespace CatalogService.Api.Commands.AddProduct
-//{
-//    public class AddProductCommandHandler : IRequestHandler<AddProductCommand, AddProductCommandResult>
-//    {
+namespace CatalogService.Api.Commands.AddProduct
+{
+    public class AddProductCommandHandler : IRequestHandler<AddProductCommand, AddProductCommandResult>
+    {
+        private readonly ICatalogRepository _repository;
 
-//        private readonly IProductRepository produtRepository;
+        public AddProductCommandHandler(ICatalogRepository repository)
+        {
+            _repository = repository;
+        }
 
-//       public AddProductCommandHandler(IProductRepository produtRepository)
-//        {
-//            this.produtRepository = produtRepository;
-//        }
+        public async Task<AddProductCommandResult> Handle(AddProductCommand request, CancellationToken cancellationToken)
+        {
+            var product = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = request.Name,
+                Slug = (request.Name ?? Guid.NewGuid().ToString()).ToLower().Replace(" ", "-").Replace("--", "-"),
+                ShortDescription = request.ShortDescription,
+                Description = request.Description,
+                Price = request.Price,
+                Sku = request.SKU,
+                StockQuantity = request.StockQuantity,
+                IsActive = true,
+                IsFeatured = false,
+                CreatedAt = DateTime.UtcNow
+            };
 
-//        public async Task<AddProductCommandResult> Handle(AddProductCommand request, CancellationToken cancellationToken)
-//        {
-//            await produtRepository.AddProduct(request.Product);
+            if (request.CategoryId.HasValue && request.CategoryId.Value != Guid.Empty)
+            {
+                product.CategoryId = request.CategoryId.Value;
+            }
+            else if (!string.IsNullOrWhiteSpace(request.CategoryName))
+            {
+                var category = new Category
+                {
+                    Id = Guid.NewGuid(),
+                    Name = request.CategoryName.Trim(),
+                    Slug = string.IsNullOrWhiteSpace(request.CategorySlug)
+                        ? request.CategoryName.Trim().ToLower().Replace(" ", "-")
+                        : request.CategorySlug.Trim(),
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                };
+                product.Category = category;
+                product.CategoryId = category.Id;
+            }
 
-//            return new AddProductCommandResult
-//            {
-//                Product = request.Product,
-//                message = "Product  added successfully!"
-//            };
-//        }
-//    }
-//}
+            if (request.BrandId.HasValue && request.BrandId.Value != Guid.Empty)
+            {
+                product.BrandId = request.BrandId.Value;
+            }
+            else if (!string.IsNullOrWhiteSpace(request.BrandName))
+            {
+                var brand = new Brand
+                {
+                    Id = Guid.NewGuid(),
+                    Name = request.BrandName.Trim(),
+                    Slug = request.BrandName.Trim().ToLower().Replace(" ", "-"),
+                    LogoUrl = string.IsNullOrWhiteSpace(request.BrandLogoUrl) ? null : request.BrandLogoUrl.Trim()
+                };
+                product.Brand = brand;
+                product.BrandId = brand.Id;
+            }
+
+            var images = new List<ProductImage>();
+            if (request.ImageUrls != null && request.ImageUrls.Count > 0)
+            {
+                images = request.ImageUrls.Select((url, i) => new ProductImage
+                {
+                    Id = Guid.NewGuid(),
+                    Url = url,
+                    AltText = $"{request.Name} by {request.BrandName ?? "Unknown Brand"} - {request.CategoryName ?? "Product"} view {i + 1}",
+                    SortOrder = i,
+                    IsThumbnail = i == 0
+                }).ToList();
+            }
+            product.ProductImages = images;
+
+
+            product.ProductTags = (request.Tags ?? new List<string>()).Select(tagName => new ProductTag
+            {
+                Tag = new Tag { Name = tagName }
+            }).ToList();
+
+            await _repository.AddProductAsync(product, cancellationToken);
+            return new AddProductCommandResult(product.Id, product.Slug);
+        }
+    }
+}

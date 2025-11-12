@@ -1,5 +1,6 @@
 using CatalogService.Api.Commands.AddProduct;
 using Ecom.Application.AuthService.Application.Interfaces;
+using Ecom.Application.CatalogService.Application.Interfaces;
 using Ecom.Infrastructure;
 using Ecom.Infrastructure.Repository;
 using Ecom.Infrastructure.Services;
@@ -16,16 +17,31 @@ namespace Ecom.Gateway
     {
         public static void Main(string[] args)
         {
+            var options = new WebApplicationOptions
+            {
+                Args = args,
+                ContentRootPath = AppContext.BaseDirectory,
+                WebRootPath = "wwwroot"   
+            };
             var builder = WebApplication.CreateBuilder(args);
+       
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularDev", p =>
+                    p.WithOrigins("http://localhost:4200")
+                     .AllowAnyHeader()
+                     .AllowAnyMethod()
+                     .AllowCredentials());
+            });
 
             builder.Services.AddControllers();
 
-            //builder.Services.AddValidatorsFromAssemblyContaining<AddProductCommandValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<AddProductCommandValidator>();
 
             builder.Services.AddFluentValidationAutoValidation();
 
 
-            //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AddProductCommandHandler>());
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AddProductCommandHandler>());
             
 
             builder.Services.AddHttpClient();
@@ -34,6 +50,7 @@ namespace Ecom.Gateway
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
 
             // DbContext
             builder.Services.AddDbContext<AuthDbContext>(options =>
@@ -62,15 +79,16 @@ namespace Ecom.Gateway
             });
 
             builder.Services.AddSwaggerGen();
-
+          
             var app = builder.Build();
+            app.UseStaticFiles();
 
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseCors("AllowAngularDev");
             app.UseHttpsRedirection();
             app.UseCookiePolicy();
             app.UseAuthentication();

@@ -35,4 +35,8 @@
     <ProjectReference Include="..\Ecom.Application\Ecom.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\products\" />
+  </ItemGroup>
+
 </Project>
