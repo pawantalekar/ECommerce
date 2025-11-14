@@ -1,6 +1,7 @@
-frontend/
+
 .vs/
 bin/
 obj/
 *.user
 *.suo
+backend/src/Ecom.Gateway/appsettings.json
