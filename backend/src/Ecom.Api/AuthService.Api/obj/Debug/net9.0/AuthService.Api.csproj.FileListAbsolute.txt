@@ -1,0 +1,11 @@
+C:\Users\ptalekar\source\repos\ECommerce\backend\src\Ecom.Api\AuthService.Api\bin\Debug\net9.0\AuthService.Api.deps.json
+C:\Users\ptalekar\source\repos\ECommerce\backend\src\Ecom.Api\AuthService.Api\bin\Debug\net9.0\AuthService.Api.dll
+C:\Users\ptalekar\source\repos\ECommerce\backend\src\Ecom.Api\AuthService.Api\bin\Debug\net9.0\AuthService.Api.pdb
+C:\Users\ptalekar\source\repos\ECommerce\backend\src\Ecom.Api\AuthService.Api\obj\Debug\net9.0\AuthService.Api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ptalekar\source\repos\ECommerce\backend\src\Ecom.Api\AuthService.Api\obj\Debug\net9.0\AuthService.Api.AssemblyInfoInputs.cache
+C:\Users\ptalekar\source\repos\ECommerce\backend\src\Ecom.Api\AuthService.Api\obj\Debug\net9.0\AuthService.Api.AssemblyInfo.cs
+C:\Users\ptalekar\source\repos\ECommerce\backend\src\Ecom.Api\AuthService.Api\obj\Debug\net9.0\AuthService.Api.csproj.CoreCompileInputs.cache
+C:\Users\ptalekar\source\repos\ECommerce\backend\src\Ecom.Api\AuthService.Api\obj\Debug\net9.0\AuthService.Api.dll
+C:\Users\ptalekar\source\repos\ECommerce\backend\src\Ecom.Api\AuthService.Api\obj\Debug\net9.0\refint\AuthService.Api.dll
+C:\Users\ptalekar\source\repos\ECommerce\backend\src\Ecom.Api\AuthService.Api\obj\Debug\net9.0\AuthService.Api.pdb
+C:\Users\ptalekar\source\repos\ECommerce\backend\src\Ecom.Api\AuthService.Api\obj\Debug\net9.0\ref\AuthService.Api.dll
