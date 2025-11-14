@@ -28,22 +28,22 @@ namespace Ecom.Gateway.Controllers
             return Redirect(url);
         }
 
+       
         [HttpGet("google-response")]
         public async Task<IActionResult> GoogleResponse([FromQuery] string code)
         {
-            if (string.IsNullOrEmpty(code))
-                return BadRequest(new { message = "No code provided. You must start login via /google-login" });
+            if (string.IsNullOrEmpty(code)) return BadRequest();
 
-            var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-            var result = await _auth.SsoSignInAsync("google", code, "https://localhost:7024/api/Auth/google-response", clientIp);
+            var result = await _auth.SsoSignInAsync("google", code, "https://localhost:7024/api/Auth/google-response", "unknown");
 
-            return Ok(new TokenResponse
-            {
-                AccessToken = result.accessToken,
-                RefreshToken = result.refreshToken,
-                Expires = result.expires
-            });
+            var url = $"http://localhost:4200/auth/callback" +
+                      $"?accessToken={result.accessToken}" +
+                      $"&refreshToken={result.refreshToken}" +
+                      $"&expires={result.expires:o}";
+
+            return Redirect(url);
         }
+
 
 
         [HttpPost("token/refresh")]

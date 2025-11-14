@@ -1,44 +1,42 @@
 ﻿using Ecom.Application.CatalogService.Application.Interfaces;
 using Ecom.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace CatalogService.Api.Commands.AddProduct
+namespace CatalogService.Api.Commands.UpdateProduct
 {
-    public class AddProductCommandHandler : IRequestHandler<AddProductCommand, AddProductCommandResult>
+    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, UpdateProductCommandResult>
     {
         private readonly ICatalogRepository _repository;
 
-        public AddProductCommandHandler(ICatalogRepository repository)
+        public UpdateProductCommandHandler(ICatalogRepository repository)
         {
             _repository = repository;
         }
 
-        public async Task<AddProductCommandResult> Handle(AddProductCommand request, CancellationToken cancellationToken)
+        public async Task<UpdateProductCommandResult> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            var product = new Product
-            {
-                Id = Guid.NewGuid(),
-                Name = request.Name,
-                Slug = (request.Name ?? Guid.NewGuid().ToString()).ToLower().Replace(" ", "-").Replace("--", "-"),
-                ShortDescription = request.ShortDescription,
-                Description = request.Description,
-                Price = request.Price,
-                Sku = request.SKU,
-                StockQuantity = request.StockQuantity,
-                IsActive = true,
-                IsFeatured = false,
-                CreatedAt = DateTime.UtcNow
-            };
+            var product = await _repository.GetByIdAsync(request.Id, cancellationToken);
+            if (product == null)
+                throw new ArgumentException("Product not found");
 
+            product.Name = request.Name;
+            product.Slug = (request.Name ?? Guid.NewGuid().ToString())
+                .ToLower().Replace(" ", "-").Replace("--", "-");
+            product.ShortDescription = request.ShortDescription;
+            product.Description = request.Description;
+            product.Price = request.Price;
+            product.Sku = request.SKU;
+            product.StockQuantity = request.StockQuantity;
+
+            // Category
             if (request.CategoryId.HasValue && request.CategoryId.Value != Guid.Empty)
-            {
                 product.CategoryId = request.CategoryId.Value;
-            }
             else if (!string.IsNullOrWhiteSpace(request.CategoryName))
             {
                 var category = new Category
@@ -55,10 +53,9 @@ namespace CatalogService.Api.Commands.AddProduct
                 product.CategoryId = category.Id;
             }
 
+            // Brand
             if (request.BrandId.HasValue && request.BrandId.Value != Guid.Empty)
-            {
                 product.BrandId = request.BrandId.Value;
-            }
             else if (!string.IsNullOrWhiteSpace(request.BrandName))
             {
                 var brand = new Brand
@@ -72,10 +69,11 @@ namespace CatalogService.Api.Commands.AddProduct
                 product.BrandId = brand.Id;
             }
 
-            var images = new List<ProductImage>();
+            // Images
+            product.ProductImages.Clear();
             if (request.ImageUrls != null && request.ImageUrls.Count > 0)
             {
-                images = request.ImageUrls.Select((url, i) => new ProductImage
+                product.ProductImages = request.ImageUrls.Select((url, i) => new ProductImage
                 {
                     Id = Guid.NewGuid(),
                     Url = url,
@@ -84,16 +82,17 @@ namespace CatalogService.Api.Commands.AddProduct
                     IsThumbnail = i == 0
                 }).ToList();
             }
-            product.ProductImages = images;
 
-
-            product.ProductTags = (request.Tags ?? new List<string>()).Select(tagName => new ProductTag
+            // Tags
+            var tags = (request.Tags ?? new List<string>()).Select(tagName => new ProductTag
             {
                 Tag = new Tag { Name = tagName }
             }).ToList();
+            product.ProductTags.Clear();
+            product.ProductTags = tags;
 
-            await _repository.AddProductAsync(product, cancellationToken);
-            return new AddProductCommandResult(product.Id, product.Slug);
+            await _repository.UpdateProductAsync(product, cancellationToken);
+            return new UpdateProductCommandResult(product.Id, product.Slug);
         }
     }
 }

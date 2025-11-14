@@ -12,7 +12,7 @@ public partial class User
     public string Name { get; set; } = null!;
 
     public string? Ssoprovider { get; set; }
-   
+
     public string? SsoproviderId { get; set; }
 
     public string? PasswordHash { get; set; }

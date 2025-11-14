@@ -1,10 +1,26 @@
-﻿using Ecom.Application.CatalogService.Application.DTO;
+﻿
 using MediatR;
 
 namespace CatalogService.Api.Commands.AddProduct
 {
-    public class AddProductCommand : IRequest<AddProductCommandResult>
+    public record AddProductCommand(
+         string Name,
+         string? ShortDescription,
+         string? Description,
+         decimal Price,
+         string SKU,
+         int StockQuantity,
+         Guid? CategoryId,
+         Guid? BrandId,
+         List<string> ImageUrls,
+         List<string> Tags
+     ) : IRequest<AddProductCommandResult>
     {
-        public ProductDto Product { get; set; } = new ProductDto();
+        public string? CategoryName { get; init; }
+        public string? CategorySlug { get; init; }
+        public string? BrandName { get; init; }
+        public string? BrandLogoUrl { get; init; }
     }
-}
+   }
+
+    

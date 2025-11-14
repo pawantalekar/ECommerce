@@ -1,17 +1,20 @@
-﻿using Ecom.Application.CatalogService.Application.DTO;
+﻿
+using Ecom.Application.CatalogService.Application.Interfaces;
 using FluentValidation;
 
 namespace CatalogService.Api.Commands.AddProduct
 {
-    public class AddProductCommandValidator : AbstractValidator<ProductDto>
+    public class AddProductCommandValidator : AbstractValidator<AddProductCommand>
     {
-        public AddProductCommandValidator() {
-
-            RuleFor(x => x.productId).NotEmpty().WithMessage("Enter a product id ");
-            RuleFor(x => x.productName).NotEmpty()
-                .WithMessage("ProductName Cant be Empty")
-                .MinimumLength(4)
-                .WithMessage("Product name should have more than 4 letters");
+        public AddProductCommandValidator(ICatalogRepository repository)
+        {
+            RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
+            RuleFor(x => x.Price).GreaterThan(0);
+            RuleFor(x => x.SKU).NotEmpty().MaximumLength(100);
+            RuleFor(x => x.StockQuantity).GreaterThanOrEqualTo(0);
+            //RuleFor(x => x.CategoryId).NotEmpty();
+            //RuleFor(x => x.ImageUrls).NotNull();
+            RuleFor(x => x.Tags).NotNull();
         }
     }
 }

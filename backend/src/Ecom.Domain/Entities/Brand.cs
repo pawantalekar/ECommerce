@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Ecom.Domain.Entities;
 
-public partial class Category
+public partial class Brand
 {
     public Guid Id { get; set; }
 
@@ -11,9 +11,5 @@ public partial class Category
 
     public string Slug { get; set; } = null!;
 
-    public bool? IsActive { get; set; }
-
-    public DateTime? CreatedAt { get; set; }
-
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+    public string? LogoUrl { get; set; }
 }
