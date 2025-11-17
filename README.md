@@ -6,6 +6,7 @@ This repository contains the ECommerce application with backend services.
 
 ## Documentation
 
+- **[Quick Reference](QUICK_REFERENCE.md)** - Essential git commands for frontend changes
 - **[Git Workflow Guide](GIT_WORKFLOW.md)** - Complete guide for committing and pushing changes, including frontend changes
 
 ## Structure
