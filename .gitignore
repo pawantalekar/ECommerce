@@ -1,6 +1,8 @@
-frontend/
 .vs/
 bin/
 obj/
 *.user
 *.suo
+node_modules/
+.angular/
+dist/
