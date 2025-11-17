@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body> <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm border-bottom sticky-top">
+    <div class="container-fluid px-4">
+       
+        <a class="navbar-brand fw-bold text-primary fs-4 me-4" routerLink="/home">EcomShop</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="d-flex w-100 align-items-center">
+
+               
+                <form class="flex-grow-1 me-4" style="max-width: 60%;" (ngSubmit)="onSearch()">
+                    <div class="input-group input-group-lg">
+                        <input class="form-control border-end-0" type="search" [(ngModel)]="searchTerm"
+                            placeholder="Search products, brands, and more..." aria-label="Search">
+                        <button class="btn btn-primary" type="submit">
+                            Search
+                        </button>
+                    </div>
+                </form>
+
+             
+                <div class="d-flex align-items-center gap-3 flex-shrink-0">
+
+                    
+                    <a routerLink="/orders" class="btn btn-outline-secondary d-flex align-items-center gap-1 px-3">
+                        <i class="bi bi-receipt"></i>
+                        <span class="d-none d-lg-inline">Orders</span>
+                    </a>
+
+                    
+                    <a routerLink="/cart" class="btn btn-outline-secondary d-flex align-items-center gap-1 px-3">
+                        <i class="bi bi-cart3"></i>
+                        <span class="d-none d-lg-inline">Cart</span>
+                    </a>
+
+                   
+                    <ng-container *ngIf="!isLoggedIn; else profile">
+                        <a routerLink="/auth/login" class="btn btn-primary px-4">Login</a>
+                    </ng-container>
+                    <ng-template #profile>
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center p-0" href="#" role="button"
+                                data-bs-toggle="dropdown" style="cursor: pointer;">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 40px; height: 40px;">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" routerLink="/profile">My Profile</a></li>
+                                <li><a class="dropdown-item" routerLink="/profile/edit">Edit Profile</a></li>
+                                <li><a class="dropdown-item" [routerLink]="['/catalog', 'add']">Add Product</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item text-danger" (click)="logout()"
+                                        style="cursor: pointer;">Logout</a></li>
+                            </ul>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>
