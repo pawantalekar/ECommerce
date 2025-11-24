@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container py-4">
+    
+    
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">All Products</h2>
+    
+    
+            <!-- <a *ngIf="isLoggedIn" [routerLink]="['/catalog', 'add']" class="btn btn-success">
+                Add Product
+            </a> -->
+        </div>
+    
+    
+        <div *ngIf="loading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    
+    
+        <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    
+    
+        <div *ngIf="!loading && !error" class="row g-4">
+            <div class="col-md-6 col-lg-4" *ngFor="let p of products">
+                <app-product-card [product]="p"></app-product-card>
+            </div>
+        </div>
+    
+    
+        <div *ngIf="!loading && !error && products.length === 0" class="text-center py-5 text-muted">
+            <p>No products available.</p>
+    
+    
+            <a *ngIf="isLoggedIn" routerLink="/catalog/add" class="btn btn-outline-primary mt-2">
+                Add Your First Product
+            </a>
+    
+    
+            <p *ngIf="!isLoggedIn" class="text-muted mt-3">
+                <a routerLink="/auth/login">Log in</a> to add products.
+            </p>
+        </div>
+    
+    </div>
+</body>
+</html>
