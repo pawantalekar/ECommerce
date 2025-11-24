@@ -1,22 +1,19 @@
-<div class="container mt-4">
-    <!-- Hero Section -->
-    <div class="p-5 mb-4 bg-light rounded-3 text-center shadow-sm">
-        <h1 class="display-5 fw-bold">Welcome to EcomShop!</h1>
-        <p class="lead">Explore our latest products and deals. Your one-stop shop for everything you need!</p>
-        <button class="btn btn-primary btn-lg mt-3">Shop Now</button>
-    </div>
-
-    <!-- Featured Products Section -->
-    <div class="row text-center mt-5">
-        <div class="col-md-4 mb-4" *ngFor="let item of [1,2,3]">
-            <div class="card shadow-sm h-100">
-                <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Product Image">
-                <div class="card-body">
-                    <h5 class="card-title">Product Name</h5>
-                    <p class="card-text">$0.00</p>
-                    <button class="btn btn-outline-primary">View Details</button>
-                </div>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="p-5 mb-5 bg-light rounded-3 text-center shadow-sm">
+            <h1 class="display-5 fw-bold">Welcome to EcomShop!</h1>
+            <p class="lead">Explore our latest products and deals.</p>
+            <a routerLink="/catalog/products" class="btn btn-primary btn-lg mt-3">Shop Now</a>
         </div>
+    
+        <app-product-list></app-product-list>
     </div>
-</div>
+</body>
+</html>
