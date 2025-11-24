@@ -7,5 +7,10 @@ export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: 'home', component: Home },
     { path: 'auth/login', component: Login },
-    { path: 'auth/callback', component: SsoCallback }
+    { path: 'auth/callback', component: SsoCallback },
+    {
+        path: 'catalog',
+        loadChildren: () =>
+            import('./features/catalog/catalog.routes').then(m => m.CATALOG_ROUTES)
+    }
 ];
