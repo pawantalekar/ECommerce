@@ -31,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ecom.Api\CartService.Api\CartService.Api.csproj" />
     <ProjectReference Include="..\Ecom.Api\CatalogService.Api\CatalogService.Api.csproj" />
     <ProjectReference Include="..\Ecom.Application\Ecom.Application.csproj" />
   </ItemGroup>

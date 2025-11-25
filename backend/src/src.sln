@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogService.Api", "Ecom.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService.Api", "Ecom.Api\AuthService.Api\AuthService.Api.csproj", "{A4B73ECE-8EC3-4F42-AB04-93CEA0DBA497}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartService.Api", "Ecom.Api\CartService.Api\CartService.Api.csproj", "{1C445183-14D4-46F9-874A-BF26DE599C02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{A4B73ECE-8EC3-4F42-AB04-93CEA0DBA497}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4B73ECE-8EC3-4F42-AB04-93CEA0DBA497}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4B73ECE-8EC3-4F42-AB04-93CEA0DBA497}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C445183-14D4-46F9-874A-BF26DE599C02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C445183-14D4-46F9-874A-BF26DE599C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C445183-14D4-46F9-874A-BF26DE599C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C445183-14D4-46F9-874A-BF26DE599C02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +81,7 @@ Global
 		{912A5178-1567-48A4-BCAF-FB2B3AFC89D6} = {980BF7F3-3F40-4BD7-B5C3-8A9CC77EEA74}
 		{A81F1B18-A895-4173-85A9-7137DC07F667} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{A4B73ECE-8EC3-4F42-AB04-93CEA0DBA497} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{1C445183-14D4-46F9-874A-BF26DE599C02} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A82A5DA-9C21-4DAE-A434-8CA5FD96A2C5}
