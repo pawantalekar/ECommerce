@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="CartService.Application\" />
     <Folder Include="CatalogService.Application\DTO\" />
+    <Folder Include="CartService.Application\" />
     <Folder Include="ReviewService.Application\" />
     <Folder Include="PaymentService.Application\" />
     <Folder Include="OrderService.Application\" />

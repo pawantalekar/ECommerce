@@ -11,7 +11,7 @@ namespace Ecom.Infrastructure
         public AuthDbContext(DbContextOptions<AuthDbContext> options)
             : base(options) { }
 
-       
+
         public virtual DbSet<Brand> Brands { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
@@ -21,7 +21,9 @@ namespace Ecom.Infrastructure
 
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
+        public virtual DbSet<Cart> Carts { get; set; }
 
+        public virtual DbSet<CartItem> CartItems { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // BRAND
@@ -100,13 +102,13 @@ namespace Ecom.Infrastructure
             });
 
             //product tag
-            
+
             modelBuilder.Entity<ProductTag>(entity =>
             {
-                entity.ToTable("ProductTags");                
+                entity.ToTable("ProductTags");
                 entity.HasKey(e => new { e.ProductId, e.TagId });
 
-                
+
                 entity.Property(e => e.ProductId).HasColumnName("ProductId");
                 entity.Property(e => e.TagId).HasColumnName("TagId");
 
@@ -154,6 +156,25 @@ namespace Ecom.Infrastructure
                       .HasForeignKey(d => d.UserId);
             });
 
+            //for cart related
+            modelBuilder.Entity<Cart>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__Carts__3214EC07F810DF33");
+
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
+            });
+
+            modelBuilder.Entity<CartItem>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__CartItem__3214EC07AC0C488D");
+
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
+                entity.Property(e => e.Quantity).HasDefaultValue(1);
+
+                entity.HasOne(d => d.Cart).WithMany(p => p.Items).HasConstraintName("FK_CartItems_Cart");
+            });
             OnModelCreatingPartial(modelBuilder);
         }
 
