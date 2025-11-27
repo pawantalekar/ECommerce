@@ -63,4 +63,17 @@ export class ProductDetail implements OnInit {
   setPrimaryImage(url: string): void {
     this.primaryImage = url;
   }
+  directCheckout() {
+    if (!this.product) return;
+    this.router.navigate(['/checkout'], {
+      state: {
+        directBuy: true,
+        productId: this.product.id,
+        quantity: 1,
+        productName: this.product.name,
+        thumbnailUrl: this.product.imageUrls[0] || '',
+        price: this.product.price
+      }
+    });
+  }
 }
