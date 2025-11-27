@@ -11,7 +11,6 @@
     <Folder Include="CartService.Application\" />
     <Folder Include="ReviewService.Application\" />
     <Folder Include="PaymentService.Application\" />
-    <Folder Include="OrderService.Application\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +29,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Razorpay" Version="3.3.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />

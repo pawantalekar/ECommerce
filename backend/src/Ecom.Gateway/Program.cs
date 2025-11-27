@@ -3,6 +3,7 @@ using CatalogService.Api.Commands.AddProduct;
 using Ecom.Application.AuthService.Application.Interfaces;
 using Ecom.Application.CartService.Application.Interfaces;
 using Ecom.Application.CatalogService.Application.Interfaces;
+using Ecom.Application.Commands.InitiatePayment;
 using Ecom.Infrastructure;
 using Ecom.Infrastructure.Repository;
 using Ecom.Infrastructure.Services;
@@ -11,6 +12,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OrderService.APi.Queries;
 using System.Text;
 
 namespace Ecom.Gateway
@@ -48,7 +50,9 @@ namespace Ecom.Gateway
             builder.Services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssemblies(
                 typeof(AddProductCommandHandler).Assembly,
-                typeof(AddToCartCommand).Assembly
+                typeof(AddToCartCommand).Assembly,
+                typeof(InitiatePaymentCommandHandler).Assembly,
+                typeof(GetMyOrdersQuery).Assembly
                  )
              );
 

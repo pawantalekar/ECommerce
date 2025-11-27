@@ -24,6 +24,9 @@ namespace Ecom.Infrastructure
         public virtual DbSet<Cart> Carts { get; set; }
 
         public virtual DbSet<CartItem> CartItems { get; set; }
+        public virtual DbSet<OrderItem> OrderItems { get; set; }
+
+        public virtual DbSet<Order> Orders { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // BRAND
@@ -174,6 +177,108 @@ namespace Ecom.Infrastructure
                 entity.Property(e => e.Quantity).HasDefaultValue(1);
 
                 entity.HasOne(d => d.Cart).WithMany(p => p.Items).HasConstraintName("FK_CartItems_Cart");
+            });
+
+            //order service 
+
+            modelBuilder.Entity<OrderItem>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__OrderIte__3214EC0779FF2A7E");
+
+                entity.HasIndex(e => e.OrderId, "IX_OrderItems_OrderId");
+
+                entity.HasIndex(e => e.ProductId, "IX_OrderItems_ProductId");
+
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.ProductName).HasMaxLength(200);
+                entity.Property(e => e.SubTotal)
+                    .HasComputedColumnSql("([UnitPrice]*[Quantity])", true)
+                    .HasColumnType("decimal(29, 2)");
+                entity.Property(e => e.ThumbnailUrl).HasMaxLength(500);
+                entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
+
+                entity.HasOne(d => d.Order).WithMany(p => p.OrderItems).HasForeignKey(d => d.OrderId);
+
+                entity.HasOne(d => d.Product).WithMany(p => p.OrderItem)
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__Orders__3214EC078C28CC25");
+
+                entity.HasIndex(e => e.OrderNumber, "IX_Orders_OrderNumber").IsUnique();
+
+                entity.HasIndex(e => e.UserId, "IX_Orders_UserId");
+
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
+                entity.Property(e => e.OrderNumber).HasMaxLength(30);
+                entity.Property(e => e.OrderStatus)
+                    .HasMaxLength(20)
+                    .HasDefaultValue("Confirmed");
+                entity.Property(e => e.PaymentStatus)
+                    .HasMaxLength(20)
+                    .HasDefaultValue("Pending");
+                entity.Property(e => e.RazorpayOrderId).HasMaxLength(50);
+                entity.Property(e => e.RazorpayPaymentId).HasMaxLength(50);
+                entity.Property(e => e.ShippingAddressLine1).HasMaxLength(200);
+                entity.Property(e => e.ShippingAddressLine2).HasMaxLength(200);
+                entity.Property(e => e.ShippingCity).HasMaxLength(50);
+                entity.Property(e => e.ShippingFullName).HasMaxLength(100);
+                entity.Property(e => e.ShippingPhone).HasMaxLength(15);
+                entity.Property(e => e.ShippingPincode).HasMaxLength(10);
+                entity.Property(e => e.ShippingState).HasMaxLength(50);
+                entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
+
+                entity.HasOne(d => d.User).WithMany(p => p.Orders).HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__Products__3214EC07F28EE719");
+
+                entity.HasIndex(e => e.Slug, "UQ__Products__BC7B5FB6ECF9EE69").IsUnique();
+
+                entity.HasIndex(e => e.Sku, "UQ__Products__CA1ECF0D2E139FBC").IsUnique();
+
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.IsFeatured).HasDefaultValue(false);
+                entity.Property(e => e.Name).HasMaxLength(200);
+                entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.ShortDescription).HasMaxLength(500);
+                entity.Property(e => e.Sku)
+                    .HasMaxLength(100)
+                    .HasColumnName("SKU");
+                entity.Property(e => e.Slug).HasMaxLength(200);
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__Users__3214EC0713F0F151");
+
+                entity.HasIndex(e => e.Email, "IX_Users_Email");
+
+                entity.HasIndex(e => e.Email, "UQ__Users__A9D10534988C48B4").IsUnique();
+
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysdatetime())");
+                entity.Property(e => e.Email).HasMaxLength(255);
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.Name).HasMaxLength(255);
+                entity.Property(e => e.PasswordHash).HasMaxLength(500);
+                entity.Property(e => e.Role)
+                    .HasMaxLength(50)
+                    .HasDefaultValue("User");
+                entity.Property(e => e.Ssoprovider)
+                    .HasMaxLength(50)
+                    .HasColumnName("SSOProvider");
+                entity.Property(e => e.SsoproviderId)
+                    .HasMaxLength(255)
+                    .HasColumnName("SSOProviderId");
             });
             OnModelCreatingPartial(modelBuilder);
         }

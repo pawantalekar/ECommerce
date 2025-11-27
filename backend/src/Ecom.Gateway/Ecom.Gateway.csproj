@@ -25,6 +25,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.10" />
     <PackageReference Include="Ocelot" Version="24.0.1" />
+    <PackageReference Include="Razorpay" Version="3.3.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />
@@ -33,6 +34,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Ecom.Api\CartService.Api\CartService.Api.csproj" />
     <ProjectReference Include="..\Ecom.Api\CatalogService.Api\CatalogService.Api.csproj" />
+    <ProjectReference Include="..\Ecom.Api\OrderService.APi\OrderService.APi.csproj" />
+    <ProjectReference Include="..\Ecom.Api\PaymentService.Api\PaymentService.Api.csproj" />
     <ProjectReference Include="..\Ecom.Application\Ecom.Application.csproj" />
   </ItemGroup>
 
