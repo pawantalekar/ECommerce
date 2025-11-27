@@ -7,7 +7,7 @@ export interface User {
   accessToken: string;
   refreshToken?: string;
   expires?: string;
-  // add other fields returned by backend (name, email) if needed
+  
 }
 
 @Injectable({ providedIn: 'root' })
@@ -44,6 +44,10 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.userKey);
     this.userSubject.next(null);
+    
+    //added when the user is logout so that all the states are cleared
+    location.reload();
+  
   }
 
   isLoggedIn(): boolean {
