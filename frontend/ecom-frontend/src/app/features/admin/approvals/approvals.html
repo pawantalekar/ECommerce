@@ -1,0 +1,82 @@
+<div class="admin-approvals p-6 max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Admin Approval Dashboard</h1>
+
+    <div class="tabs mb-6">
+        <button (click)="activeTab = 'reviews'" [class.active]="activeTab === 'reviews'"
+            class="px-6 py-3 border rounded-l-lg">
+            Pending Reviews ({{ pendingReviews.length }})
+        </button>
+        <button (click)="activeTab = 'requests'" [class.active]="activeTab === 'requests'"
+            class="px-6 py-3 border rounded-r-lg">
+            Seller Requests ({{ pendingRequests.length }})
+        </button>
+    </div>
+    <div *ngIf="activeTab === 'reviews'">
+        <h2 class="text-2xl mb-4">Pending Reviews</h2>
+        <div *ngIf="loading" class="text-center py-8">Loading...</div>
+
+        <table class="w-full border-collapse border" *ngIf="!loading">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="border p-3 text-left">Product</th>
+                    <th class="border p-3 text-left">User</th>
+                    <th class="border p-3 text-left">Rating</th>
+                    <th class="border p-3 text-left">Comment</th>
+                    <th class="border p-3 text-left">Date</th>
+                    <th class="border p-3 text-left">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let r of pendingReviews">
+                    <td class="border p-3">{{ r.productName }}</td>
+                    <td class="border p-3">{{ r.userName }}</td>
+                    <td class="border p-3">{{ r.rating }} stars</td>
+                    <td class="border p-3">{{ r.comment || 'No comment' }}</td>
+                    <td class="border p-3">{{ r.createdAt | date:'short' }}</td>
+                    <td class="border p-3">
+                        <button (click)="approveReview(r.id)"
+                            class="btn btn-success px-3 py-1 rounded me-2">Approve</button>
+
+                        <button (click)="rejectReview(r.id)" class="btn btn-danger px-3 py-1 rounded">Reject</button>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p *ngIf="pendingReviews.length === 0 && !loading" class="text-center py-8 text-gray-500">
+            No pending reviews
+        </p>
+    </div>
+   
+    <div *ngIf="activeTab === 'requests'">
+        <h2 class="text-2xl mb-4">Pending Seller Requests</h2>
+
+        <table class="w-full border-collapse border" *ngIf="pendingRequests.length > 0">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="border p-3 text-left">Name</th>
+                    <th class="border p-3 text-left">Email</th>
+                    <th class="border p-3 text-left">Requested At</th>
+                    <th class="border p-3 text-left">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let r of pendingRequests">
+                    <td class="border p-3">{{ r.userName }}</td>
+                    <td class="border p-3">{{ r.userEmail }}</td>
+                    <td class="border p-3">{{ r.requestedAt | date:'medium' }}</td>
+                    <td class="border p-3">
+                        <button (click)="approveSeller(r.id)"
+                            class="btn btn-success px-3 py-1 rounded me-2">Approve</button>
+                        <button (click)="rejectSeller(r.id)" class="btn btn-danger px-3 py-1 rounded">Reject</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p *ngIf="pendingRequests.length === 0" class="text-center py-8 text-gray-500">
+            No pending seller requests
+        </p>
+    </div>
+</div>

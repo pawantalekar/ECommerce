@@ -1,0 +1,51 @@
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-body p-5">
+
+                    <h3 class="mb-5 text-center">{{ isEdit ? 'Edit Your Review' : 'Write a Review' }}</h3>
+
+                    <form [formGroup]="form" (ngSubmit)="submit()">
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Rating <span class="text-danger">*</span></label>
+                            <div class="d-flex gap-3 my-3">
+                                <span *ngFor="let s of stars" class="fs-1 cursor-pointer"
+                                    [class.text-warning]="(form.value.rating ?? 0) >= s"
+                                    [class.text-muted]="(form.value.rating ?? 0) < s"
+                                    (click)="form.patchValue({ rating: s })">
+                                    ★
+                                </span>
+                            </div>
+                            <small class="text-muted">Selected: {{ form.value.rating || 0 }} / 5</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Your Review (optional)</label>
+                            <textarea formControlName="comment" class="form-control" rows="6"
+                                placeholder="Share your experience with this product..."></textarea>
+                        </div>
+
+                        <div class="d-flex gap-3 justify-content-center">
+                            <button type="submit" class="btn btn-primary px-5"
+                                [disabled]="form.invalid || form.value.rating === 0">
+                                {{ isEdit ? 'Update' : 'Submit' }} Review
+                            </button>
+
+                            <button type="button" class="btn btn-outline-secondary px-5" (click)="cancel()">
+                                Cancel
+                            </button>
+
+                            <button *ngIf="isEdit" type="button" class="btn btn-danger px-5 ms-auto" (click)="delete()">
+                                Delete Review
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
