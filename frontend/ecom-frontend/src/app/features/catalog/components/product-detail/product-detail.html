@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container py-5" *ngIf="product; else loadingOrError">
+        <div class="row g-5">
+
+            <div class="col-lg-6">
+
+                <div class="mb-3">
+                    <img [src]="primaryImage" class="img-fluid rounded shadow w-100" [alt]="product.name"
+                        style="max-height: 500px; object-fit: contain; background: #f8f9fa;">
+                </div>
+
+
+                <div class="row g-2" *ngIf="galleryImages.length > 0">
+                    <div class="col-4" *ngFor="let img of galleryImages">
+                        <img [src]="img" class="img-fluid rounded border cursor-pointer"
+                            [alt]="product.name + ' thumbnail'" style="height: 100px; object-fit: cover;"
+                            (click)="primaryImage = img">
+                    </div>
+                </div>
+
+
+                <div *ngIf="!product.imageUrls.length" class="text-center py-5 bg-light rounded">
+                    <p class="text-muted">No images available</p>
+                </div>
+            </div>
+
+
+            <div class="col-lg-6">
+                <h1 class="display-5 fw-bold">{{ product.name }}</h1>
+                <p class="lead text-muted" *ngIf="product.shortDescription">
+                    {{ product.shortDescription }}
+                </p>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="h3 text-primary mb-0">₹{{ product.price | number:'1.0-0' }}</span>
+                    <span class="badge bg-success" *ngIf="product.stockQuantity > 0">In Stock</span>
+                    <span class="badge bg-danger" *ngIf="product.stockQuantity === 0">Out of Stock</span>
+                </div>
+
+                <p class="text-muted small">SKU: {{ product.sku }}</p>
+
+                <div class="mb-4 d-flex gap-3 flex-wrap">
+                    <ng-container *ngIf="isInCart(); else addToCartBlock">
+                        <button class="btn btn-success px-4 py-2 fw-medium rounded" (click)="goToCart()">
+                            Go to Cart
+                        </button>
+                    </ng-container>
+
+                    <ng-template #addToCartBlock>
+                        <app-add-to-cart-button [productId]="product.id"
+                            class="btn btn-primary px-4 py-2 fw-medium rounded" (click)="goToCart()">
+                        </app-add-to-cart-button>
+                    </ng-template>
+
+                    <button class="btn btn-danger px-4 py-2 fw-medium rounded text-white" (click)="directCheckout()">
+                        Buy Now
+                    </button>
+                </div>
+                <hr>
+
+                <h5>Description</h5>
+                <p *ngIf="product.description; else noDesc">{{ product.description }}</p>
+                <ng-template #noDesc>
+                    <p class="text-muted">No description available.</p>
+                </ng-template>
+            
+                <div class="mt-4">
+                    <strong>Tags:</strong>
+                    <span *ngFor="let tag of product.tags" class="badge bg-light text-dark ms-1">{{ tag }}</span>
+                </div>
+                <div class="mt-4 text-muted small">
+                    <strong>Category:</strong> {{ product.categoryName }}<br>
+                    <strong>Brand:</strong> {{ product.brandName }}
+                </div>
+                <div class="mt-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="mb-0">Reviews</h3>
+                <button *ngIf="canReview && product" [routerLink]="['/catalog/products', product.slug, 'review']"
+                    [queryParams]="{ pid: product.id }" [state]="{ productId: product.id }" class="btn btn-primary">
+                    Rate Product
+                </button>
+                    </div>
+                    <div *ngIf="reviews.length === 0" class="text-muted py-4 text-center">
+                        Be the first to review this product!
+                    </div>
+                    
+                    <div *ngIf="reviews.length > 0" class="mt-4">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="h4 mb-0 text-warning">★ {{ averageRating }}</span>
+                            <span class="text-muted">({{ reviews.length }} {{ reviews.length === 1 ? 'review' : 'reviews' }})</span>
+                        </div>
+                    
+                        <div *ngFor="let r of reviews" class="border rounded p-3 mb-3 bg-light">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ r.userName }}</strong>
+                                <small class="text-muted">{{ r.createdAt | date:'shortDate' }}</small>
+                            </div>
+                            <div class="text-warning my-1">
+                                <span *ngFor="let i of [1,2,3,4,5]" class="me-1">
+                                    {{ i <= r.rating ? '★' : '☆' }} </span>
+                            </div>
+                            <p class="mb-0">{{ r.comment || 'No comment' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template #loadingOrError>
+        <div class="text-center py-5">
+            <div *ngIf="loading" class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+        </div>
+    </ng-template>
+    <div class="text-center mt-4">
+        <a routerLink="/catalog/products" class="btn btn-link">Back to Products</a>
+    <router-outlet></router-outlet>
+    </div>
+</body>
+
+</html>

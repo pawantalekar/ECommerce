@@ -1,0 +1,80 @@
+@if (order) {
+<div class="container py-5">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h2 class="mb-1">Order {{ order.orderNumber }}</h2>
+                    <p class="text-muted mb-0">{{ order.createdAt | date:'mediumDate' }}</p>
+                </div>
+                <span class="badge fs-5 px-4 py-2" [ngClass]="{
+                'bg-success': order.paymentStatus === 'Paid',
+                'bg-danger': order.paymentStatus === 'Failed',
+                'bg-warning text-dark': order.paymentStatus === 'Pending'
+              }">
+                    {{ order.paymentStatus }}
+                </span>
+            </div>
+
+            <hr>
+
+            <div class="row g-5">
+                <div class="col-lg-8">
+                    <h5 class="mb-3">Items Ordered</h5>
+        @for (item of order.items; track item.productId) {
+        <div class="d-flex align-items-center mb-4 pb-4 border-bottom">
+            <img [src]="item.thumbnailUrl || 'https://via.placeholder.com/100'" class="rounded me-4"
+                style="width: 90px; height: 90px; object-fit: cover;">
+        
+            <div class="flex-grow-1">
+                <h6 class="mb-1">{{ item.productName }}</h6>
+                <p class="text-muted mb-0">
+                    Quantity: {{ item.quantity }} × ₹{{ item.unitPrice | number:'1.0-0' }}
+                </p>
+            </div>
+        
+            <div class="text-end">
+                <strong>₹{{ (item.unitPrice * item.quantity) | number:'1.0-0' }}</strong>
+        
+                @if (order.paymentStatus === 'Paid' && canUserReview(item.productId)) {
+                <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-primary" (click)="goToReview(item.productId, item.productName)">
+                        Rate Product
+                    </button>
+                </div>
+                }
+            </div>
+        </div>
+        }
+                    <div class="text-end mt-4">
+                        <h4 class="text-primary">Total: ₹{{ order.totalAmount | number:'1.0-0' }}</h4>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="bg-light rounded-3 p-4">
+                        <h5 class="mb-3">Shipping Address</h5>
+                        <p class="mb-1 fw-bold">{{ order.shippingAddress.fullName }}</p>
+                        <p class="mb-1">{{ order.shippingAddress.phone }}</p>
+                        <p class="mb-1 text-muted">
+                            {{ order.shippingAddress.addressLine1 }}
+                            @if (order.shippingAddress.addressLine2) {
+                            <br>{{ order.shippingAddress.addressLine2 }}
+                            }
+                            <br>
+                            {{ order.shippingAddress.city }}, {{ order.shippingAddress.state }} - {{
+                            order.shippingAddress.pincode }}
+                        </p>
+                    </div>
+
+                    <button class="btn btn-primary w-100 mt-4 py-3 fw-medium" (click)="buyAgain()">
+                        Buy Again
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+}
