@@ -1,10 +1,6 @@
-﻿using AuthService.Api.Queries;
-using Ecom.Application.AuthService.Application.DTO;
+﻿using Ecom.Application.AuthService.Application.DTO;
 using Ecom.Application.AuthService.Application.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using MediatR;
 
 namespace Ecom.Gateway.Controllers
 {
@@ -14,15 +10,11 @@ namespace Ecom.Gateway.Controllers
     {
         private readonly IAuthService _auth;
         private readonly IConfiguration _config;
-        private readonly IRefreshTokenRepository _refresh;
-        private readonly IMediator _mediator;
 
-        public AuthController(IAuthService auth, IConfiguration config, IRefreshTokenRepository refresh, IMediator _mediator)
+        public AuthController(IAuthService auth, IConfiguration config)
         {
             _auth = auth;
             _config = config;
-            _refresh = refresh;
-            this._mediator = _mediator;
         }
 
         [HttpGet("google-login")]
@@ -52,30 +44,7 @@ namespace Ecom.Gateway.Controllers
             return Redirect(url);
         }
 
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout([FromBody] JsonElement body)
-        {
-            string? refreshToken = null;
 
-            if (body.ValueKind != JsonValueKind.Undefined && body.ValueKind != JsonValueKind.Null)
-            {
-                if (body.TryGetProperty("refreshToken", out var prop))
-                    refreshToken = prop.GetString();
-                else if (body.TryGetProperty("refreshToken", out prop))
-                    refreshToken = prop.GetString();
-            }
-
-            if (!string.IsNullOrWhiteSpace(refreshToken))
-            {
-                var tokenEntity = await _refresh.GetByTokenAsync(refreshToken);
-                if (tokenEntity != null && tokenEntity.RevokedAt == null)
-                {
-                    await _refresh.RevokeAsync(tokenEntity, "User logout");
-                }
-            }
-
-            return Ok(new { success = true });
-        }
 
         [HttpPost("token/refresh")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshRequest request)
@@ -89,14 +58,5 @@ namespace Ecom.Gateway.Controllers
                 Expires = result.expires
             });
         }
-        
-        [HttpGet("me")]
-        [Authorize]
-        public async Task<IActionResult> GetCurrentUserInfo()
-        {
-            var role = await _mediator.Send(new GetCurrentUserRoleQuery());
-            return Ok(new { role });
-        }
-
     }
 }

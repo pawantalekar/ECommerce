@@ -29,21 +29,17 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />
-    <PackageReference Include="Typesense" Version="7.36.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ecom.Api\AuthService.Api\AuthService.Api.csproj" />
     <ProjectReference Include="..\Ecom.Api\CartService.Api\CartService.Api.csproj" />
     <ProjectReference Include="..\Ecom.Api\CatalogService.Api\CatalogService.Api.csproj" />
     <ProjectReference Include="..\Ecom.Api\OrderService.APi\OrderService.APi.csproj" />
     <ProjectReference Include="..\Ecom.Api\PaymentService.Api\PaymentService.Api.csproj" />
-    <ProjectReference Include="..\Ecom.Api\ReviewService.Api\ReviewService.Api.csproj" />
     <ProjectReference Include="..\Ecom.Application\Ecom.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\" />
     <Folder Include="wwwroot\uploads\products\" />
   </ItemGroup>
 

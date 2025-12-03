@@ -1,11 +1,9 @@
-using AuthService.Api.Queries;
 using CartService.Api.Commands.AddToCart;
 using CatalogService.Api.Commands.AddProduct;
 using Ecom.Application.AuthService.Application.Interfaces;
 using Ecom.Application.CartService.Application.Interfaces;
 using Ecom.Application.CatalogService.Application.Interfaces;
 using Ecom.Application.Commands.InitiatePayment;
-using Ecom.Application.ReviewService.Application.Interfaces;
 using Ecom.Infrastructure;
 using Ecom.Infrastructure.Repository;
 using Ecom.Infrastructure.Services;
@@ -15,14 +13,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OrderService.APi.Queries;
-using ReviewService.Api.Queries;
 using System.Text;
 
 namespace Ecom.Gateway
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var options = new WebApplicationOptions
             {
@@ -55,9 +52,7 @@ namespace Ecom.Gateway
                 typeof(AddProductCommandHandler).Assembly,
                 typeof(AddToCartCommand).Assembly,
                 typeof(InitiatePaymentCommandHandler).Assembly,
-                typeof(GetMyOrdersQuery).Assembly,
-                typeof(CanReviewProductQueryHandler).Assembly,
-                 typeof(GetCurrentUserRoleQueryHandler).Assembly
+                typeof(GetMyOrdersQuery).Assembly
                  )
              );
 
@@ -67,14 +62,12 @@ namespace Ecom.Gateway
 
             // registering the services and depe
             builder.Services.AddScoped<AuthDbContext>();
-            builder.Services.AddScoped<IAuthService, Ecom.Infrastructure.Services.AuthService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
-            builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-            builder.Services.AddSingleton<TypesenseService>();
-            //builder.Services.AddScoped<ProductIndexer>();
+
             // DbContext
             builder.Services.AddDbContext<AuthDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DCS")));
@@ -154,21 +147,6 @@ namespace Ecom.Gateway
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
-
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    try
-            //    {
-            //        var indexer = scope.ServiceProvider.GetRequiredService<ProductIndexer>();
-            //        await indexer.IndexAllProductsAsync();
-            //        Console.WriteLine("Typesense: All products indexed successfully!");
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine("TYPESENSE INDEXING FAILED:");
-            //        Console.WriteLine(ex.ToString());
-            //    }
-            //}
             app.UseStaticFiles();
 
             if (app.Environment.IsDevelopment())

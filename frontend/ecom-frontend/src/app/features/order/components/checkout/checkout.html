@@ -1,0 +1,84 @@
+<div class="container py-5">
+    <h2 class="mb-4">Checkout</h2>
+
+    <div class="row g-5">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">Shipping Address</h4>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="form">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <input formControlName="fullName" placeholder="Full Name" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <input formControlName="phone" placeholder="Phone Number" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <input formControlName="addressLine1" placeholder="Address Line 1" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <input formControlName="addressLine2" placeholder="Address Line 2 (Optional)"
+                                    class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <input formControlName="city" placeholder="City" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <input formControlName="state" placeholder="State" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <input formControlName="pincode" placeholder="Pincode" class="form-control">
+                            </div>
+                        </div>
+
+                        <button type="button" (click)="onPay()" class="btn btn-primary btn-lg w-100 mt-4">
+                            Pay ₹{{ totalAmount | number:'1.0-0' }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm sticky-top" style="top:20px">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">Order Summary ({{ cartItems.length }} items)</h4>
+                </div>
+                <div class="card-body">
+                    <div *ngFor="let item of cartItems; let i = index" class="d-flex mb-3 pb-3 border-bottom align-items-center">
+                        <img [src]="item.thumbnailUrl || 'https://via.placeholder.com/80'" class="rounded me-3"
+                            style="width:80px;height:80px;object-fit:cover;">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">{{ item.productName }}</h6>
+                            <div class="d-flex align-items-center mt-2">
+                                <button class="btn btn-outline-secondary btn-sm" (click)="updateQty(i, -1)"
+                                    [disabled]="item.quantity <= 1">–</button>
+                                <span class="px-3 fw-bold">{{ item.quantity }}</span>
+                                <button class="btn btn-outline-secondary btn-sm" (click)="updateQty(i, 1)">+</button>
+                            </div>
+                        </div>
+                        <strong class="text-end">₹{{ (item.unitPrice * item.quantity) | number:'1.0-0' }}</strong>
+                    </div>
+
+                    <div class="pt-3 border-top">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <strong>₹{{ totalAmount | number:'1.0-0' }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Shipping</span>
+                            <span class="text-success">FREE</span>
+                        </div>
+                        <div class="d-flex justify-content-between fs-4">
+                            <strong>Total</strong>
+                            <strong class="text-primary">₹{{ totalAmount | number:'1.0-0' }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

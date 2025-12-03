@@ -57,21 +57,17 @@ namespace Ecom.Infrastructure.Services
 
         public async Task<(string accessToken, string refreshToken, DateTime expires)> RefreshTokenAsync(string refreshToken, string clientIp)
         {
-            var normalizedToken = refreshToken?.Replace(" ", "+");
-
-            var stored = await _refresh.GetByTokenAsync(normalizedToken);
+            var stored = await _refresh.GetByTokenAsync(refreshToken);
             if (stored == null || stored.ExpiresAt <= DateTime.UtcNow || stored.RevokedAt != null)
                 throw new Exception("Invalid refresh token");
 
-            
+            stored.RevokedAt = DateTime.UtcNow;
+            await _refresh.SaveChangesAsync();
 
             var user = stored.User;
             var jwt = GenerateAccessToken(user);
             var newRefresh = CreateRefreshToken(user.Id, clientIp);
             await _refresh.AddAsync(newRefresh);
-
-            stored.RevokedAt = DateTime.UtcNow;
-            await _refresh.SaveChangesAsync();
 
             return (jwt.token, newRefresh.Token, jwt.expires);
         }

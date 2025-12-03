@@ -7,9 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="CatalogService.Application\DTO\" />
     <Folder Include="CartService.Application\" />
+    <Folder Include="ReviewService.Application\" />
     <Folder Include="PaymentService.Application\" />
-    <Folder Include="OrderService.Application\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,7 +33,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />
-    <PackageReference Include="Typesense" Version="7.36.0" />
   </ItemGroup>
 
   <ItemGroup>

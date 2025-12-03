@@ -1,0 +1,21 @@
+<div class="container py-5">
+    <h2 class="mb-4">My Cart</h2>
+
+    <div *ngIf="store.itemCount() === 0" class="text-center py-5">
+        <i class="bi bi-cart-x display-1 text-muted"></i>
+        <h4 class="mt-3 text-muted">Your cart is empty</h4>
+        <a routerLink="/catalog" class="btn btn-primary mt-3">Continue Shopping</a>
+    </div>
+
+    <div class="row" *ngIf="store.itemCount() > 0">
+        <div class="col-lg-8">
+            <div *ngFor="let item of store.cart().items">
+                <app-cart-item [item]="item"></app-cart-item>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <app-cart-summary></app-cart-summary>
+        </div>
+    </div>
+</div>

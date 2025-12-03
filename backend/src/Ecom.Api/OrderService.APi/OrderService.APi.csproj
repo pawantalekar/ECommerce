@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Razorpay" Version="3.3.2" />
-    <PackageReference Include="Typesense" Version="7.36.0" />
   </ItemGroup>
 
   <ItemGroup>

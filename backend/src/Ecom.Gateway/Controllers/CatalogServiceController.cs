@@ -1,11 +1,9 @@
 ﻿using CatalogService.Api.Commands.AddProduct;
 using CatalogService.Api.Commands.UpdateProduct;
 using CatalogService.Api.Queries;
-using Ecom.Infrastructure.Repository;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Typesense;
 
 namespace Ecom.Gateway.Controllers
 {
@@ -15,15 +13,13 @@ namespace Ecom.Gateway.Controllers
     {
         private readonly IMediator _mediator;
 
-        private readonly IWebHostEnvironment _env;
-        private readonly TypesenseService _typesenseService;
+        private readonly IWebHostEnvironment _env; 
 
-
-        public CatalogServiceController( IMediator mediator, IWebHostEnvironment env, TypesenseService _typesenseService)
+      
+        public CatalogServiceController(IMediator mediator, IWebHostEnvironment env)
         {
             _mediator = mediator;
             _env = env;
-            this._typesenseService = _typesenseService;
         }
 
         [HttpPost("products")]
@@ -93,30 +89,6 @@ namespace Ecom.Gateway.Controllers
 
             var url = $"{Request.Scheme}://{Request.Host}/uploads/products/{fileName}";
             return Ok(new { url });
-        }
-
-        [HttpGet("search")]
-        public async Task<IActionResult> SearchProducts([FromQuery] string q, [FromQuery] int page = 1)
-        {
-            if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
-                return Ok(new { hits = new List<object>(), found = 0 });
-
-            var result = await _typesenseService.Client.Search<object>("products", new SearchParameters
-            {
-                Text = q,                                           
-                QueryBy = "name,brandName,categoryName,tags,description",
-                PerPage = 20,
-                Page = page,
-                SortBy = "stockQuantity:desc"
-            });
-
-            return Ok(new
-            {
-                hits = result.Hits.Select(h => h.Document),
-                found = result.Found,
-                page,
-                totalPages = (result.Found + 19) / 20
-            });
         }
 
 

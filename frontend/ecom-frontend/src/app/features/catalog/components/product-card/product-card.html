@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="card h-100 shadow-sm border-0 overflow-hidden">
+        <div class="position-relative">
+            <img [src]="product.imageUrls[0] || 'https://via.placeholder.com/300x200'" class="card-img-top"
+                [alt]="product.name" style="height:200px;object-fit:cover;">
+            <div *ngIf="product.isFeatured" class="position-absolute top-0 start-0 m-2">
+                <span class="badge bg-success">Featured</span>
+            </div>
+        </div>
+
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title mb-1">{{ product.name }}</h5>
+            <p class="card-text text-muted small mb-2" *ngIf="product.shortDescription">
+                {{ product.shortDescription }}
+            </p>
+
+            <div class="mt-auto">
+                <p class="h5 fw-bold text-primary mb-2">
+                    ₹{{ product.price | number:'1.0-0' }}
+                </p>
+
+                <div class="d-flex gap-1 mb-2 flex-wrap">
+                    <span *ngFor="let tag of product.tags" class="badge bg-light text-dark border">
+                        {{ tag }}
+                    </span>
+                </div>
+
+                <a [routerLink]="['/catalog/products', product.slug]" class="btn btn-outline-primary btn-sm w-100">
+                    View Details
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

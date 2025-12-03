@@ -1,0 +1,19 @@
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title mb-4">Order Summary</h5>
+
+        <div class="d-flex justify-content-between mb-2">
+            <span>Items ({{ store.itemCount() }})</span>
+            <strong>₹{{ store.total() | number:'1.0-0' }}</strong>
+        </div>
+
+        <hr>
+
+        <div class="d-flex justify-content-between mb-4">
+            <h6 class="fw-bold">Total Amount</h6>
+            <h5 class="text-primary fw-bold">₹{{ store.total() | number:'1.0-0' }}</h5>
+        </div>
+
+    <a routerLink="/checkout" class="btn btn-primary mt-3">Proceed to Checkout</a>
+    </div>
+</div>

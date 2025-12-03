@@ -21,18 +21,12 @@ namespace Ecom.Infrastructure
 
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
-
         public virtual DbSet<Cart> Carts { get; set; }
 
         public virtual DbSet<CartItem> CartItems { get; set; }
         public virtual DbSet<OrderItem> OrderItems { get; set; }
 
         public virtual DbSet<Order> Orders { get; set; }
-
-        public virtual DbSet<Review> Reviews { get; set; }
-
-        public virtual DbSet<SellerRequest> SellerRequests { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // BRAND
@@ -112,12 +106,10 @@ namespace Ecom.Infrastructure
 
             //product tag
 
-
             modelBuilder.Entity<ProductTag>(entity =>
             {
                 entity.ToTable("ProductTags");
                 entity.HasKey(e => new { e.ProductId, e.TagId });
-
 
 
                 entity.Property(e => e.ProductId).HasColumnName("ProductId");
@@ -166,7 +158,6 @@ namespace Ecom.Infrastructure
                       .WithMany(p => p.RefreshTokens)
                       .HasForeignKey(d => d.UserId);
             });
-
 
             //for cart related
             modelBuilder.Entity<Cart>(entity =>
@@ -289,44 +280,6 @@ namespace Ecom.Infrastructure
                     .HasMaxLength(255)
                     .HasColumnName("SSOProviderId");
             });
-
-            //Review 
-
-            modelBuilder.Entity<Review>(entity =>
-            {
-                entity.HasKey(e => e.Id).HasName("PK__Reviews__3214EC073A636C96");
-
-                entity.HasIndex(e => e.CreatedAt, "IX_Reviews_CreatedAt").IsDescending();
-
-                entity.HasIndex(e => e.ProductId, "IX_Reviews_ProductId");
-
-                entity.HasIndex(e => e.Status, "IX_Reviews_Status");
-
-                entity.HasIndex(e => e.UserId, "IX_Reviews_UserId");
-
-                entity.HasIndex(e => new { e.ProductId, e.UserId }, "UX_Reviews_ProductId_UserId").IsUnique();
-
-                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
-                entity.Property(e => e.Status)
-                    .HasMaxLength(20)
-                    .HasDefaultValue("Pending");
-            });
-
-            //sellerRequests
-            modelBuilder.Entity<SellerRequest>(entity =>
-            {
-                entity.HasIndex(e => e.Status, "IX_SellerRequests_Status");
-
-                entity.HasIndex(e => e.UserId, "IX_SellerRequests_UserId");
-
-                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
-                entity.Property(e => e.RequestedAt).HasDefaultValueSql("(getutcdate())");
-                entity.Property(e => e.Status)
-                    .HasMaxLength(20)
-                    .HasDefaultValue("Pending");
-            });
-
             OnModelCreatingPartial(modelBuilder);
         }
 
