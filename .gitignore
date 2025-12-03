@@ -1,0 +1,9 @@
+.vs/
+bin/
+obj/
+*.user
+*.suo
+backend/src/Ecom.Gateway/appsettings.json
+node_modules/
+.angular/
+dist/
