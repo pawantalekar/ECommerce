@@ -1,41 +1,43 @@
 <div class="card mb-3 border-0 shadow-sm">
-    <div class="row g-0">
-        <div class="col-3 col-md-2">
-            <img [src]="item.thumbnailUrl || 'https://via.placeholder.com/150'"
-                class="img-fluid rounded-start h-100 w-100" style="object-fit: cover;" alt="{{ item.name }}">
-        </div>
-        <div class="col-9 col-md-10">
-            <div class="card-body py-3">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div class="flex-grow-1 pe-3">
-                        <h6 class="mb-1">
-                            <a routerLink="/catalog/products/{{ item.slug }}"
-                                class="text-decoration-none text-dark hover-text-primary">
-                                {{ item.name }}
-                            </a>
-                        </h6>
-                        <p class="text-primary fw-bold mb-0">₹{{ item.price | number:'1.0-0' }}</p>
-                    </div>
-                    <button class="btn btn-sm btn-link text-danger p-0" (click)="remove()">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-
-                <div class="d-flex align-items-center mt-3">
-                    <div class="btn-group">
-                        <button class="btn btn-outline-secondary btn-sm"
-                            (click)="updateQuantity(item.quantity - 1)">–</button>
-                        <button class="btn btn-outline-secondary btn-sm px-3" [disabled]="true">
-                            {{ item.quantity }}
-                        </button>
-                        <button class="btn btn-outline-secondary btn-sm"
-                            (click)="updateQuantity(item.quantity + 1)">+</button>
-                    </div>
-                    <div class="ms-4 text-muted" *ngIf="loading()">
-                        <span class="spinner-border spinner-border-sm me-2"></span>Updating...
-                    </div>
-                </div>
+  <div class="row g-0">
+    <div class="col-3 col-md-2">
+      <img [src]="item.thumbnailUrl || 'https://via.placeholder.com/150'"
+        class="img-fluid rounded-start h-100 w-100" style="object-fit: cover;" alt="{{ item.name }}">
+      </div>
+      <div class="col-9 col-md-10">
+        <div class="card-body py-3">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1 pe-3">
+              <h6 class="mb-1">
+                <a routerLink="/catalog/products/{{ item.slug }}"
+                  class="text-decoration-none text-dark hover-text-primary">
+                  {{ item.name }}
+                </a>
+              </h6>
+              <p class="text-primary fw-bold mb-0">₹{{ item.price | number:'1.0-0' }}</p>
             </div>
+            <button class="btn btn-sm btn-link text-danger p-0" (click)="remove()">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+
+          <div class="d-flex align-items-center mt-3">
+            <div class="btn-group">
+              <button class="btn btn-outline-secondary btn-sm"
+              (click)="updateQuantity(item.quantity - 1)">–</button>
+              <button class="btn btn-outline-secondary btn-sm px-3" [disabled]="true">
+                {{ item.quantity }}
+              </button>
+              <button class="btn btn-outline-secondary btn-sm"
+              (click)="updateQuantity(item.quantity + 1)">+</button>
+            </div>
+            @if (loading()) {
+              <div class="ms-4 text-muted">
+                <span class="spinner-border spinner-border-sm me-2"></span>Updating...
+              </div>
+            }
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </div>

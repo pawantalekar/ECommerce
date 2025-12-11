@@ -1,23 +1,42 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Table, TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { DropdownModule } from 'primeng/dropdown';
 import { AdminApprovalService } from './services/admin-approval';
 import { PendingReview } from './models/pending-review.model';
 import { SellerRequest } from './models/seller-request.model';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-approvals',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    IconFieldModule,
+    InputIconModule,
+    DropdownModule,
+    FormsModule
+  ],
   templateUrl: './approvals.html',
-  // styleUrls: ['./approvals.scss']
+  styleUrls: ['./approvals.css']
 })
 export class ApprovalsComponent implements OnInit {
+  @ViewChild('reviewTable') reviewTable!: Table;
+  @ViewChild('requestTable') requestTable!: Table;
+
   pendingReviews: PendingReview[] = [];
   pendingRequests: SellerRequest[] = [];
-  activeTab = 'reviews';
+  activeTab = "reviews";
   loading = true;
 
-  constructor(private service: AdminApprovalService) { }
+  private service = inject(AdminApprovalService);
 
   ngOnInit() {
     this.loadData();
@@ -25,6 +44,7 @@ export class ApprovalsComponent implements OnInit {
 
   loadData() {
     this.loading = true;
+
     this.service.getPendingReviews().subscribe({
       next: (data) => {
         this.pendingReviews = data;
@@ -34,8 +54,7 @@ export class ApprovalsComponent implements OnInit {
     });
 
     this.service.getPendingSellerRequests().subscribe({
-      next: (data) => this.pendingRequests = data,
-      error: () => { }
+      next: (data) => this.pendingRequests = data
     });
   }
 
@@ -54,4 +73,4 @@ export class ApprovalsComponent implements OnInit {
   rejectSeller(id: string) {
     this.service.rejectSellerRequest(id).subscribe(() => this.loadData());
   }
-}
+} 

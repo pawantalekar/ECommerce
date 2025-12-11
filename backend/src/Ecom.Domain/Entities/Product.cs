@@ -40,6 +40,6 @@ public partial class Product
     public virtual ICollection<OrderItem> OrderItem { get; set; } = new List<OrderItem>();
 
 
-
+    
     public virtual ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
 }

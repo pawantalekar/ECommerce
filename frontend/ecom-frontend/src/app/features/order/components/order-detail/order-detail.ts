@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';  
 import { CommonModule } from '@angular/common';
 import { Orderservice } from '../../services/orderservice';
@@ -13,16 +13,14 @@ import { ReviewService } from '../../../reviews/services/review-service';
   imports: [CommonModule, RouterModule]
 })
 export class OrderDetailComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private orderService = inject(Orderservice);
+  private cartService = inject(CartHttpService);
+  private router = inject(Router);
+  private reviewService = inject(ReviewService);
+
   order: Order | null = null;
   canReviewMap = new Map<string, boolean>();
-
-  constructor(
-    private route: ActivatedRoute,
-    private orderService: Orderservice,
-    private cartService: CartHttpService,
-    private router: Router,
-    private reviewService: ReviewService  
-  ) { }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -51,7 +49,7 @@ export class OrderDetailComponent implements OnInit {
   private checkReviewStatusForItems(productIds: string[]) {
     productIds.forEach(pid => {
       this.reviewService.getMyReview(pid).subscribe({
-        next: (review) => this.canReviewMap.set(pid, true),
+        next: () => this.canReviewMap.set(pid, true),
         error: () => {
           this.reviewService.canReview(pid).subscribe(can => {
             this.canReviewMap.set(pid, can);

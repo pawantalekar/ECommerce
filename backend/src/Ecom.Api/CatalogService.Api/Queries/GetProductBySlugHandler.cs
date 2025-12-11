@@ -5,12 +5,12 @@ namespace CatalogService.Api.Queries
 {
     public class GetProductBySlugHandler : IRequestHandler<GetProductBySlugQuery, Result?>
     {
-        private readonly ICatalogRepository _repo;
-        public GetProductBySlugHandler(ICatalogRepository repo) => _repo = repo;
+        private readonly ICatalogRepository repo;
+        public GetProductBySlugHandler(ICatalogRepository repo) => this.repo = repo;
 
         public async Task<Result?> Handle(GetProductBySlugQuery request, CancellationToken ct)
         {
-            var product = await _repo.GetBySlugAsync(request.Slug, ct);
+            var product = await repo.GetBySlugAsync(request.Slug, ct);
             if (product == null) return null;
 
             return new Result(

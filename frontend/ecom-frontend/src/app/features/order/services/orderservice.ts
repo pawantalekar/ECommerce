@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
@@ -9,9 +9,9 @@ import { InitiatePaymentResponse } from '../models/payment';
   providedIn: 'root'
 })
 export class Orderservice {
-  private apiUrl = `${environment.apiBaseUrl}/payments`;
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) { }
+  private apiUrl = `${environment.apiBaseUrl}/payments`;
 
   createOrder(items: CheckoutItem[], shipping: ShippingAddress): Observable<InitiatePaymentResponse> {
     return this.http.post<InitiatePaymentResponse>(`${this.apiUrl}/create`, { items, shippingAddress: shipping });

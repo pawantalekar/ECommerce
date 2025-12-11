@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.0" />
-    <PackageReference Include="Typesense" Version="7.36.0" />
   </ItemGroup>
 
   <ItemGroup>

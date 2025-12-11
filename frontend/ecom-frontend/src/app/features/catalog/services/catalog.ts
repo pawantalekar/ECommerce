@@ -1,5 +1,5 @@
 
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product, AddProductPayload } from '../models/product'; // Import
@@ -9,9 +9,9 @@ export type { AddProductPayload };
 
 @Injectable({ providedIn: 'root' })
 export class Catalog {
-  private readonly api = `${environment.apiBaseUrl}/CatalogService`;
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) { }
+  private readonly api = `${environment.apiBaseUrl}/CatalogService`;
 
   getAll(): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.api}/products`);

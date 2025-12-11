@@ -11,7 +11,7 @@ namespace Ecom.Infrastructure
         public AuthDbContext(DbContextOptions<AuthDbContext> options)
             : base(options) { }
 
-
+       
         public virtual DbSet<Brand> Brands { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
@@ -111,14 +111,14 @@ namespace Ecom.Infrastructure
             });
 
             //product tag
-
+            
 
             modelBuilder.Entity<ProductTag>(entity =>
             {
-                entity.ToTable("ProductTags");
+                entity.ToTable("ProductTags");                
                 entity.HasKey(e => new { e.ProductId, e.TagId });
 
-
+                
 
                 entity.Property(e => e.ProductId).HasColumnName("ProductId");
                 entity.Property(e => e.TagId).HasColumnName("TagId");

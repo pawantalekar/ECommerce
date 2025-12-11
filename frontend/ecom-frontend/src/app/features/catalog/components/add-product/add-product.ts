@@ -1,6 +1,6 @@
 
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Catalog, AddProductPayload } from '../../services/catalog';
@@ -8,11 +8,14 @@ import { Catalog, AddProductPayload } from '../../services/catalog';
 @Component({
   selector: 'app-add-product',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './add-product.html',
   styleUrls: ['./add-product.css']
 })
 export class AddProduct {
+  private catalog = inject(Catalog);
+  private router = inject(Router);
+
   model: AddProductPayload = {
     name: '',
     shortDescription: '',
@@ -32,8 +35,6 @@ export class AddProduct {
   selectedFiles: File[] = [];
   uploading = false;
   error = '';
-
-  constructor(private catalog: Catalog, private router: Router) { }
 
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;

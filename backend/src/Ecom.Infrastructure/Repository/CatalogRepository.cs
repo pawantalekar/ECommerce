@@ -183,7 +183,15 @@ namespace Ecom.Infrastructure.Repository
             _db.Products.Update(product);
             await _db.SaveChangesAsync(ct);
         }
-
+        public IQueryable<Product> GetQueryable()
+        {
+            return _db.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
+                .AsNoTracking();
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Orderservice } from '../../services/orderservice';
@@ -7,14 +7,13 @@ import { InitiatePaymentResponse } from '../../models/payment';
 import { CartHttpService } from '../../../cart/services/cart-http.service';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../../environments/environment';
 
 interface CheckoutDisplayItem {
   productId: string;
   productName: string;
   thumbnailUrl?: string;
   unitPrice: number;
-  quantity: number;
+  quantity: number
 }
 
 @Component({
@@ -24,17 +23,17 @@ interface CheckoutDisplayItem {
   templateUrl: './checkout.html'
 })
 export class CheckoutComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private orderService = inject(Orderservice);
+  private router = inject(Router);
+  private cartService = inject(CartHttpService);
+  private http = inject(HttpClient);
+
   form: FormGroup;
   cartItems: CheckoutDisplayItem[] = [];
   totalAmount = 0;
 
-  constructor(
-    private fb: FormBuilder,
-    private orderService: Orderservice,
-    private router: Router,
-    private cartService: CartHttpService,
-    private http: HttpClient
-  ) {
+  constructor() {
     this.form = this.fb.group({
       fullName: ['', Validators.required],
       phone: ['', Validators.required],

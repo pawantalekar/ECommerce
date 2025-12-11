@@ -9,12 +9,14 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
   console.log("INTERCEPTOR TOKEN:", user?.accessToken);
 
   if (req.url.includes('/auth/logout')) {
-    return next(req);   
+    return next(req);
   }
+
   if (user?.accessToken) {
-    req = req.clone({
+    const cloned = req.clone({
       setHeaders: { Authorization: `Bearer ${user.accessToken}` }
     });
+    return next(cloned);
   }
 
   return next(req);

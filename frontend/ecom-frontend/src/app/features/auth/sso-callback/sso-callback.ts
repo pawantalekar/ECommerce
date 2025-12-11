@@ -1,18 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth-service';
 
 @Component({
   selector: 'app-sso-callback',
   standalone: true,
-  template: `<p>Signing in...</p>`
+  template: '<p>Signing in...</p>'
 })
 export class SsoCallback implements OnInit {
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private auth: AuthService
-  ) { }
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private auth = inject(AuthService);
+
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(p => {
@@ -23,9 +22,10 @@ export class SsoCallback implements OnInit {
           refreshToken: p.get('refreshToken') ?? undefined,
           expires: p.get('expires') ?? undefined
         });
+        this.auth.loadUserRole();
         this.router.navigate(['/home'], { replaceUrl: true });
       } else {
-        this.router.navigate(['/auth/login'], { replaceUrl: true });
+        this.router.navigate(['/auth/login']);
       }
     });
   }

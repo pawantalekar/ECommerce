@@ -1,5 +1,4 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReviewService } from '../../services/review-service';
@@ -10,7 +9,7 @@ import { UpdateReviewRequest } from '../../models/update-review-request.model';
 @Component({
   selector: 'app-write-review-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './write-review-page.html'
 })
 export class WriteReviewPageComponent implements OnInit {
@@ -29,14 +28,13 @@ export class WriteReviewPageComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    // If no productId from state → redirect (safety)
     if (!this.productId) {
       alert('No product selected for review');
       this.router.navigate(['/']);
       return;
     }
 
-    // Load existing review (if any)
+    // Load existing review 
     this.reviewService.getMyReview(this.productId).subscribe({
       next: (r) => {
         if (r) {

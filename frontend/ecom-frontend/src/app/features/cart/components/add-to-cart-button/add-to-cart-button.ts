@@ -2,23 +2,25 @@ import { Component, Input, inject } from '@angular/core';
 import { CartStore } from '../../signals/cart.store';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth-service';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-add-to-cart-button',
   standalone: true,
-  imports: [CommonModule ],
+  imports: [],
   template: `
     <button class="btn btn-primary btn-lg me-2 position-relative"
-            (click)="addToCart()"
-            [disabled]="loading()">
-      <span class="spinner-border spinner-border-sm me-2" *ngIf="loading()"></span>
+      (click)="addToCart()"
+      [disabled]="loading()">
+      @if (loading()) {
+        <span class="spinner-border spinner-border-sm me-2"></span>
+      }
       <i class="bi bi-cart-plus"></i>
       <span>Add to Cart</span>
     </button>
-  `,
+    `,
   styles: [
-    `button:hover { transform: translateY(-1px); }`
+    'button:hover { transform: translateY(-1px); }'
   ]
 })
 export class AddToCartButtonComponent {

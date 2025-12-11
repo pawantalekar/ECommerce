@@ -1,6 +1,7 @@
 using AuthService.Api.Queries;
 using CartService.Api.Commands.AddToCart;
 using CatalogService.Api.Commands.AddProduct;
+using CatalogService.Api.Queries;
 using Ecom.Application.AuthService.Application.Interfaces;
 using Ecom.Application.CartService.Application.Interfaces;
 using Ecom.Application.CatalogService.Application.Interfaces;
@@ -28,10 +29,10 @@ namespace Ecom.Gateway
             {
                 Args = args,
                 ContentRootPath = AppContext.BaseDirectory,
-                WebRootPath = "wwwroot"
+                WebRootPath = "wwwroot"   
             };
             var builder = WebApplication.CreateBuilder(args);
-
+       
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAngularDev", p =>
@@ -49,7 +50,7 @@ namespace Ecom.Gateway
 
 
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AddProductCommandHandler>());
-
+            
             builder.Services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssemblies(
                 typeof(AddProductCommandHandler).Assembly,
@@ -57,7 +58,8 @@ namespace Ecom.Gateway
                 typeof(InitiatePaymentCommandHandler).Assembly,
                 typeof(GetMyOrdersQuery).Assembly,
                 typeof(CanReviewProductQueryHandler).Assembly,
-                 typeof(GetCurrentUserRoleQueryHandler).Assembly
+                typeof(GetCurrentUserRoleQueryHandler).Assembly,
+                typeof(SearchProductsQueryHandler).Assembly
                  )
              );
 
@@ -73,7 +75,7 @@ namespace Ecom.Gateway
             builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-            builder.Services.AddSingleton<TypesenseService>();
+            
             //builder.Services.AddScoped<ProductIndexer>();
             // DbContext
             builder.Services.AddDbContext<AuthDbContext>(options =>
@@ -92,17 +94,17 @@ namespace Ecom.Gateway
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-           .AddJwtBearer(options =>
-           {
+            .AddJwtBearer(options =>
+            {
                options.MapInboundClaims = false;
-               options.TokenValidationParameters = new TokenValidationParameters
-               {
-                   ValidateIssuer = true,
-                   ValidateAudience = true,
-                   ValidateLifetime = true,
-                   ValidateIssuerSigningKey = true,
-                   ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                   ValidAudience = builder.Configuration["Jwt:Audience"],
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
                    IssuerSigningKey = new SymmetricSecurityKey(key),
 
                    NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
@@ -146,13 +148,13 @@ namespace Ecom.Gateway
                        Console.WriteLine($"?? CHALLENGE: {context.Error}, {context.ErrorDescription}");
                        return Task.CompletedTask;
                    }
-               };
-           });
+                };
+            });
             builder.Services.AddAuthorization();
 
 
             builder.Services.AddSwaggerGen();
-
+          
             var app = builder.Build();
 
             //using (var scope = app.Services.CreateScope())
@@ -178,6 +180,8 @@ namespace Ecom.Gateway
             }
             app.UseHttpsRedirection();
             app.UseCors("AllowAngularDev");
+            app.UseHttpsRedirection();
+            app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();

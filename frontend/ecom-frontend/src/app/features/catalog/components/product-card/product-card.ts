@@ -1,5 +1,5 @@
 
-import { Component, Input, NgModuleRef } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Product } from '../../models/product';
@@ -13,8 +13,4 @@ import { Product } from '../../models/product';
 })
 export class ProductCard {
   @Input({ required: true }) product!: Product;
-
-  comingSoon() {
-    alert('Cart feature coming soon!');
-  }
 }

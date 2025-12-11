@@ -12,7 +12,7 @@ describe('Login', () => {
       imports: [Login, HttpClientTestingModule],
       providers: [provideRouter([])]
     })
-      .compileComponents();
+    .compileComponents();
 
     fixture = TestBed.createComponent(Login);
     component = fixture.componentInstance;

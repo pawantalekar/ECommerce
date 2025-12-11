@@ -60,17 +60,17 @@ export class ProductDetail implements OnInit {
 
       const productId = this.product.id;
 
-    
+
       this.reviewService.getMyReview(productId).subscribe({
         next: (existing) => {
           if (existing) {
-            this.canReview = true;  
+            this.canReview = true;
             return;
           }
 
-         
+
           this.reviewService.canReview(productId).subscribe({
-            next: (can) => this.canReview = can   
+            next: (can) => this.canReview = can
           });
         },
         error: () => this.canReview = false
@@ -91,6 +91,7 @@ export class ProductDetail implements OnInit {
     return this.product.imageUrls.filter(url => url !== this.primaryImage);
   }
 
+
   setPrimaryImage(url: string): void {
     this.primaryImage = url;
   }
@@ -107,7 +108,7 @@ export class ProductDetail implements OnInit {
       }
     });
   }
-    
+
   private loadReviews() {
     if (!this.product) return;
     this.reviewService.getReviews(this.product.id).subscribe({

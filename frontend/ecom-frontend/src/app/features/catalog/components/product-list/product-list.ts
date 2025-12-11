@@ -1,6 +1,6 @@
 // src/app/features/catalog/components/product-list/product-list.ts
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+
 import { ProductCard } from '../product-card/product-card';
 import { Catalog } from '../../services/catalog';
 import { Product } from '../../models/product';
@@ -10,10 +10,13 @@ import { AuthService } from '../../../../core/services/auth-service'; // Import 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, ProductCard, RouterModule],
+  imports: [ProductCard, RouterModule],
   templateUrl: './product-list.html'
 })
 export class ProductList implements OnInit {
+  private catalog = inject(Catalog);
+  private auth = inject(AuthService);
+
   products: Product[] = [];
   loading = true;
   error: string | null = null;
@@ -21,10 +24,7 @@ export class ProductList implements OnInit {
   
   isLoggedIn = false;
 
-  constructor(
-    private catalog: Catalog,
-    private auth: AuthService 
-  ) {
+  constructor() {
     
     this.auth.user$.subscribe(user => this.isLoggedIn = !!user);
   }

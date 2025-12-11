@@ -10,15 +10,15 @@
 <body>
     <div class="container py-5" *ngIf="product; else loadingOrError">
         <div class="row g-5">
-
+    
             <div class="col-lg-6">
-
+    
                 <div class="mb-3">
                     <img [src]="primaryImage" class="img-fluid rounded shadow w-100" [alt]="product.name"
                         style="max-height: 500px; object-fit: contain; background: #f8f9fa;">
                 </div>
-
-
+    
+    
                 <div class="row g-2" *ngIf="galleryImages.length > 0">
                     <div class="col-4" *ngFor="let img of galleryImages">
                         <img [src]="img" class="img-fluid rounded border cursor-pointer"
@@ -26,34 +26,35 @@
                             (click)="primaryImage = img">
                     </div>
                 </div>
-
-
+    
+    
                 <div *ngIf="!product.imageUrls.length" class="text-center py-5 bg-light rounded">
                     <p class="text-muted">No images available</p>
                 </div>
             </div>
-
-
+    
+    
             <div class="col-lg-6">
                 <h1 class="display-5 fw-bold">{{ product.name }}</h1>
                 <p class="lead text-muted" *ngIf="product.shortDescription">
                     {{ product.shortDescription }}
                 </p>
+    
                 <div class="d-flex align-items-center gap-3 mb-3">
                     <span class="h3 text-primary mb-0">₹{{ product.price | number:'1.0-0' }}</span>
                     <span class="badge bg-success" *ngIf="product.stockQuantity > 0">In Stock</span>
                     <span class="badge bg-danger" *ngIf="product.stockQuantity === 0">Out of Stock</span>
                 </div>
-
+    
                 <p class="text-muted small">SKU: {{ product.sku }}</p>
-
+    
                 <div class="mb-4 d-flex gap-3 flex-wrap">
                     <ng-container *ngIf="isInCart(); else addToCartBlock">
                         <button class="btn btn-success px-4 py-2 fw-medium rounded" (click)="goToCart()">
                             Go to Cart
-                        </button>
+                    </button>
                     </ng-container>
-
+    
                     <ng-template #addToCartBlock>
                         <app-add-to-cart-button [productId]="product.id"
                             class="btn btn-primary px-4 py-2 fw-medium rounded" (click)="goToCart()">
@@ -65,17 +66,18 @@
                     </button>
                 </div>
                 <hr>
-
+    
                 <h5>Description</h5>
                 <p *ngIf="product.description; else noDesc">{{ product.description }}</p>
                 <ng-template #noDesc>
                     <p class="text-muted">No description available.</p>
                 </ng-template>
-            
+    
                 <div class="mt-4">
                     <strong>Tags:</strong>
                     <span *ngFor="let tag of product.tags" class="badge bg-light text-dark ms-1">{{ tag }}</span>
                 </div>
+    
                 <div class="mt-4 text-muted small">
                     <strong>Category:</strong> {{ product.categoryName }}<br>
                     <strong>Brand:</strong> {{ product.brandName }}
@@ -114,6 +116,7 @@
             </div>
         </div>
     </div>
+    
     <ng-template #loadingOrError>
         <div class="text-center py-5">
             <div *ngIf="loading" class="spinner-border text-primary" role="status">
@@ -122,6 +125,7 @@
             <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
         </div>
     </ng-template>
+    
     <div class="text-center mt-4">
         <a routerLink="/catalog/products" class="btn btn-link">Back to Products</a>
     <router-outlet></router-outlet>

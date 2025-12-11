@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,9 +9,9 @@ import { environment } from '../../../../environments/environment';
     providedIn: 'root'
 })
 export class CartHttpService {
-    private apiUrl = `${environment.apiBaseUrl}/Cart`;
+    private http = inject(HttpClient);
 
-    constructor(private http: HttpClient) { }
+    private apiUrl = `${environment.apiBaseUrl}/Cart`;
 
     getCart(): Observable<CartDto> {
         return this.http.get<any>(this.apiUrl).pipe(map(res => res.cart ?? res));

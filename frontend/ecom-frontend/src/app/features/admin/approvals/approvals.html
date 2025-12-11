@@ -1,82 +1,131 @@
-<div class="admin-approvals p-6 max-w-6xl mx-auto">
-    <h1 class="text-3xl font-bold mb-6">Admin Approval Dashboard</h1>
+<div class="admin-approvals p-6 max-w-7xl mx-auto">
+  <h1 class="text-3xl font-bold mb-6">Admin Approval Dashboard</h1>
 
-    <div class="tabs mb-6">
-        <button (click)="activeTab = 'reviews'" [class.active]="activeTab === 'reviews'"
-            class="px-6 py-3 border rounded-l-lg">
-            Pending Reviews ({{ pendingReviews.length }})
-        </button>
-        <button (click)="activeTab = 'requests'" [class.active]="activeTab === 'requests'"
-            class="px-6 py-3 border rounded-r-lg">
-            Seller Requests ({{ pendingRequests.length }})
-        </button>
-    </div>
-    <div *ngIf="activeTab === 'reviews'">
-        <h2 class="text-2xl mb-4">Pending Reviews</h2>
-        <div *ngIf="loading" class="text-center py-8">Loading...</div>
+  <div class="tabs mb-6 flex border-b">
+    <button (click)="activeTab = 'reviews'" [class.border-primary]="activeTab === 'reviews'"
+      [class.text-primary]="activeTab === 'reviews'" class="px-6 py-3 font-medium border-b-2 transition-colors">
+      Pending Reviews ({{ pendingReviews.length }})
+    </button>
+    <button (click)="activeTab = 'requests'" [class.border-primary]="activeTab === 'requests'"
+      [class.text-primary]="activeTab === 'requests'" class="px-6 py-3 font-medium border-b-2 transition-colors">
+      Seller Requests ({{ pendingRequests.length }})
+    </button>
+  </div>
 
-        <table class="w-full border-collapse border" *ngIf="!loading">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="border p-3 text-left">Product</th>
-                    <th class="border p-3 text-left">User</th>
-                    <th class="border p-3 text-left">Rating</th>
-                    <th class="border p-3 text-left">Comment</th>
-                    <th class="border p-3 text-left">Date</th>
-                    <th class="border p-3 text-left">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let r of pendingReviews">
-                    <td class="border p-3">{{ r.productName }}</td>
-                    <td class="border p-3">{{ r.userName }}</td>
-                    <td class="border p-3">{{ r.rating }} stars</td>
-                    <td class="border p-3">{{ r.comment || 'No comment' }}</td>
-                    <td class="border p-3">{{ r.createdAt | date:'short' }}</td>
-                    <td class="border p-3">
-                        <button (click)="approveReview(r.id)"
-                            class="btn btn-success px-3 py-1 rounded me-2">Approve</button>
+  @if (activeTab === 'reviews') {
+  <div class="card">
+    <p-table #reviewTable [value]="pendingReviews" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 25, 50]"
+      [loading]="loading" [globalFilterFields]="['productName', 'userName', 'rating', 'comment']" dataKey="id"
+      [tableStyle]="{ 'min-width': '70rem', 'table-layout': 'fixed' }">
 
-                        <button (click)="rejectReview(r.id)" class="btn btn-danger px-3 py-1 rounded">Reject</button>
+      <ng-template pTemplate="caption">
+        <div class="flex justify-content-end">
+          <p-iconField iconPosition="left">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input pInputText type="text" (input)="reviewTable.filterGlobal($any($event.target).value, 'contains')"
+              placeholder="Search reviews..." class="w-full sm:w-64" />
+          </p-iconField>
+        </div>
+      </ng-template>
 
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="productName" style="width: 15%">Product <p-sortIcon field="productName"></p-sortIcon>
+          </th>
+          <th pSortableColumn="userName" style="width: 12%">User <p-sortIcon field="userName"></p-sortIcon></th>
+          <th pSortableColumn="rating" style="width: 10%">Rating <p-sortIcon field="rating"></p-sortIcon></th>
+          <th style="width: 30%">Comment</th>
+          <th pSortableColumn="createdAt" style="width: 13%">Date <p-sortIcon field="createdAt"></p-sortIcon></th>
+          <th style="width: 20%">Actions</th>
+        </tr>
+      </ng-template>
 
-        <p *ngIf="pendingReviews.length === 0 && !loading" class="text-center py-8 text-gray-500">
-            No pending reviews
-        </p>
-    </div>
-   
-    <div *ngIf="activeTab === 'requests'">
-        <h2 class="text-2xl mb-4">Pending Seller Requests</h2>
+      <ng-template pTemplate="body" let-review>
+        <tr>
+          <td style="word-wrap: break-word; overflow-wrap: break-word;">{{ review.productName }}</td>
+          <td style="word-wrap: break-word; overflow-wrap: break-word;">{{ review.userName }}</td>
+          <td>
+            <span class="flex items-center gap-1">
+              <i class="pi pi-star-fill text-yellow-500"></i>
+              {{ review.rating }} / 5
+            </span>
+          </td>
+          <td style="word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
+            {{ review.comment || 'No comment' }}
+          </td>
+          <td style="word-wrap: break-word;">{{ review.createdAt | date:'medium' }}</td>
+          <td style="white-space: nowrap;">
+            <button pButton icon="pi pi-check" class="p-button-success p-button-sm" style="margin-right: 0.5rem;"
+              (click)="approveReview(review.id)" label="Approve"></button>
+            <button pButton icon="pi pi-times" class="p-button-danger p-button-sm" (click)="rejectReview(review.id)"
+              label="Reject"></button>
+          </td>
+        </tr>
+      </ng-template>
 
-        <table class="w-full border-collapse border" *ngIf="pendingRequests.length > 0">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="border p-3 text-left">Name</th>
-                    <th class="border p-3 text-left">Email</th>
-                    <th class="border p-3 text-left">Requested At</th>
-                    <th class="border p-3 text-left">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let r of pendingRequests">
-                    <td class="border p-3">{{ r.userName }}</td>
-                    <td class="border p-3">{{ r.userEmail }}</td>
-                    <td class="border p-3">{{ r.requestedAt | date:'medium' }}</td>
-                    <td class="border p-3">
-                        <button (click)="approveSeller(r.id)"
-                            class="btn btn-success px-3 py-1 rounded me-2">Approve</button>
-                        <button (click)="rejectSeller(r.id)" class="btn btn-danger px-3 py-1 rounded">Reject</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center py-6 text-gray-500">
+            No pending reviews found.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  }
 
-        <p *ngIf="pendingRequests.length === 0" class="text-center py-8 text-gray-500">
-            No pending seller requests
-        </p>
-    </div>
+  @if (activeTab === 'requests') {
+  <div class="card">
+    <p-table #requestTable [value]="pendingRequests" [paginator]="true" [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 25, 50]" [loading]="loading" [globalFilterFields]="['userName', 'userEmail']"
+      dataKey="id" [tableStyle]="{ 'min-width': '50rem', 'table-layout': 'fixed' }">
+
+      <ng-template pTemplate="caption">
+        <div class="flex justify-content-end">
+          <p-iconField iconPosition="left">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input pInputText type="text" (input)="requestTable.filterGlobal($any($event.target).value, 'contains')"
+              placeholder="Search requests..." class="w-full sm:w-64" />
+          </p-iconField>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="userName" style="width: 25%">Name <p-sortIcon field="userName"></p-sortIcon></th>
+          <th pSortableColumn="userEmail" style="width: 30%">Email <p-sortIcon field="userEmail"></p-sortIcon></th>
+          <th pSortableColumn="requestedAt" style="width: 20%">Requested At <p-sortIcon
+              field="requestedAt"></p-sortIcon></th>
+          <th style="width: 25%">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-request>
+        <tr>
+          <td style="word-wrap: break-word; overflow-wrap: break-word;">{{ request.userName }}</td>
+          <td style="word-wrap: break-word; overflow-wrap: break-word;">{{ request.userEmail }}</td>
+          <td style="word-wrap: break-word;">{{ request.requestedAt | date:'medium' }}</td>
+          <td style="white-space: nowrap;">
+            <button pButton icon="pi pi-check" class="p-button-success p-button-sm" style="margin-right: 0.5rem;"
+              (click)="approveSeller(request.id)" label="Approve"></button>
+            <button pButton icon="pi pi-times" class="p-button-danger p-button-sm" (click)="rejectSeller(request.id)"
+              label="Reject"></button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center py-6 text-gray-500">
+            No pending seller requests.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  }
 </div>

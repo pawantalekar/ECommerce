@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Orderservice } from '../../services/orderservice';
 import { Order } from '../../models/order';
 import { Router } from '@angular/router';
@@ -11,9 +11,10 @@ import { CommonModule, DatePipe } from '@angular/common';
   templateUrl: './order-history.html'
 })
 export class OrderHistoryComponent implements OnInit {
-  orders: Order[] = [];
+  private orderService = inject(Orderservice);
+  private router = inject(Router);
 
-  constructor(private orderService: Orderservice, private router: Router) { }
+  orders: Order[] = [];
 
   ngOnInit() {
     this.orderService.getMyOrders().subscribe(orders => this.orders = orders);

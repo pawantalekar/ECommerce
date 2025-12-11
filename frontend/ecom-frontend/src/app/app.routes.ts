@@ -4,6 +4,7 @@ import { SsoCallback } from './features/auth/sso-callback/sso-callback';
 import { Home } from './features/home/home/home';
 import { ApprovalsComponent } from './features/admin/approvals/approvals';
 import { AdminGuard } from './core/guards/admin-guard';
+import { AuthGuard } from './core/guards/auth-guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -25,12 +26,11 @@ export const routes: Routes = [
     },
     {
         path: 'search',
-        loadComponent: () => import('./features/search/search-results/search-results')
-            .then(m => m.SearchResults)
+        loadComponent: () => import('./features/search/component/search-results').then(m => m.SearchResults)
     },
     {
         path: 'admin/approvals',
         component: ApprovalsComponent,
-        canActivate: [AdminGuard] 
+        canActivate: [AdminGuard]
     }
 ];

@@ -16,12 +16,12 @@ export const CATALOG_ROUTES: Routes = [
         path: 'products/:slug/review',           
         loadComponent: () => import('../reviews/components/write-review-page/write-review-page')
             .then(c => c.WriteReviewPageComponent)
-    },    
+    },
   
     {
         path: 'add',
         loadComponent: () => import('./components/add-product/add-product')
             .then(m => m.AddProduct)
     },
-   
+    
 ];

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { PendingReview } from '../models/pending-review.model';
 import { SellerRequest } from '../models/seller-request.model';
@@ -8,9 +8,9 @@ import { SellerRequest } from '../models/seller-request.model';
   providedIn: 'root'
 })
 export class AdminApprovalService {
-  private baseUrl = `${environment.apiBaseUrl}/admin`;
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) { }
+  private baseUrl = `${environment.apiBaseUrl}/admin`;
 
   getPendingReviews() {
     return this.http.get<PendingReview[]>(`${this.baseUrl}/reviews/pending`);

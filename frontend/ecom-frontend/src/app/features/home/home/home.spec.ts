@@ -11,7 +11,7 @@ describe('Home', () => {
       imports: [Home, HttpClientTestingModule],
       providers: []
     })
-      .compileComponents();
+    .compileComponents();
 
     fixture = TestBed.createComponent(Home);
     component = fixture.componentInstance;

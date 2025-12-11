@@ -12,7 +12,7 @@ describe('SsoCallback', () => {
       imports: [SsoCallback, HttpClientTestingModule],
       providers: [provideRouter([])]
     })
-      .compileComponents();
+    .compileComponents();
 
     fixture = TestBed.createComponent(SsoCallback);
     component = fixture.componentInstance;

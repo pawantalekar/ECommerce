@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,7 +7,8 @@ import { Router } from '@angular/router';
   templateUrl: './order-success.html'
 })
 export class OrderSuccessComponent {
-  constructor(private router: Router) { }
+  private router = inject(Router);
+
 
   goToOrders() {
     this.router.navigate(['/orders']);
