@@ -41,3 +41,23 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Backend build artifacts and secrets
+**/bin/
+**/obj/
+**/.vs/
+**/appsettings.json
+**/appsettings.*.json
+!**/appsettings.Development.json.example
+
+# Test results
+**/TestResults/
+**/coverage/
+**/CoverSummary/
+
+# Installers
+*.exe
+*.msi
+
+# Backend uploads
+**/wwwroot/uploads/
