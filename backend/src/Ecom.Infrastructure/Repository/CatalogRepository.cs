@@ -192,6 +192,17 @@ namespace Ecom.Infrastructure.Repository
                 .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
                 .AsNoTracking();
         }
+
+       public async Task<List<Product>> GetProductsBySellerIdAsync(Guid sellerId, CancellationToken ct)
+        {
+            return await _db.Products
+               .Include(p => p.Category)
+               .Include(p => p.ProductImages)
+               .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
+               .Include(p => p.Brand)
+               .Where(p => p.SellerId == sellerId)
+               .ToListAsync(ct);
+        }
     }
 
 }

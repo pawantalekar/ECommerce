@@ -1,0 +1,157 @@
+Summary
+  Generated on: 09-12-2025 - 12:03:45
+  Coverage date: 09-12-2025 - 11:51:31 - 09-12-2025 - 12:03:08
+  Parser: MultiReport (2x Cobertura)
+  Assemblies: 10
+  Classes: 117
+  Files: 117
+  Line coverage: 30.7%
+  Covered lines: 694
+  Uncovered lines: 1562
+  Coverable lines: 2256
+  Total lines: 4307
+  Branch coverage: 23.6% (89 of 376)
+  Covered branches: 89
+  Total branches: 376
+  Method coverage: 52.6% (241 of 458)
+  Full method coverage: 50% (229 of 458)
+  Covered methods: 241
+  Fully covered methods: 229
+  Total methods: 458
+
+AuthService.Api                                                                    0%
+  AuthService.Api.Commands.ApproveReviewCommand                                    0%
+  AuthService.Api.Commands.ApproveReviewCommandHandler                             0%
+  AuthService.Api.Commands.ApproveReviewCommandValidator                           0%
+  AuthService.Api.Commands.ApproveSellerRequestCommand                             0%
+  AuthService.Api.Commands.ApproveSellerRequestCommandHandler                      0%
+  AuthService.Api.Commands.CreateSellerRequestCommand                              0%
+  AuthService.Api.Commands.CreateSellerRequestCommandHandler                       0%
+  AuthService.Api.Commands.RejectReviewCommand                                     0%
+  AuthService.Api.Commands.RejectReviewCommandHandler                              0%
+  AuthService.Api.Commands.RejectReviewCommandValidator                            0%
+  AuthService.Api.Commands.RejectSellerRequestCommand                              0%
+  AuthService.Api.Commands.RejectSellerRequestCommandHandler                       0%
+  AuthService.Api.Commands.RequestSellerRoleCommandHandler                         0%
+  AuthService.Api.Queries.GetCurrentUserRoleQueryHandler                           0%
+  AuthService.Api.Queries.GetPendingReviewsQueryHandler                            0%
+  AuthService.Api.Queries.GetPendingSellerRequestsQueryHandler                     0%
+
+CartService.Api                                                                 58.3%
+  CartService.Api.Commands.AddToCart.AddToCartCommand                            100%
+  CartService.Api.Commands.AddToCart.AddToCartCommandHandler                    93.2%
+  CartService.Api.Commands.AddToCart.AddToCartCommandResult                      100%
+  CartService.Api.Commands.AddToCart.AddToCartCommandValidator                     0%
+  CartService.Api.Commands.RemoveFromCart.RemoveFromCartCommand                  100%
+  CartService.Api.Commands.RemoveFromCart.RemoveFromCartCommandHandler          58.4%
+  CartService.Api.Commands.RemoveFromCart.RemoveFromCartCommandResult            100%
+  CartService.Api.Commands.RemoveFromCart.RemoveFromCartCommandValidator           0%
+  CartService.Api.Commands.UpdateCart.UpdateCartItemCommand                      100%
+  CartService.Api.Commands.UpdateCart.UpdateCartItemCommandHandler              86.1%
+  CartService.Api.Commands.UpdateCart.UpdateCartItemCommandResult                100%
+  CartService.Api.Commands.UpdateCart.UpdateCartItemCommandValidator               0%
+  CartService.Api.Queries.GetMyCartQueryHandler                                    0%
+  CartService.Api.Queries.GetMyCartQueryResult                                     0%
+
+CatalogService.Api                                                              79.1%
+  CatalogService.Api.Commands.AddProduct.AddProductCommand                       100%
+  CatalogService.Api.Commands.AddProduct.AddProductCommandHandler               83.7%
+  CatalogService.Api.Commands.AddProduct.AddProductCommandResult                 100%
+  CatalogService.Api.Commands.AddProduct.AddProductCommandValidator                0%
+  CatalogService.Api.Commands.UpdateProduct.UpdateProductCommand                 100%
+  CatalogService.Api.Commands.UpdateProduct.UpdateProductCommandHandler         82.3%
+  CatalogService.Api.Commands.UpdateProduct.UpdateProductCommandResult           100%
+  CatalogService.Api.Commands.UpdateProduct.UpdateProductCommandValidator          0%
+  CatalogService.Api.Queries.GetAllProductsHandlerQuery                          100%
+  CatalogService.Api.Queries.GetAllProductsQuery                                 100%
+  CatalogService.Api.Queries.GetProductBySlugHandler                             100%
+  CatalogService.Api.Queries.GetProductBySlugQuery                               100%
+  CatalogService.Api.Queries.GetProductBySlugValidator                             0%
+  CatalogService.Api.Queries.Result                                             43.7%
+
+Ecom.Application                                                                31.5%
+  Ecom.Application.AuthService.Application.DTO.CreateSellerRequestResponseDto      0%
+  Ecom.Application.AuthService.Application.DTO.RefreshRequest                      0%
+  Ecom.Application.AuthService.Application.DTO.SellerRequestDto                    0%
+  Ecom.Application.AuthService.Application.DTO.TokenResponse                       0%
+  Ecom.Application.CartService.Application.DTO.AddToCartRequest                    0%
+  Ecom.Application.CartService.Application.DTO.CartDto                           100%
+  Ecom.Application.CartService.Application.DTO.CartItemDto                       100%
+  Ecom.Application.CartService.Application.DTO.UpdateCartItemRequest               0%
+  Ecom.Application.CatalogService.Application.DTO.CategoryDto                      0%
+  Ecom.Application.CatalogService.Application.DTO.ProductDTO                       0%
+  Ecom.Application.GlobalExceptionHandlerService.Application.DTO.ErrorDetails      0%
+  Ecom.Application.OrderService.Application.DTO.CheckoutItemDto                    0%
+  Ecom.Application.OrderService.Application.DTO.InitiatePaymentResponseDto         0%
+  Ecom.Application.OrderService.Application.DTO.OrderDto                          60%
+  Ecom.Application.OrderService.Application.DTO.OrderItemDto                     100%
+  Ecom.Application.OrderService.Application.DTO.ShippingAddressDto              33.3%
+  Ecom.Application.ReviewService.Application.DTO.CreateReviewRequestDto          100%
+  Ecom.Application.ReviewService.Application.DTO.PendingReviewDto                  0%
+  Ecom.Application.ReviewService.Application.DTO.ReviewDto                       100%
+  Ecom.Application.ReviewService.Application.DTO.UpdateReviewRequestDto          100%
+
+Ecom.Domain                                                                     92.8%
+  Ecom.Domain.Entities.Brand                                                     100%
+  Ecom.Domain.Entities.Cart                                                      100%
+  Ecom.Domain.Entities.CartItem                                                 85.7%
+  Ecom.Domain.Entities.Category                                                  100%
+  Ecom.Domain.Entities.Order                                                     100%
+  Ecom.Domain.Entities.OrderItem                                                 100%
+  Ecom.Domain.Entities.Product                                                   100%
+  Ecom.Domain.Entities.ProductImage                                              100%
+  Ecom.Domain.Entities.ProductTag                                                100%
+  Ecom.Domain.Entities.RefreshToken                                              100%
+  Ecom.Domain.Entities.Review                                                    100%
+  Ecom.Domain.Entities.SellerRequest                                               0%
+  Ecom.Domain.Entities.Tag                                                       100%
+  Ecom.Domain.Entities.User                                                      100%
+
+Ecom.Gateway                                                                       0%
+  Ecom.Gateway.Controllers.AdminApprovalController                                 0%
+  Ecom.Gateway.Controllers.AuthController                                          0%
+  Ecom.Gateway.Controllers.CartController                                          0%
+  Ecom.Gateway.Controllers.CatalogServiceController                                0%
+  Ecom.Gateway.Controllers.OrderController                                         0%
+  Ecom.Gateway.Controllers.PaymentController                                       0%
+  Ecom.Gateway.Controllers.ReviewsController                                       0%
+  Ecom.Gateway.Controllers.WebhookController                                       0%
+  Ecom.Gateway.Program                                                             0%
+
+Ecom.Infrastructure                                                              1.3%
+  Ecom.Infrastructure.AuthDbContext                                              3.2%
+  Ecom.Infrastructure.Repository.CartRepository                                    0%
+  Ecom.Infrastructure.Repository.CatalogRepository                                 0%
+  Ecom.Infrastructure.Repository.RazorpayGateway                                   0%
+  Ecom.Infrastructure.Repository.RefreshTokenRepository                            0%
+  Ecom.Infrastructure.Repository.ReviewRepository                                  0%
+  Ecom.Infrastructure.Repository.TypesenseService                                  0%
+  Ecom.Infrastructure.Repository.UserRepository                                    0%
+  Ecom.Infrastructure.Services.AuthService                                         0%
+
+OrderService.APi                                                                 100%
+  Ecom.Application.Queries.GetMyOrdersQueryHandler                               100%
+  OrderService.APi.Queries.GetOrderDetailsQuery                                  100%
+  OrderService.APi.Queries.GetOrderDetailsQueryHandler                           100%
+
+PaymentService.Api                                                                 0%
+  Ecom.Application.Commands.InitiatePayment.InitiatePaymentCommandHandler          0%
+  PaymentService.Api.Commands.InitiatePaymentCommand                               0%
+  PaymentService.Api.Commands.ProcessPaymentWebhookCommand                         0%
+  PaymentService.Api.Commands.ProcessPaymentWebhookCommandHandler                  0%
+
+ReviewService.Api                                                               89.1%
+  ReviewService.Api.Commands.CreateReview.CreateReviewCommand                    100%
+  ReviewService.Api.Commands.CreateReview.CreateReviewCommandHandler             100%
+  ReviewService.Api.Commands.CreateReview.CreateReviewCommandValidator             0%
+  ReviewService.Api.Commands.DeleteReview.DeleteReviewCommand                    100%
+  ReviewService.Api.Commands.DeleteReview.DeleteReviewCommandHandler             100%
+  ReviewService.Api.Commands.UpdateReview.UpdateReviewCommand                    100%
+  ReviewService.Api.Commands.UpdateReview.UpdateReviewCommandHandler             100%
+  ReviewService.Api.Commands.UpdateReview.UpdateReviewCommandValidator             0%
+  ReviewService.Api.Queries.CanReviewProductQuery                                100%
+  ReviewService.Api.Queries.CanReviewProductQueryHandler                         100%
+  ReviewService.Api.Queries.GetMyReviewForProductQuery                           100%
+  ReviewService.Api.Queries.GetMyReviewForProductQueryHandler                    100%
+  ReviewService.Api.Queries.GetReviewsByProductQuery                             100%
+  ReviewService.Api.Queries.GetReviewsByProductQueryHandler                      100%

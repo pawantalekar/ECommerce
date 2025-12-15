@@ -15,6 +15,7 @@ namespace Ecom.Application.CatalogService.Application.Interfaces
         Task<Product?> GetByIdAsync(Guid id, CancellationToken ct);
         Task UpdateProductAsync(Product product, CancellationToken ct);
         IQueryable<Product> GetQueryable();
+        Task<List<Product>> GetProductsBySellerIdAsync(Guid sellerId, CancellationToken ct);
 
     }
 }

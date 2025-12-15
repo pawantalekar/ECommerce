@@ -66,6 +66,9 @@
                             <li *ngIf="userRole === 'Seller' || userRole === 'Admin'">
                                 <a class="dropdown-item" [routerLink]="['/catalog', 'add']">Add Product</a>
                             </li>
+                            <li *ngIf="userRole === 'Seller' || userRole === 'Admin'">
+                                <a class="dropdown-item" [routerLink]="['/catalog', 'my-products']">My Products</a>
+                            </li>
                         
                         <li *ngIf="userRole === 'User'">
                             <a class="dropdown-item" (click)="requestToBeSeller()" style="cursor: pointer;">

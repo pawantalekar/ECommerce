@@ -23,5 +23,10 @@ export const CATALOG_ROUTES: Routes = [
         loadComponent: () => import('./components/add-product/add-product')
             .then(m => m.AddProduct)
     },
+    {
+        path: 'my-products',
+        loadComponent: () => import('./components/my-products/my-products')
+            .then(m => m.MyProducts)
+    }
     
 ];

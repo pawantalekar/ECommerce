@@ -1,0 +1,30 @@
+[33m2a34350[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mEcom-1001-project-structure-login-module-backend[m[33m, [m[1;31morigin/Ecom-1001-project-structure-login-module-backend[m[33m)[m HEAD@{0}: checkout: moving from Ecom-1001-project-structure-login-module-backend to Ecom-1001-project-structure-login-module-backend
+[33m2a34350[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mEcom-1001-project-structure-login-module-backend[m[33m, [m[1;31morigin/Ecom-1001-project-structure-login-module-backend[m[33m)[m HEAD@{1}: commit: Add frontend folder with source code to project structure
+[33mc50a246[m[33m ([m[1;31morigin/1001-project-structure-login-module-backend[m[33m, [m[1;32m1001-project-structure-login-module-backend[m[33m)[m HEAD@{2}: checkout: moving from Ecom-1004-catalogService-frontend to Ecom-1001-project-structure-login-module-backend
+[33mfc80fee[m[33m ([m[1;31morigin/Ecom-1004-catalogService-frontend[m[33m, [m[1;32mEcom-1004-catalogService-frontend[m[33m)[m HEAD@{3}: checkout: moving from Ecom-1004-catalogService-frontend to Ecom-1004-catalogService-frontend
+[33mfc80fee[m[33m ([m[1;31morigin/Ecom-1004-catalogService-frontend[m[33m, [m[1;32mEcom-1004-catalogService-frontend[m[33m)[m HEAD@{4}: checkout: moving from release to Ecom-1004-catalogService-frontend
+[33md2f45f4[m[33m ([m[1;32mrelease[m[33m)[m HEAD@{5}: checkout: moving from Ecom-1004-catalogService-frontend to release
+[33mfc80fee[m[33m ([m[1;31morigin/Ecom-1004-catalogService-frontend[m[33m, [m[1;32mEcom-1004-catalogService-frontend[m[33m)[m HEAD@{6}: commit: Update .gitignore - remove frontend/ from ignore list
+[33m6f7192c[m HEAD@{7}: pull origin release: Fast-forward
+[33m9a25b63[m[33m ([m[1;31morigin/Ecom-1002-login-module-frontend[m[33m, [m[1;32mEcom-1002-login-module-frontend[m[33m)[m HEAD@{8}: checkout: moving from Ecom-1004-catalogService-frontend to Ecom-1004-catalogService-frontend
+[33m9a25b63[m[33m ([m[1;31morigin/Ecom-1002-login-module-frontend[m[33m, [m[1;32mEcom-1002-login-module-frontend[m[33m)[m HEAD@{9}: checkout: moving from release to Ecom-1004-catalogService-frontend
+[33md2f45f4[m[33m ([m[1;32mrelease[m[33m)[m HEAD@{10}: reset: moving to HEAD
+[33md2f45f4[m[33m ([m[1;32mrelease[m[33m)[m HEAD@{11}: commit: Save local changes before merging
+[33m6719e52[m HEAD@{12}: checkout: moving from release to release
+[33m6719e52[m HEAD@{13}: checkout: moving from Ecom-1003-catalogService-backend to release
+[33m0017204[m[33m ([m[1;32mEcom-1003-catalogService-backend[m[33m)[m HEAD@{14}: commit (merge): Update .gitignore
+[33m3cffbc5[m HEAD@{15}: commit: Remove backend folder from frontend branch
+[33m97385c0[m[33m ([m[1;31morigin/Ecom-1003-catalogService-backend[m[33m)[m HEAD@{16}: commit: Remove unintended frontend files from backend branch
+[33m3febf72[m HEAD@{17}: commit: Ecom-1003: Added backend changes for catalogService
+[33m9a25b63[m[33m ([m[1;31morigin/Ecom-1002-login-module-frontend[m[33m, [m[1;32mEcom-1002-login-module-frontend[m[33m)[m HEAD@{18}: checkout: moving from Ecom-1004-catalogService-frontend to Ecom-1003-catalogService-backend
+[33m9a25b63[m[33m ([m[1;31morigin/Ecom-1002-login-module-frontend[m[33m, [m[1;32mEcom-1002-login-module-frontend[m[33m)[m HEAD@{19}: checkout: moving from Ecom-1003-catalogService-backend to Ecom-1004-catalogService-frontend
+[33m9a25b63[m[33m ([m[1;31morigin/Ecom-1002-login-module-frontend[m[33m, [m[1;32mEcom-1002-login-module-frontend[m[33m)[m HEAD@{20}: checkout: moving from Ecom-1002-login-module-frontend to Ecom-1003-catalogService-backend
+[33m9a25b63[m[33m ([m[1;31morigin/Ecom-1002-login-module-frontend[m[33m, [m[1;32mEcom-1002-login-module-frontend[m[33m)[m HEAD@{21}: commit: Ecom-1002: Add frontend for Login module (Google SSO UI)
+[33me0a3569[m[33m ([m[1;31morigin/1002-login-module-frontend[m[33m, [m[1;32m1002-login-module-frontend[m[33m)[m HEAD@{22}: checkout: moving from 1002-login-module-frontend to Ecom-1002-login-module-frontend
+[33me0a3569[m[33m ([m[1;31morigin/1002-login-module-frontend[m[33m, [m[1;32m1002-login-module-frontend[m[33m)[m HEAD@{23}: commit (amend): 1002: Added frontend for login using sso google
+[33m2ace228[m HEAD@{24}: commit: 1002: Added frontend for login using sso google
+[33mc50a246[m[33m ([m[1;31morigin/1001-project-structure-login-module-backend[m[33m, [m[1;32m1001-project-structure-login-module-backend[m[33m)[m HEAD@{25}: checkout: moving from 1001-project-structure-login-module-backend to 1002-login-module-frontend
+[33mc50a246[m[33m ([m[1;31morigin/1001-project-structure-login-module-backend[m[33m, [m[1;32m1001-project-structure-login-module-backend[m[33m)[m HEAD@{26}: commit (amend): 1001: created project structure and Added backend code for login module
+[33m2f7714c[m HEAD@{27}: commit: 1001: created project structure and Added backend code for login module
+[33m6719e52[m HEAD@{28}: checkout: moving from release to 1001-project-structure-login-module-backend
+[33m6719e52[m HEAD@{29}: commit (initial): Initial empty commit for release branch
