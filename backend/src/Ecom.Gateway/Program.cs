@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using OrderService.APi.Queries;
 using ReviewService.Api.Queries;
 using System.Text;
+using Microsoft.OpenApi.Models;
 
 namespace Ecom.Gateway
 {

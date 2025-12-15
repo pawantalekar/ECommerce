@@ -31,6 +31,9 @@ public partial class Product
     public bool? IsFeatured { get; set; }
 
     public DateTime? CreatedAt { get; set; }
+    public Guid SellerId { get; set; } 
+
+    public virtual User Seller { get; set; } = null!;
     public virtual Brand? Brand { get; set; }
 
     public virtual Category Category { get; set; } = null!;

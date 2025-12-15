@@ -3,6 +3,7 @@ using CatalogService.Api.Commands.UpdateProduct;
 using CatalogService.Api.Queries;
 using Ecom.Infrastructure.Repository;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Typesense;
@@ -26,6 +27,7 @@ namespace Ecom.Gateway.Controllers
         }
 
         [HttpPost("products")]
+        [Authorize(Roles = "Seller,Admin")]
         public async Task<IActionResult> AddProduct([FromBody] AddProductCommand command)
         {
             try
@@ -69,6 +71,7 @@ namespace Ecom.Gateway.Controllers
 
         //for the images specailly to select and save from the local storage maybe for temporarily if not works
         [HttpPost("upload")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> UploadImage([FromForm] IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -94,7 +97,14 @@ namespace Ecom.Gateway.Controllers
             return Ok(new { url });
         }
 
-      
+        [HttpGet("my-products")]
+        [Authorize(Roles = "Seller,Admin")]
+        public async Task<IActionResult> GetMyProducts()
+        {
+            var result = await _mediator.Send(new GetMyProductsQuery());
+            return Ok(result);
+        }
+
 
 
     }

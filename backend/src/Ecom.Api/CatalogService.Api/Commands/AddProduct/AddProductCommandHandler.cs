@@ -1,21 +1,24 @@
 ﻿using Ecom.Application.CatalogService.Application.Interfaces;
 using Ecom.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace CatalogService.Api.Commands.AddProduct
 {
     public class AddProductCommandHandler : IRequestHandler<AddProductCommand, AddProductCommandResult>
     {
         private readonly ICatalogRepository _repository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AddProductCommandHandler(ICatalogRepository repository)
+        public AddProductCommandHandler(ICatalogRepository repository, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AddProductCommandResult> Handle(AddProductCommand request, CancellationToken cancellationToken)
@@ -23,6 +26,7 @@ namespace CatalogService.Api.Commands.AddProduct
             var product = new Product
             {
                 Id = Guid.NewGuid(),
+                SellerId = GetCurrentUserId(),
                 Name = request.Name,
                 Slug = (request.Name ?? Guid.NewGuid().ToString()).ToLower().Replace(" ", "-").Replace("--", "-"),
                 ShortDescription = request.ShortDescription,
@@ -94,6 +98,13 @@ namespace CatalogService.Api.Commands.AddProduct
 
             await _repository.AddProductAsync(product, cancellationToken);
             return new AddProductCommandResult(product.Id, product.Slug);
+        }
+        private Guid GetCurrentUserId()
+        {
+            var userId = _httpContextAccessor.HttpContext?.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var id))
+                throw new UnauthorizedAccessException("User not authenticated");
+            return id;
         }
     }
 }
