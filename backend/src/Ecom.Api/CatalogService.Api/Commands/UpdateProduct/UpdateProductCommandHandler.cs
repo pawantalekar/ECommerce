@@ -1,98 +1,75 @@
 ﻿using Ecom.Application.CatalogService.Application.Interfaces;
 using Ecom.Domain.Entities;
+using Ecom.Infrastructure;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace CatalogService.Api.Commands.UpdateProduct
 {
-    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, UpdateProductCommandResult>
+    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Unit>
     {
-        private readonly ICatalogRepository _repository;
+        private readonly ICatalogRepository _repo;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly AuthDbContext _db;
 
-        public UpdateProductCommandHandler(ICatalogRepository repository)
+        public UpdateProductCommandHandler(
+            ICatalogRepository repo,
+            IHttpContextAccessor httpContextAccessor,
+            AuthDbContext db)
         {
-            _repository = repository;
+            _repo = repo;
+            _httpContextAccessor = httpContextAccessor;
+            _db = db;
         }
 
-        public async Task<UpdateProductCommandResult> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateProductCommand request, CancellationToken ct)
         {
-            var product = await _repository.GetByIdAsync(request.Id, cancellationToken);
-            if (product == null)
-                throw new ArgumentException("Product not found");
+            var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var sellerId))
+                throw new UnauthorizedAccessException();
+
+            var product = await _repo.GetByIdAsync(request.Id, ct);
+
+            if (product == null)
+                throw new KeyNotFoundException("Product not found");
+
+            if (product.SellerId != sellerId)
+                throw new UnauthorizedAccessException("You can only update your own products");
+
+            // Update scalar properties
             product.Name = request.Name;
-            product.Slug = (request.Name ?? Guid.NewGuid().ToString())
-                .ToLower().Replace(" ", "-").Replace("--", "-");
+            product.Slug = request.Name.ToLower().Replace(" ", "-").Replace("--", "-");
             product.ShortDescription = request.ShortDescription;
             product.Description = request.Description;
             product.Price = request.Price;
-            product.Sku = request.SKU;
+            product.Sku = request.Sku;
             product.StockQuantity = request.StockQuantity;
+            product.CategoryId = request.CategoryId;
+            product.BrandId = request.BrandId;
+            product.IsActive = request.IsActive;
+            product.IsFeatured = request.IsFeatured;
 
-            // Category
-            if (request.CategoryId.HasValue && request.CategoryId.Value != Guid.Empty)
-                product.CategoryId = request.CategoryId.Value;
-            else if (!string.IsNullOrWhiteSpace(request.CategoryName))
+            if (request.BrandId.HasValue)
             {
-                var category = new Category
+                var brand = await _db.Brands.FirstOrDefaultAsync(b => b.Id == request.BrandId.Value, ct);
+                if (brand != null && !string.IsNullOrWhiteSpace(request.BrandLogoUrl))
                 {
-                    Id = Guid.NewGuid(),
-                    Name = request.CategoryName.Trim(),
-                    Slug = string.IsNullOrWhiteSpace(request.CategorySlug)
-                        ? request.CategoryName.Trim().ToLower().Replace(" ", "-")
-                        : request.CategorySlug.Trim(),
-                    IsActive = true,
-                    CreatedAt = DateTime.UtcNow
-                };
-                product.Category = category;
-                product.CategoryId = category.Id;
+                    brand.LogoUrl = request.BrandLogoUrl;
+                    _db.Brands.Update(brand);
+                }
             }
 
-            // Brand
-            if (request.BrandId.HasValue && request.BrandId.Value != Guid.Empty)
-                product.BrandId = request.BrandId.Value;
-            else if (!string.IsNullOrWhiteSpace(request.BrandName))
-            {
-                var brand = new Brand
-                {
-                    Id = Guid.NewGuid(),
-                    Name = request.BrandName.Trim(),
-                    Slug = request.BrandName.Trim().ToLower().Replace(" ", "-"),
-                    LogoUrl = string.IsNullOrWhiteSpace(request.BrandLogoUrl) ? null : request.BrandLogoUrl.Trim()
-                };
-                product.Brand = brand;
-                product.BrandId = brand.Id;
-            }
+            // Pass images and tags to the repository
+            await _repo.UpdateFullProductAsync(
+                product,
+                request.ImageUrls ?? new List<string>(),
+                request.Tags ?? new List<string>(),
+                ct);
 
-            // Images
-            product.ProductImages.Clear();
-            if (request.ImageUrls != null && request.ImageUrls.Count > 0)
-            {
-                product.ProductImages = request.ImageUrls.Select((url, i) => new ProductImage
-                {
-                    Id = Guid.NewGuid(),
-                    Url = url,
-                    AltText = $"{request.Name} by {request.BrandName ?? "Unknown Brand"} - {request.CategoryName ?? "Product"} view {i + 1}",
-                    SortOrder = i,
-                    IsThumbnail = i == 0
-                }).ToList();
-            }
-
-            // Tags
-            var tags = (request.Tags ?? new List<string>()).Select(tagName => new ProductTag
-            {
-                Tag = new Tag { Name = tagName }
-            }).ToList();
-            product.ProductTags.Clear();
-            product.ProductTags = tags;
-
-            await _repository.UpdateProductAsync(product, cancellationToken);
-            return new UpdateProductCommandResult(product.Id, product.Slug);
+            return Unit.Value;
         }
     }
 }

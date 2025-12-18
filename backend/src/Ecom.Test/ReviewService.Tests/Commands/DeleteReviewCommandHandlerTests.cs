@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using ReviewService.Api.Commands.DeleteReview;
 using System.Security.Claims;
+using Xunit;
 
 namespace Ecom.Test.ReviewService.Tests.Commands
 {

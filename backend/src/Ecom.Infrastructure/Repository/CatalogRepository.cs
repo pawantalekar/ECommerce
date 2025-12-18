@@ -157,7 +157,9 @@ namespace Ecom.Infrastructure.Repository
              .Include(p => p.ProductImages)
              .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
              .Include(p => p.Brand)
+             .Where(p => p.IsActive!=false)
              .FirstOrDefaultAsync(p => p.Slug == slug, ct);
+             
     
     public async Task<List<Product>> GetAllProductsAsync(CancellationToken ct)
         {
@@ -166,6 +168,7 @@ namespace Ecom.Infrastructure.Repository
                 .Include(p => p.ProductImages)
                 .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
                 .Include(p => p.Brand)
+                .Where(p => p.IsActive != false)
                 .ToListAsync(ct);
         }
         public async Task<Product?> GetByIdAsync(Guid id, CancellationToken ct)
@@ -202,6 +205,96 @@ namespace Ecom.Infrastructure.Repository
                .Include(p => p.Brand)
                .Where(p => p.SellerId == sellerId)
                .ToListAsync(ct);
+        }
+        public async Task UpdateFullProductAsync(Product updatedProduct, List<string> imageUrls, List<string> tagNames, CancellationToken ct)
+        {
+            // Load the product with collections in the SAME context
+            var product = await _db.Products
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductTags)
+                .FirstOrDefaultAsync(p => p.Id == updatedProduct.Id, ct);
+
+            if (product == null)
+                throw new KeyNotFoundException("Product not found");
+
+            // Update scalar properties
+            product.Name = updatedProduct.Name;
+            product.Slug = updatedProduct.Slug;
+            product.ShortDescription = updatedProduct.ShortDescription;
+            product.Description = updatedProduct.Description;
+            product.Price = updatedProduct.Price;
+            product.Sku = updatedProduct.Sku;
+            product.StockQuantity = updatedProduct.StockQuantity;
+            product.CategoryId = updatedProduct.CategoryId;
+            product.BrandId = updatedProduct.BrandId;
+            product.IsActive = updatedProduct.IsActive;
+            product.IsFeatured = updatedProduct.IsFeatured;
+            
+
+            // Update images - remove old, add new
+            _db.ProductImages.RemoveRange(product.ProductImages);
+            product.ProductImages.Clear();
+
+            var newImages = imageUrls.Select((url, index) => new ProductImage
+            {
+                Id = Guid.NewGuid(),
+                ProductId = product.Id,
+                Url = url,
+                SortOrder = index,
+                IsThumbnail = index == 0
+            }).ToList();
+
+            foreach (var image in newImages)
+            {
+                product.ProductImages.Add(image);
+            }
+            _db.ProductImages.AddRange(newImages);
+
+            // Update tags - remove old, add new
+            _db.ProductTags.RemoveRange(product.ProductTags);
+            product.ProductTags.Clear();
+
+            var incomingTags = (tagNames ?? new List<string>())
+                .Select(t => t.Trim())
+                .Where(t => !string.IsNullOrEmpty(t))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var allTags = await _db.Tags.ToListAsync(ct);
+
+            var existingTags = allTags
+                .Where(t => incomingTags.Contains(t.Name, StringComparer.OrdinalIgnoreCase))
+                .ToList();
+
+            var tagDict = existingTags.ToDictionary(t => t.Name, StringComparer.OrdinalIgnoreCase);
+
+            // Create new tags if needed
+            foreach (var name in incomingTags.Where(n => !tagDict.ContainsKey(n)))
+            {
+                var newTag = new Tag
+                {
+                    Id = Guid.NewGuid(),
+                    Name = name
+                };
+                _db.Tags.Add(newTag);
+                tagDict[name] = newTag;
+            }
+
+            // Create new ProductTag links
+            var newProductTags = tagDict.Values.Select(tag => new ProductTag
+            {
+                ProductId = product.Id,
+                TagId = tag.Id
+            }).ToList();
+
+            foreach (var productTag in newProductTags)
+            {
+                product.ProductTags.Add(productTag);
+            }
+            _db.ProductTags.AddRange(newProductTags);
+
+            // Save everything in one transaction
+            await _db.SaveChangesAsync(ct);
         }
     }
 

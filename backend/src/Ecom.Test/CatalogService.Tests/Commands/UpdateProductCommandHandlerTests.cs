@@ -4,6 +4,7 @@ using Ecom.Application.CatalogService.Application.Interfaces;
 using Ecom.Domain.Entities;
 using FluentAssertions;
 using Moq;
+using Xunit;
 
 namespace Ecom.Test.CatalogService.Tests.Commands
 {
@@ -106,7 +107,6 @@ namespace Ecom.Test.CatalogService.Tests.Commands
             var command = fixture.Build<UpdateProductCommand>()
                 .With(c => c.Id, product.Id)
                 .With(c => c.CategoryId, (Guid?)null)
-                .With(c => c.CategoryName, fixture.Create<string>())
                 .Create();
 
             repo.Setup(r => r.GetByIdAsync(product.Id, It.IsAny<CancellationToken>())).ReturnsAsync(product);
@@ -115,7 +115,6 @@ namespace Ecom.Test.CatalogService.Tests.Commands
             await handler.Handle(command, CancellationToken.None);
 
             product.Category.Should().NotBeNull();
-            product.Category!.Name.Should().Be(command.CategoryName);
         }
 
         [Fact]

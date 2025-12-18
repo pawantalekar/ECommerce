@@ -1,5 +1,8 @@
-﻿using Ecom.Application.CartService.Application.DTO;
+﻿using CatalogService.Api.Commands.UpdateProduct;
+using Ecom.Application.CartService.Application.DTO;
 using Ecom.Application.CartService.Application.Interfaces;
+using Ecom.Application.CatalogService.Application.Interfaces;
+using Ecom.Domain.Entities;
 using Ecom.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -8,103 +11,76 @@ using System.Security.Claims;
 
 namespace CartService.Api.Commands.UpdateCart
 {
-    public class UpdateCartItemCommandHandler : IRequestHandler<UpdateCartItemCommand, UpdateCartItemCommandResult>
+    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Unit>
     {
-        private readonly ICartRepository _cartRepository;
-        private readonly AuthDbContext _context;
+        private readonly ICatalogRepository _repo;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly AuthDbContext _db;
 
-        public UpdateCartItemCommandHandler(
-            ICartRepository cartRepository,
-            AuthDbContext context,
-            IHttpContextAccessor httpContextAccessor)
+        public UpdateProductCommandHandler(
+            ICatalogRepository repo,
+            IHttpContextAccessor httpContextAccessor,
+            AuthDbContext db)
         {
-            _cartRepository = cartRepository;
-            _context = context;
+            _repo = repo;
             _httpContextAccessor = httpContextAccessor;
+            _db = db;
         }
 
-        public async Task<UpdateCartItemCommandResult> Handle(UpdateCartItemCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateProductCommand request, CancellationToken ct)
         {
-            var userId = GetCurrentUserId();
-            var cart = await _cartRepository.GetByUserIdWithItemsAsync(userId);
+            var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            var item = cart.Items.FirstOrDefault(i => i.ProductId == request.ProductId)
-                       ?? throw new Exception("Item not found in cart");
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var sellerId))
+                throw new UnauthorizedAccessException();
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(p => p.Id == request.ProductId && p.IsActive == true, cancellationToken);
+            var product = await _repo.GetByIdAsync(request.Id, ct);
 
             if (product == null)
-                throw new Exception("Product not found or inactive");
+                throw new KeyNotFoundException("Product not found");
 
-            if (product.StockQuantity < request.Quantity)
-                throw new Exception("Insufficient stock");
+            if (product.SellerId != sellerId)
+                throw new UnauthorizedAccessException("You can only update your own products");
 
-            item.Quantity = request.Quantity;
-            cart.UpdatedAt = DateTime.UtcNow;
+            product.Name = request.Name;
+            product.Slug = request.Name.ToLower().Replace(" ", "-").Replace("--", "-");
+            product.ShortDescription = request.ShortDescription;
+            product.Description = request.Description;
+            product.Price = request.Price;
+            product.Sku = request.Sku;
+            product.StockQuantity = request.StockQuantity;
+            product.CategoryId = request.CategoryId;
+            product.BrandId = request.BrandId;
+            product.IsActive = request.IsActive;
+            product.IsFeatured = request.IsFeatured;
+           
 
-            await _cartRepository.UpdateAsync(cart);
-
-            var cartDto = await BuildCartDto(cart, cancellationToken);
-
-            return new UpdateCartItemCommandResult { Cart = cartDto };
-        }
-
-        private Guid GetCurrentUserId()
-        {
-            var claim = _httpContextAccessor.HttpContext?.User
-                .Claims.FirstOrDefault(c => c.Type == "sub" || c.Type == ClaimTypes.NameIdentifier);
-
-            if (claim == null || !Guid.TryParse(claim.Value, out var userId))
-                throw new UnauthorizedAccessException("User not authenticated");
-
-            return userId;
-        }
-
-        private async Task<CartDto> BuildCartDto(Ecom.Domain.Entities.Cart cart, CancellationToken ct)
-        {
-            if (!cart.Items.Any())
+            _db.ProductImages.RemoveRange(product.ProductImages);
+            product.ProductImages = request.ImageUrls.Select((url, index) => new ProductImage
             {
-                return new CartDto
-                {
-                    Id = cart.Id,
-                    ItemsCount = 0,
-                    Total = 0,
-                    Items = new()
-                };
+                Id = Guid.NewGuid(),
+                Url = url,
+                SortOrder = index,
+                IsThumbnail = index == 0
+            }).ToList();
+
+            var incomingTags = request.Tags ?? new List<string>();
+            var normalized = incomingTags.Select(t => t.Trim().ToLowerInvariant()).Distinct().ToList();
+            var existingTags = await _db.Tags.Where(t => normalized.Contains(t.Name.ToLowerInvariant())).ToListAsync(ct);
+            var tagDict = existingTags.ToDictionary(t => t.Name.ToLowerInvariant());
+
+            foreach (var name in normalized.Where(n => !tagDict.ContainsKey(n)))
+            {
+                var newTag = new Tag { Id = Guid.NewGuid(), Name = name };
+                _db.Tags.Add(newTag);
+                tagDict[name] = newTag;
             }
 
-            var productIds = cart.Items.Select(i => i.ProductId).ToList();
-            var products = await _context.Products
-                .Where(p => productIds.Contains(p.Id))
-                .ToDictionaryAsync(p => p.Id, ct);
+            product.ProductTags = tagDict.Values.Select(tag => new ProductTag { Tag = tag }).ToList();
 
-            var items = new List<CartItemDto>();
+            await _repo.UpdateProductAsync(product, ct);
 
-            foreach (var item in cart.Items)
-            {
-                var product = products[item.ProductId];
-                var thumbnail = product.ProductImages.FirstOrDefault(img => img.IsThumbnail == true)?.Url;
-
-                items.Add(new CartItemDto
-                {
-                    ProductId = product.Id,
-                    Name = product.Name,
-                    Slug = product.Slug,
-                    Price = product.Price,
-                    ThumbnailUrl = thumbnail,
-                    Quantity = item.Quantity
-                });
-            }
-
-            return new CartDto
-            {
-                Id = cart.Id,
-                ItemsCount = items.Sum(i => i.Quantity),
-                Total = items.Sum(i => i.SubTotal),
-                Items = items
-            };
+            return Unit.Value;
         }
     }
 }
