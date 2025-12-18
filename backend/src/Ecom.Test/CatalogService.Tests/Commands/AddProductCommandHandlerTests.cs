@@ -3,6 +3,7 @@ using CatalogService.Api.Commands.AddProduct;
 using Ecom.Application.CatalogService.Application.Interfaces;
 using Ecom.Domain.Entities;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
 
@@ -12,6 +13,7 @@ namespace Ecom.Test.CatalogService.Tests.Commands
     {
         private readonly Fixture fixture = new();
         private readonly Mock<ICatalogRepository> repo = new();
+        private readonly Mock<IHttpContextAccessor> httpContextAccessor = new();
         private readonly AddProductCommandHandler handler;
 
         public AddProductCommandHandlerTests()
@@ -22,7 +24,7 @@ namespace Ecom.Test.CatalogService.Tests.Commands
             repo.Setup(r => r.AddProductAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
-            handler = new AddProductCommandHandler(repo.Object);
+            handler = new AddProductCommandHandler(repo.Object, httpContextAccessor.Object);
         }
 
         [Fact]

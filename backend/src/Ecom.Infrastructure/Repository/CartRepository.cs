@@ -22,7 +22,7 @@ namespace Ecom.Infrastructure.Repository
         public async Task<Cart> GetByUserIdWithItemsAsync(Guid userId)
         {
             var cart = await _context.Carts
-                .Include(c => c.Items)
+                .Include(c => c.Items.Where(i => i.Product.IsActive != false))
                     .ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 

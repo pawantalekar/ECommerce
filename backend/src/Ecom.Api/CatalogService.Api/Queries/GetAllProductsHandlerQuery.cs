@@ -29,7 +29,7 @@ namespace CatalogService.Api.Queries
                 product.StockQuantity,
                 product.Category.Name,
                 product.Brand?.Name,
-                product.IsActive ?? true,
+                product.IsActive != false,
                 product.IsFeatured ?? false,
                 product.ProductImages.OrderBy(i => i.SortOrder).Select(i => i.Url).ToList(),
                 product.ProductTags.Select(pt => pt.Tag.Name).ToList()

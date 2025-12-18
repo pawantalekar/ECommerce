@@ -8,19 +8,15 @@ namespace CatalogService.Api.Commands.UpdateProduct
         string? ShortDescription,
         string? Description,
         decimal Price,
-        string SKU,
+        string Sku,
         int StockQuantity,
-        Guid? CategoryId,
+        Guid CategoryId,
         Guid? BrandId,
-        List<string> ImageUrls,
-        List<string> Tags,
+        string? BrandLogoUrl,
         bool IsActive,
-        bool IsFeatured
-    ) : IRequest<UpdateProductCommandResult>
-    {
-        public string? CategoryName { get; init; }
-        public string? CategorySlug { get; init; }
-        public string? BrandName { get; init; }
-        public string? BrandLogoUrl { get; init; }
-    }
+        bool IsFeatured,
+        List<string> ImageUrls,
+        List<string> Tags
+    ) : IRequest<Unit>;
+
 }

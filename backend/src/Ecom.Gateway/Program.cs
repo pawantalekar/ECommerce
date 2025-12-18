@@ -86,6 +86,7 @@ namespace Ecom.Gateway
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AddToCartCommand>());
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AddToCartCommandHandler>());
             builder.Services.AddValidatorsFromAssemblyContaining<AddToCartCommandValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<AddToCartCommandResult>();
 
             // for the JWT Authentication part secret name use instead of key 
 

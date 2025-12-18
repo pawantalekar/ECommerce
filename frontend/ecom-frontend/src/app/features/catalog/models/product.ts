@@ -32,3 +32,40 @@ export interface AddProductPayload {
     brandName: string;
     brandLogoUrl?: string;
 }
+
+//payload to update product
+export interface UpdateProductPayload {
+    id: string;
+    name: string;
+    shortDescription?: string | null;
+    description?: string | null;
+    price: number;
+    sku: string;
+    stockQuantity: number;
+    categoryId: string;
+    brandId?: string | null;
+    brandLogoUrl?: string | null;
+    isActive: boolean;
+    isFeatured: boolean;
+    imageUrls: string[];
+    tags: string[];
+}
+
+export interface ProductForEdit {
+    id: string;
+    name: string;
+    shortDescription?: string | null;
+    description?: string | null;
+    price: number;
+    sku: string;
+    stockQuantity: number;
+    categoryId: string;
+    categoryName: string;
+    brandId?: string | null;
+    brandName?: string | null;
+    brandLogoUrl?: string | null;
+    isActive: boolean;
+    isFeatured: boolean;
+    imageUrls: string[];
+    tags: string[];
+}

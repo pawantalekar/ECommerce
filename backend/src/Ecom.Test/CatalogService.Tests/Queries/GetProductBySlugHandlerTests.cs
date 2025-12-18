@@ -4,6 +4,7 @@ using Ecom.Application.CatalogService.Application.Interfaces;
 using Ecom.Domain.Entities;
 using FluentAssertions;
 using Moq;
+using Xunit;
 
 namespace Ecom.Test.CatalogService.Tests.Queries
 {

@@ -1,4 +1,4 @@
-<!-- my-products.component.html -->
+<!-- eslint-disable @angular-eslint/template/elements-content -->
 <div class="container py-5">
     <h2 class="mb-4 fw-bold">My Products</h2>
 
@@ -9,29 +9,225 @@
         </div>
         <p class="mt-3 text-muted">Loading your products...</p>
     </div>
-    }
-
-    @else if (error) {
-    <div class="alert alert-danger" role="alert">
+    } @else if (error) {
+    <div class="alert alert-danger d-flex justify-content-between align-items-center">
         {{ error }}
-        <button class="btn btn-outline-danger btn-sm ms-3" (click)="loadMyProducts()">Retry</button>
+        <button class="btn btn-outline-danger btn-sm" (click)="loadMyProducts()">Retry</button>
     </div>
-    }
-
-    @else if (products.length === 0) {
+    } @else if (products.length === 0) {
     <div class="text-center py-5">
         <p class="text-muted fs-5">You haven't added any products yet.</p>
         <a routerLink="/seller/add-product" class="btn btn-primary">Add Your First Product</a>
     </div>
+    } @else {
+    <p-table #dt [value]="products" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10,25,50]" [loading]="loading"
+        [globalFilterFields]="['name','sku','categoryName','brandName','tags']" dataKey="id"
+        [tableStyle]="{'min-width':'80rem'}">
+
+        <ng-template pTemplate="caption">
+            <div class="flex justify-content-between align-items-center">
+                <span class="text-lg font-medium">Total: {{ products.length }} products</span>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="onGlobalFilter($event)" placeholder="Search products..."
+                        class="w-full" />
+                </span>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 8%">Image</th>
+                <th pSortableColumn="name" style="width: 20%">Name <p-sortIcon field="name"></p-sortIcon></th>
+                <th pSortableColumn="sku" style="width: 10%">SKU <p-sortIcon field="sku"></p-sortIcon></th>
+                <th pSortableColumn="price" style="width: 10%">Price <p-sortIcon field="price"></p-sortIcon></th>
+                <th pSortableColumn="stockQuantity" style="width: 10%">Stock <p-sortIcon
+                        field="stockQuantity"></p-sortIcon></th>
+                <th style="width: 12%">Category</th>
+                <th style="width: 10%">Brand</th>
+                <th style="width: 8%">Status</th>
+                <th style="width: 12%">Actions</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-product>
+            <tr>
+                <td>
+                    @if (product.imageUrls && product.imageUrls.length > 0 && product.imageUrls[0]) {
+                    <img [src]="product.imageUrls[0]" alt="{{ product.name }}"
+                        style="height:48px; width:48px; object-fit:cover; border-radius:6px; border:1px solid #ddd;"
+                        (error)="$event.target.src = 'assets/placeholder.jpg'" />
+                    } @else {
+                    <div class="w-16 h-16 bg-gray-200 border rounded flex items-center justify-center">
+                        <i class="pi pi-image text-gray-400 text-2xl"></i>
+                    </div>
+                    }
+                </td>
+                <td class="font-medium">{{ product.name }}</td>
+                <td>{{ product.sku }}</td>
+                <td>₹{{ product.price | number:'1.0-0' }}</td>
+                <td>
+                    <span [class.text-danger]="product.stockQuantity < 10"
+                        [class.font-bold]="product.stockQuantity === 0">
+                        {{ product.stockQuantity }}
+                    </span>
+                </td>
+                <td>{{ product.categoryName }}</td>
+                <td>{{ product.brandName || '-' }}</td>
+                <td>
+                    <p-toggleButton [(ngModel)]="product.isActive" (onChange)="onToggleChange(product)" onLabel="Active"
+                        offLabel="Inactive"
+                        [styleClass]="product.isActive ? 'p-button-success' : 'p-button-secondary'" />
+                </td>
+                <td>
+                    <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info p-button-sm"
+                        (click)="openEditModal(product)" label="Edit"></button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="9" class="text-center py-6 text-gray-500">No products found.</td>
+            </tr>
+        </ng-template>
+    </p-table>
     }
 
-    @else {
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-        @for (product of products; track product.id) {
-        <div class="col">
-            <app-product-card [product]="asProduct(product)"></app-product-card>
+    <!-- Edit Product Modal -->
+    <p-dialog header="Edit Product - {{ editingProduct?.name }}" [(visible)]="editDialogVisible" [modal]="true"
+        [style]="{ width: '95vw', 'max-width': '1200px' }" [maximizable]="true" [dismissableMask]="true">
+
+        @if (editLoading) {
+        <div class="flex flex-column align-items-center py-8 gap-4">
+            <p-progressSpinner></p-progressSpinner>
+            <p class="text-lg">Loading product details...</p>
         </div>
         }
-    </div>
-    }
+        @else if (editingProduct) {
+        <div class="p-fluid">
+            <div class="grid gap-4">
+
+                <!-- Name & SKU -->
+                <div class="col-12 md:col-6">
+                    <label class="font-medium">Product Name</label>
+                    <input pInputText [(ngModel)]="editingProduct.name" class="w-full mt-2" />
+                </div>
+                <div class="col-12 md:col-6">
+                    <label class="font-medium">SKU</label>
+                    <input pInputText [(ngModel)]="editingProduct.sku" class="w-full mt-2" />
+                </div>
+
+                <!-- Price & Stock -->
+                <div class="col-12 md:col-6">
+                    <label class="font-medium">Price (₹)</label>
+                    <p-inputNumber [(ngModel)]="editingProduct.price" mode="decimal" [minFractionDigits]="2"
+                        [maxFractionDigits]="2" class="w-full mt-2">
+                    </p-inputNumber>
+                </div>
+                <div class="col-12 md:col-6">
+                    <label class="font-medium">Stock Quantity</label>
+                    <p-inputNumber [(ngModel)]="editingProduct.stockQuantity" [min]="0" class="w-full mt-2">
+                    </p-inputNumber>
+                </div>
+
+                <!-- Current Category & Brand (read-only) -->
+                <div class="col-12 md:col-6">
+                    <label class="font-medium">Category</label>
+                    <input pInputText [value]="editingProduct.categoryName" disabled class="w-full mt-2" />
+                </div>
+                <div class="col-12 md:col-6">
+                    <label class="font-medium">Brand</label>
+                    <input pInputText [value]="editingProduct.brandName || 'None'" disabled class="w-full mt-2" />
+                </div>
+
+                <!-- Descriptions -->
+                <div class="col-12">
+                    <label class="font-medium">Short Description</label>
+                    <textarea pInputTextarea [(ngModel)]="editingProduct.shortDescription" rows="3"
+                        class="w-full mt-2"></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="font-medium">Full Description</label>
+                    <textarea pInputTextarea [(ngModel)]="editingProduct.description" rows="6"
+                        class="w-full mt-2"></textarea>
+                </div>
+
+                <!-- Tags -->
+                <div class="col-12">
+                    <label class="font-medium">Tags</label>
+                    <p-chips [(ngModel)]="editingProduct.tags" placeholder="Add tag and press Enter"
+                        class="w-full mt-2"></p-chips>
+                </div>
+
+                <!-- Images -->
+                <div class="col-12">
+                    <label class="font-medium">Product Images</label>
+                    <div class="mt-3">
+                        <!-- Upload Button -->
+                        <input type="file" multiple accept="image/*" (change)="this['onImageUpload']($event)"
+                            class="block mb-4 p-2 border rounded bg-gray-50" />
+
+                        @if (this['imageUploading']) {
+                        <div class="flex items-center gap-2 mb-4">
+                            <p-progressSpinner styleClass="w-6 h-6"></p-progressSpinner>
+                            <span>Uploading images...</span>
+                        </div>
+                        }
+
+                        @if (editingProduct.imageUrls.length === 0) {
+                        <p class="text-gray-500 italic">No images uploaded yet.</p>
+                        } @else {
+                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
+                            @for (url of editingProduct.imageUrls; track url; let i = $index) {
+                            <div class="relative group">
+                                <img [src]="url"
+                                    style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 1px 4px rgba(0,0,0,0.05);" />
+                                <button type="button"
+                                    class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                    (click)="this['removeImage'](i)" title="Remove image">
+                                    <i class="pi pi-times text-base" style="color: #dc2626;"></i>
+                                </button>
+                                @if (i === 0) {
+                                <span
+                                    class="absolute bottom-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">Main</span>
+                                }
+                            </div>
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Status Toggles -->
+                <div class="col-12 md:col-6">
+                    <label class="font-medium">Active Status</label>
+                    <div class="mt-2">
+                        <p-toggleButton [(ngModel)]="editingProduct.isActive" onLabel="Active" offLabel="Inactive"
+                            styleClass="w-full">
+                        </p-toggleButton>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6">
+                    <label class="font-medium">Featured Product</label>
+                    <div class="mt-2">
+                        <p-toggleButton [(ngModel)]="editingProduct.isFeatured" onLabel="Yes" offLabel="No"
+                            styleClass="w-full">
+                        </p-toggleButton>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        }
+        <!-- Footer -->
+        <ng-template pTemplate="footer">
+            <div class="flex justify-center gap-6 py-4">
+                <p-button label="Cancel" icon="pi pi-times" (onClick)="closeEditModal()"
+                    styleClass="p-button-lg p-button-outlined p-button-secondary rounded-full px-6 text-lg font-semibold shadow-md hover:shadow-lg transition-all duration-200"></p-button>
+                <p-button label="Update Product" icon="pi pi-check" (onClick)="saveEdit()"
+                    styleClass="p-button-lg p-button-success rounded-full px-8 text-lg font-bold shadow-md hover:shadow-lg transition-all duration-200"></p-button>
+            </div>
+        </ng-template>
+    </p-dialog>
 </div>
