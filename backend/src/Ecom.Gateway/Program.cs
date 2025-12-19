@@ -37,7 +37,7 @@ namespace Ecom.Gateway
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAngularDev", p =>
-                    p.WithOrigins("http://localhost:4200")
+                    p.WithOrigins("http://localhost:4200", "http://172.30.220.12:4200")
                      .AllowAnyHeader()
                      .AllowAnyMethod()
                      .AllowCredentials());
@@ -156,7 +156,6 @@ namespace Ecom.Gateway
 
 
             builder.Services.AddSwaggerGen();
-          
             var app = builder.Build();
 
             //using (var scope = app.Services.CreateScope())
@@ -180,12 +179,11 @@ namespace Ecom.Gateway
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseHttpsRedirection();
             app.UseCors("AllowAngularDev");
-            app.UseHttpsRedirection();
-            app.UseCookiePolicy();
             app.UseAuthentication();
+            app.UseHttpsRedirection();
             app.UseAuthorization();
+            app.UseCookiePolicy();
             app.MapControllers();
             app.Run();
         }
