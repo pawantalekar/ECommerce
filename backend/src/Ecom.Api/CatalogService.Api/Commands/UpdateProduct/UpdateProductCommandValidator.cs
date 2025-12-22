@@ -16,8 +16,8 @@ namespace CatalogService.Api.Commands.UpdateProduct
             RuleFor(x => x.Tags).NotNull();
 
             RuleFor(x => x.Price)
-                .MustAsync(async (price, cancellation) => await ProductHelper.ValidateProductPrice(price))
-                .WithMessage("Invalid product price.");
+                     .Must(predicate: static price => ProductHelper.ValidateProductPrice(price))
+                     .WithMessage("Invalid product price.");
         }
     }
 }

@@ -296,6 +296,16 @@ namespace Ecom.Infrastructure.Repository
             // Save everything in one transaction
             await _db.SaveChangesAsync(ct);
         }
+        public async Task<List<Product>> GetFeaturedProductsAsync(CancellationToken ct)
+        {
+            return await _db.Products
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
+                .Include(p => p.Brand)
+                .Where(p => p.IsActive != false && p.IsFeatured != false)
+                .ToListAsync(ct);
+        }
     }
 
 }

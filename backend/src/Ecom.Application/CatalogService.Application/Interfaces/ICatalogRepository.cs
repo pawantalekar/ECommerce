@@ -20,6 +20,8 @@ namespace Ecom.Application.CatalogService.Application.Interfaces
         IQueryable<Product> GetQueryable();
         Task<List<Product>> GetProductsBySellerIdAsync(Guid sellerId, CancellationToken ct);
         Task UpdateFullProductAsync(Product updatedProduct, List<string> imageUrls, List<string> tagNames, CancellationToken ct);
+        Task<List<Product>> GetFeaturedProductsAsync(CancellationToken ct);
+
 
     }
 }
