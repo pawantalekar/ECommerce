@@ -61,4 +61,8 @@ export class Catalog {
   GetProductForEdit(productId: string): Observable<ProductForEdit> {
     return this.http.get<ProductForEdit>(`${this.api}/my-products/${productId}`);
   }
+
+  GetFeaturedProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.api}/featured-products`);
+  }
 }

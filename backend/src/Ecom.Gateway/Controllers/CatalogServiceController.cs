@@ -120,5 +120,11 @@ namespace Ecom.Gateway.Controllers
             return result == null ? NotFound() : Ok(result);
         }
 
+        [HttpGet("featured-products")]
+        public async Task<IActionResult> GetFeaturedProducts()
+        {
+            var result = await _mediator.Send(new GetFeaturedProductsQuery());
+            return Ok(result);
+        }
     }
 }
