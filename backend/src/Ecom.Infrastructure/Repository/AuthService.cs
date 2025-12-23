@@ -99,7 +99,7 @@ namespace Ecom.Infrastructure.Services
         {
             var random = RandomNumberGenerator.GetBytes(64);
             var token = Convert.ToBase64String(random);
-            var expires = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenExpiryDays"] ?? "7"));
+            var expires = DateTime.UtcNow.AddMinutes(int.Parse(_config["Jwt:RefreshTokenExpiryMinutes"]));
 
             return new RefreshToken
             {
