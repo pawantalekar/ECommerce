@@ -306,6 +306,15 @@ namespace Ecom.Infrastructure.Repository
                 .Where(p => p.IsActive != false && p.IsFeatured != false)
                 .ToListAsync(ct);
         }
+        public async Task<List<Category>> GetAllCategoriesAsync(CancellationToken ct)
+        {
+            return await _db.Categories.ToListAsync();
+        }
+        public async Task<List<Brand>> GetAllBrandsAsync(CancellationToken ct)
+        {
+            return await _db.Brands.ToListAsync();
+        }
+
     }
 
 }

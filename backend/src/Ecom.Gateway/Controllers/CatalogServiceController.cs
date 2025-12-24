@@ -126,5 +126,17 @@ namespace Ecom.Gateway.Controllers
             var result = await _mediator.Send(new GetFeaturedProductsQuery());
             return Ok(result);
         }
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetAllCatogories()
+        {
+            var result = await _mediator.Send(new GetAllCategroiesQuery());
+            return Ok(result);
+        }
+        [HttpGet("brands")]
+        public async Task<IActionResult> GetAllBrands()
+        {
+            var result = await _mediator.Send(new GetAllBrandsQuery());
+            return Ok(result);
+        }
     }
 }
