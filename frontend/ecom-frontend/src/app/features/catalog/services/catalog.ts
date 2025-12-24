@@ -2,7 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Product, AddProductPayload, UpdateProductPayload, ProductForEdit } from '../models/product'; // Import
+import { Product, AddProductPayload, UpdateProductPayload, ProductForEdit, Brand, Category } from '../models/product'; // Import
 import { environment } from '../../../../environments/environment';
 
 export type { AddProductPayload };
@@ -64,5 +64,11 @@ export class Catalog {
 
   GetFeaturedProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.api}/featured-products`);
+  }
+  GetAllBrands(): Observable<Brand[]> {
+    return this.http.get<Brand[]>(`${this.api}/brands`);
+  }
+  GetAllCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(`${this.api}/categories`);
   }
 }

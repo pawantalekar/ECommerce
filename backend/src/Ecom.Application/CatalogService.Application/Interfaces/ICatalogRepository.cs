@@ -21,6 +21,9 @@ namespace Ecom.Application.CatalogService.Application.Interfaces
         Task<List<Product>> GetProductsBySellerIdAsync(Guid sellerId, CancellationToken ct);
         Task UpdateFullProductAsync(Product updatedProduct, List<string> imageUrls, List<string> tagNames, CancellationToken ct);
         Task<List<Product>> GetFeaturedProductsAsync(CancellationToken ct);
+        Task<List<Category>> GetAllCategoriesAsync(CancellationToken ct);
+        Task<List<Brand>> GetAllBrandsAsync(CancellationToken ct);
+
 
 
     }

@@ -69,3 +69,12 @@ export interface ProductForEdit {
     imageUrls: string[];
     tags: string[];
 }
+
+export interface Category{
+    id:string;
+    name:string;
+}
+export interface Brand {
+    id: string;
+    name: string;
+}
