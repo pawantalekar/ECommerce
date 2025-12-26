@@ -1,0 +1,13 @@
+/* Remove extra margin and padding from the breadcrumb */
+p-breadcrumb {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.p-breadcrumb {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+}

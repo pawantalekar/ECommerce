@@ -6,6 +6,8 @@ import { Product } from '../../models/product';
 import { AddToCartButtonComponent } from '../../../cart/components/add-to-cart-button/add-to-cart-button';
 import { CartStore } from '../../../cart/signals/cart.store';
 import { ReviewService } from '../../../reviews/services/review-service';
+import { BreadcrumbService } from '../../../shared/breadcrumb/breadcrumb.service';
+
 
 
 @Component({
@@ -25,6 +27,7 @@ export class ProductDetail implements OnInit {
   private cartStore = inject(CartStore);
   private router = inject(Router);
   private reviewService = inject(ReviewService);
+  private breadcrumbService = inject(BreadcrumbService);
 
   cartItems = this.cartStore.cart;
   canReview = false;
@@ -43,6 +46,12 @@ export class ProductDetail implements OnInit {
     this.catalog.getBySlug(slug).subscribe({
       next: d => {
         this.product = d;
+        // Set the category for the breadcrumb
+        if (d.categoryId && d.categoryName) {
+          this.breadcrumbService.setCategory({ id: d.categoryId, name: d.categoryName });
+        } else {
+          this.breadcrumbService.setCategory(null);
+        }
         this.loadReviews();
         this.primaryImage = d.imageUrls[0] || 'https://via.placeholder.com/500';
         this.loading = false;
@@ -51,8 +60,12 @@ export class ProductDetail implements OnInit {
       error: () => {
         this.error = 'Product not found.';
         this.loading = false;
+        this.breadcrumbService.setCategory(null);
       }
     });
+  }
+  ngOnDestroy(): void {
+    this.breadcrumbService.setCategory(null);
   }
   private checkCanReview() {
     {
@@ -122,4 +135,5 @@ export class ProductDetail implements OnInit {
       }
     });
   }
+
 }

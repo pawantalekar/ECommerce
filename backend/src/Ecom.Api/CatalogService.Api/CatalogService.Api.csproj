@@ -28,4 +28,8 @@
     <ProjectReference Include="..\..\Ecom.Infrastructure\Ecom.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Queries\GetProductsByBrands\" />
+  </ItemGroup>
+
 </Project>

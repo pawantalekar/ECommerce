@@ -9,6 +9,7 @@ export interface Product {
     price: number;
     sku: string;
     stockQuantity: number;
+    categoryId: string | null;
     categoryName: string;
     brandName: string;
     isActive: boolean;

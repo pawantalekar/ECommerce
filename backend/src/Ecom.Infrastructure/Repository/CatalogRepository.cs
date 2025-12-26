@@ -315,6 +315,17 @@ namespace Ecom.Infrastructure.Repository
             return await _db.Brands.ToListAsync();
         }
 
+        public async Task<List<Product>> GetProductsByCategoryIdAsync(Guid Id, CancellationToken ct)
+        {
+            return await _db.Products
+               .Include(p => p.Category)
+               .Include(p => p.ProductImages)
+               .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
+               .Include(p => p.Brand)
+               .Where(p => p.IsActive != false && p.CategoryId == Id)
+               .ToListAsync(ct);
+        }
+
     }
 
 }
