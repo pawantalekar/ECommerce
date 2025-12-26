@@ -2,6 +2,7 @@
 using CatalogService.Api.Commands.DeleteProduct;
 using CatalogService.Api.Commands.UpdateProduct;
 using CatalogService.Api.Queries;
+using CatalogService.Api.Queries.ProductsByCategoryId;
 using Ecom.Infrastructure.Repository;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -136,6 +137,12 @@ namespace Ecom.Gateway.Controllers
         public async Task<IActionResult> GetAllBrands()
         {
             var result = await _mediator.Send(new GetAllBrandsQuery());
+            return Ok(result);
+        }
+        [HttpGet("categories/{categoryId}/products")]
+        public async Task<IActionResult> GetProductsByCategoryId(Guid categoryId)
+        {
+            var result = await _mediator.Send(new GetProductsByCategoryIdQuery(categoryId));
             return Ok(result);
         }
     }

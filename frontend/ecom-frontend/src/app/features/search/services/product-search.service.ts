@@ -10,6 +10,7 @@ export interface ProductSearchResultDto {
     price: number;
     imageUrl: string;
     imageUrls: string[];
+    categoryId: string | null;
     brandName: string;
     isFeatured: boolean;
     tags: string[];

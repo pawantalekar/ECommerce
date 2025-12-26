@@ -1,7 +1,7 @@
 
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Product, AddProductPayload, UpdateProductPayload, ProductForEdit, Brand, Category } from '../models/product'; // Import
 import { environment } from '../../../../environments/environment';
 
@@ -71,4 +71,13 @@ export class Catalog {
   GetAllCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(`${this.api}/categories`);
   }
+  getProductsByCategory(categoryId: string): Observable<Product[]> {
+    return this.http.get<any[]>(`${this.api}/categories/${categoryId}/products`).pipe(
+      map(products => products.map(p => ({
+        ...p,
+        imageUrls: Array.isArray(p.imageUrls) ? p.imageUrls : (Array.isArray(p.imageurls) ? p.imageurls : [])
+      })))
+    );
+  }
+  
 }

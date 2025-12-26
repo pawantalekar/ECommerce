@@ -1,10 +1,4 @@
 ﻿using Ecom.Domain.Entities;
-using Razorpay.Api;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Product = Ecom.Domain.Entities.Product;
 
 namespace Ecom.Application.CatalogService.Application.Interfaces
@@ -23,8 +17,6 @@ namespace Ecom.Application.CatalogService.Application.Interfaces
         Task<List<Product>> GetFeaturedProductsAsync(CancellationToken ct);
         Task<List<Category>> GetAllCategoriesAsync(CancellationToken ct);
         Task<List<Brand>> GetAllBrandsAsync(CancellationToken ct);
-
-
-
+        Task<List<Product>> GetProductsByCategoryIdAsync(Guid Id, CancellationToken ct);
     }
 }

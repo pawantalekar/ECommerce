@@ -22,6 +22,7 @@ namespace CatalogService.Api.Queries
                 product.Price,
                 product.Sku,
                 product.StockQuantity,
+                product.CategoryId,
                 product.Category.Name,
                 product.Brand?.Name,
                 product.IsActive != false,

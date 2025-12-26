@@ -15,6 +15,7 @@ namespace CatalogService.Api.Queries
          decimal Price,
          string Sku,
          int StockQuantity,
+         Guid CategoryId,
          string CategoryName,
          string? BrandName,
          bool IsActive,
