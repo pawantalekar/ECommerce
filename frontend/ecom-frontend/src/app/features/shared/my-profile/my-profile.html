@@ -1,0 +1,189 @@
+<p-toast></p-toast>
+<div class="container-fluid mt-4">
+    <div class="row g-4">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-3 mb-4 mb-md-0">
+            <div class="card shadow-lg border-0 h-100 rounded-4 overflow-hidden">
+                <div class="card-body d-flex flex-column text-center p-4">
+                    <div class="mb-4">
+                        <svg width="120" height="120" viewBox="0 0 120 120" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="60" cy="60" r="60" fill="#e3f2fd" />
+                            <circle cx="60" cy="44" r="24" fill="#1976d2" />
+                            <path d="M60 80C38 80 20 98 20 120H100C100 98 82 80 60 80Z" fill="#1976d2" />
+                            <circle cx="60" cy="44" r="16" fill="#bbdefb" />
+                        </svg>
+                    </div>
+
+                    <h5 class="card-title mb-1 fw-bold fs-4 text-dark">
+                        {{ (userProfile?.firstName || 'User') + ' ' + (userProfile?.lastName || '') }}
+                    </h5>
+                    <p class="text-muted small mb-4">{{ userProfile?.email || 'No email provided' }}</p>
+
+                    <hr class="my-4 border-secondary-subtle">
+
+                    <ul class="nav flex-column gap-2">
+                        <li class="nav-item">
+                            <a class="nav-link active d-flex align-items-center fw-semibold py-3 px-3 rounded-3 bg-primary bg-opacity-10 text-primary"
+                                href="#">
+                                <i class="bi bi-person-fill fs-5 me-3"></i>
+                                Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center text-dark py-3 px-3 rounded-3 hover-bg-light"
+                                href="#">
+                                <i class="bi bi-house-door-fill fs-5 me-3 text-secondary"></i>
+                                Addresses
+                            </a>
+                        </li>
+                        <li class="nav-item mt-auto">
+                            <a class="nav-link d-flex align-items-center text-danger py-3 px-3 rounded-3 hover-bg-danger"
+                                routerLink="/login" (click)="logout()">
+                                <i class="bi bi-box-arrow-right fs-5 me-3"></i>
+                                Log Out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-9">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-gradient-primary text-white py-4 border-0">
+                    <h5 class="mb-0 fs-4 fw-semibold">My Profile</h5>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <!-- Loading -->
+                    <div *ngIf="loading" class="text-center py-5">
+                        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+
+                    <!-- Error -->
+                    <div *ngIf="error && !loading" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" (click)="error = undefined">
+                            <span class="visually-hidden">Close</span>
+                        </button>
+                    </div>
+
+                    <!-- Profile Form -->
+                    <div *ngIf="userProfile && !loading">
+                        <form #profileForm="ngForm" (ngSubmit)="updateProfile(profileForm)">
+                            <div class="row g-4">
+                                <!-- First Name -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold text-dark">First Name</label>
+                                    <input type="text" class="form-control form-control-lg rounded-3"
+                                        [(ngModel)]="updateCommand.firstName" name="firstName" required maxlength="50"
+                                        pattern="[A-Za-z\s]+" (keypress)="onlyLetters($event)"
+                                        (input)="sanitizeName($event)" #firstNameCtrl="ngModel">
+                                    <div *ngIf="firstNameCtrl.invalid && (firstNameCtrl.dirty || firstNameCtrl.touched)"
+                                        class="text-danger small mt-1">
+                                        <div *ngIf="firstNameCtrl.errors?.['required']">First name is required</div>
+                                        <div *ngIf="firstNameCtrl.errors?.['maxlength']">Maximum 50 characters allowed
+                                        </div>
+                                        <div *ngIf="firstNameCtrl.errors?.['pattern']">Only letters and spaces allowed
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Last Name -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold text-dark">Last Name</label>
+                                    <input type="text" class="form-control form-control-lg rounded-3"
+                                        [(ngModel)]="updateCommand.lastName" name="lastName" required maxlength="50"
+                                        pattern="[A-Za-z\s]+" (keypress)="onlyLetters($event)"
+                                        (input)="sanitizeName($event)" #lastNameCtrl="ngModel">
+                                    <div *ngIf="lastNameCtrl.invalid && (lastNameCtrl.dirty || lastNameCtrl.touched)"
+                                        class="text-danger small mt-1">
+                                        <div *ngIf="lastNameCtrl.errors?.['required']">Last name is required</div>
+                                        <div *ngIf="lastNameCtrl.errors?.['maxlength']">Maximum 50 characters allowed
+                                        </div>
+                                        <div *ngIf="lastNameCtrl.errors?.['pattern']">Only letters and spaces allowed
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Gender -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold text-dark">Gender</label>
+                                    <select class="form-select form-select-lg rounded-3"
+                                        [(ngModel)]="updateCommand.gender" name="gender">
+                                        <option value="">Prefer not to say</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <!-- Mobile Number -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold text-dark">Mobile Number</label>
+                                    <input type="tel" class="form-control form-control-lg rounded-3"
+                                        [(ngModel)]="updateCommand.mobileNumber" name="mobileNumber" required
+                                        pattern="^[0-9]{10}$" maxlength="10" (keypress)="onlyNumbers($event)"
+                                        (input)="limitTo10Digits($event)" #mobileCtrl="ngModel">
+                                    <div *ngIf="mobileCtrl.invalid && (mobileCtrl.dirty || mobileCtrl.touched)"
+                                        class="text-danger small mt-1">
+                                        <div *ngIf="mobileCtrl.errors?.['required']">Mobile number is required</div>
+                                        <div *ngIf="mobileCtrl.errors?.['pattern']">Exactly 10 digits required (no
+                                            spaces, no +)</div>
+                                    </div>
+                                </div>
+
+                                <!-- Email (disabled) -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold text-dark">Email</label>
+                                    <input type="email" class="form-control form-control-lg rounded-3 bg-light"
+                                        [value]="userProfile.email" disabled>
+                                </div>
+
+                                <!-- Role (disabled) -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold text-dark">Role</label>
+                                    <input type="text" class="form-control form-control-lg rounded-3 bg-light"
+                                        [value]="userProfile.role" disabled>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="mt-5 text-end">
+                                <button type="submit" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-semibold"
+                                    [disabled]="loading || profileForm.invalid || !hasChanges()">
+                                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"
+                                        role="status"></span>
+                                    {{ loading ? 'Updating...' : 'Update Profile' }}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(90deg, #0d6efd, #0b5ed7);
+    }
+
+    .hover-bg-light:hover {
+        background-color: #f8f9fa !important;
+    }
+
+    .hover-bg-danger:hover {
+        background-color: #f8d7da !important;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+</style>

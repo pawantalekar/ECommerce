@@ -1,9 +1,4 @@
 ﻿using Ecom.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ecom.Application.AuthService.Application.Interfaces
 {
@@ -13,5 +8,12 @@ namespace Ecom.Application.AuthService.Application.Interfaces
         Task<User> GetByEmailAsync(string email);
         Task<User> AddAsync(User user);
         Task SaveChangesAsync();
+        Task<UserProfile?> UpdateProfileAsync(
+            Guid userId,
+            string firstName,
+            string lastName,
+            string? gender,
+            string? mobileNumber,
+            CancellationToken cancellationToken);
     }
 }

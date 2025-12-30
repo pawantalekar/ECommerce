@@ -1,0 +1,8 @@
+export interface UserProfileDto {
+  firstName: string;
+  lastName: string;
+  gender?: string;
+  mobileNumber: string;
+  email: string;
+  role: string;
+}

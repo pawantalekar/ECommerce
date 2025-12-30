@@ -6,7 +6,6 @@ using Ecom.Infrastructure;
 using Ecom.Test.ReviewService.Tests.Commands;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using MockQueryable.Moq;
 using Moq;
 using System.Security.Claims;
 using Xunit;

@@ -32,6 +32,8 @@ namespace Ecom.Infrastructure
         public virtual DbSet<Review> Reviews { get; set; }
 
         public virtual DbSet<SellerRequest> SellerRequests { get; set; }
+        public virtual DbSet<UserProfile> UserProfiles { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -325,6 +327,46 @@ namespace Ecom.Infrastructure
                 entity.Property(e => e.Status)
                     .HasMaxLength(20)
                     .HasDefaultValue("Pending");
+            });
+
+            //userProfile
+            modelBuilder.Entity<UserProfile>(entity =>
+            {
+                entity.HasKey(e => e.UserId).HasName("PK__user_pro__B9BE370F7F0D6FA7");
+
+                entity.ToTable("user_profiles");
+
+                entity.Property(e => e.UserId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("user_id");
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("(getdate())")
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at");
+                entity.Property(e => e.FirstName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("first_name");
+                entity.Property(e => e.Gender)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("gender");
+                entity.Property(e => e.LastName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("last_name");
+                entity.Property(e => e.MobileNumber)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("mobile_number");
+                entity.Property(e => e.UpdatedAt)
+                    .HasDefaultValueSql("(getdate())")
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at");
+
+                entity.HasOne(d => d.User).WithOne(p => p.UserProfile)
+                    .HasForeignKey<UserProfile>(d => d.UserId)
+                    .HasConstraintName("FK__user_prof__user___1D7B6025");
             });
 
             OnModelCreatingPartial(modelBuilder);
