@@ -1,10 +1,11 @@
-﻿using AuthService.Api.Queries;
+﻿using AuthService.Api.Commands.UpdateProfile;
+using AuthService.Api.Queries;
 using Ecom.Application.AuthService.Application.DTO;
 using Ecom.Application.AuthService.Application.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using MediatR;
 
 namespace Ecom.Gateway.Controllers
 {
@@ -97,6 +98,19 @@ namespace Ecom.Gateway.Controllers
             var role = await _mediator.Send(new GetCurrentUserRoleQuery());
             return Ok(new { role });
         }
-
+        [HttpGet("myprofile")]
+        [Authorize]
+        public async Task<IActionResult> GetUSersProfile(CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetMyProfileQuery(),cancellationToken);
+            return Ok(new { result });
+        }
+        [HttpPut("updateprofile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateMyProfile([FromBody] UpdateMyProfileCommand command, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(command, cancellationToken);
+            return Ok(result);
+        }
     }
 }

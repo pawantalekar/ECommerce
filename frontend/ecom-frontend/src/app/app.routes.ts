@@ -11,6 +11,7 @@ export const routes: Routes = [
     { path: 'home', component: Home, data: { breadcrumb: 'Home' } },
     { path: 'auth/login', component: Login, data: { breadcrumb: 'Login' } },
     { path: 'auth/callback', component: SsoCallback, data: { breadcrumb: 'SSO Callback' } },
+    { path: 'profile', loadComponent: () => import('./features/shared/my-profile/my-profile').then(m => m.MyProfileComponent), data: { breadcrumb: 'My Profile' }, canActivate: [AuthGuard] },
 
     {
         path: 'catalog',
