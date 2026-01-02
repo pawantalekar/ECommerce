@@ -42,8 +42,8 @@ export class CheckoutComponent implements OnInit {
       city: ['', Validators.required],
       state: ['', Validators.required],
       pincode: ['', Validators.required],
-      country: ['', Validators.required],
-      addressType: ['', Validators.required]
+      shippingCountry: ['', Validators.required],
+      shippingAddressType: ['', Validators.required]
     });
   }
 

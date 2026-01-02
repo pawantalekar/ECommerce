@@ -6,8 +6,8 @@ export interface ShippingAddress {
     city: string;
     state: string;
     pincode: string;
-    country: string;
-    addressType: string;
+    shippingCountry: string;
+    shippingAddressType: string;
 }
 
 export interface CheckoutItem {
