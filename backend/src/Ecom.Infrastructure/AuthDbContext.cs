@@ -33,6 +33,7 @@ namespace Ecom.Infrastructure
 
         public virtual DbSet<SellerRequest> SellerRequests { get; set; }
         public virtual DbSet<UserProfile> UserProfiles { get; set; }
+        public virtual DbSet<Address> Addresses { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -367,6 +368,27 @@ namespace Ecom.Infrastructure
                 entity.HasOne(d => d.User).WithOne(p => p.UserProfile)
                     .HasForeignKey<UserProfile>(d => d.UserId)
                     .HasConstraintName("FK__user_prof__user___1D7B6025");
+            });
+            //Addresses
+            modelBuilder.Entity<Address>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__Addresse__3214EC07DF476E31");
+
+                entity.HasIndex(e => e.UserProfileId, "IX_Addresses_UserProfileId");
+
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.AddressLine1).HasMaxLength(200);
+                entity.Property(e => e.AddressLine2).HasMaxLength(200);
+                entity.Property(e => e.AddressType)
+                    .HasMaxLength(50)
+                    .HasDefaultValue("Home");
+                entity.Property(e => e.City).HasMaxLength(100);
+                entity.Property(e => e.Country).HasMaxLength(100);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
+                entity.Property(e => e.FullName).HasMaxLength(100);
+                entity.Property(e => e.Phone).HasMaxLength(15);
+                entity.Property(e => e.Pincode).HasMaxLength(20);
+                entity.Property(e => e.State).HasMaxLength(100);
             });
 
             OnModelCreatingPartial(modelBuilder);

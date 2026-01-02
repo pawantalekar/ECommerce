@@ -6,6 +6,9 @@ import { routes } from './app.routes';
 import { AuthInterceptor } from './core/middleware/auth-interceptor';
 import { RefreshInterceptor } from './core/middleware/refresh.interceptor';
 import { FormsModule } from '@angular/forms';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 
 export const appConfig: ApplicationConfig = {
@@ -13,6 +16,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptors([AuthInterceptor, RefreshInterceptor])),
     provideAnimations(),
-    importProvidersFrom(FormsModule)
+    importProvidersFrom(FormsModule, ToastModule, ConfirmDialogModule),
+    ConfirmationService,
+    MessageService
   ]
 };

@@ -17,4 +17,5 @@ public partial class UserProfile
     public DateTime? UpdatedAt { get; set; }
 
     public virtual User User { get; set; } = null!;
+    public virtual List<Address> Addresses { get; set; }
 }

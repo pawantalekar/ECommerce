@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
 export interface UserProfileDto {
@@ -22,8 +22,10 @@ export interface UpdateMyProfileCommand {
     providedIn: 'root'
 })
 export class MyProfileService {
-      private apiUrl = `${environment.apiBaseUrl}/Auth/myprofile`;
-    
+    private apiUrl = `${environment.apiBaseUrl}/Auth/myprofile`;
+    private profileUpdatedSource = new BehaviorSubject<void>(undefined);
+    profileUpdated$ = this.profileUpdatedSource.asObservable();
+
 
     constructor(private http: HttpClient) { }
 
@@ -32,5 +34,8 @@ export class MyProfileService {
     }
     updateMyProfile(command: UpdateMyProfileCommand): Observable<{ result: UserProfileDto }> {
         return this.http.put<{ result: UserProfileDto }>(`${environment.apiBaseUrl}/Auth/updateprofile`, command);
+    }
+    notifyProfileUpdated() {
+        this.profileUpdatedSource.next();
     }
 }
