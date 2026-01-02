@@ -1,5 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, NgModule, OnInit, inject } from '@angular/core';
+import { AddressService } from '../../../shared/services/address-service';
+import { AddressDto } from '../../../shared/models/address-model';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, NgModel, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Orderservice } from '../../services/orderservice';
 import { CheckoutItem, ShippingAddress } from '../../models/order';
@@ -19,7 +21,7 @@ interface CheckoutDisplayItem {
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './checkout.html'
 })
 export class CheckoutComponent implements OnInit {
@@ -32,6 +34,14 @@ export class CheckoutComponent implements OnInit {
   form: FormGroup;
   cartItems: CheckoutDisplayItem[] = [];
   totalAmount = 0;
+
+  addressService = inject(AddressService);
+  savedAddresses: AddressDto[] = [];
+  addressesLoading = true;
+  addressesError?: string;
+  selectedAddressId: string | null = null;
+  showAddressForm = false;
+  isEditMode = false;
 
   constructor() {
     this.form = this.fb.group({
@@ -47,7 +57,76 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
+  selectAddress(addr: AddressDto) {
+    this.selectedAddressId = addr.id;
+    this.showAddressForm = false;
+  }
+
+  confirmDeliverHere(addr: AddressDto) {
+    this.selectedAddressId = addr.id;
+    this.showAddressForm = false;
+    // Only mark as selected, do not proceed to payment
+  }
+
+  onChangeAddress() {
+    this.selectedAddressId = null;
+    this.showAddressForm = false;
+  }
+
+  onAddNewAddress() {
+    this.showAddressForm = true;
+    this.isEditMode = false;
+    this.form.reset();
+  }
+
+  onCancelAddressForm() {
+    this.showAddressForm = false;
+    this.isEditMode = false;
+  }
+
+  onSaveAndDeliverAddress() {
+    if (this.form.invalid) return;
+    const newAddress = {
+      fullName: this.form.value.fullName,
+      phone: this.form.value.phone,
+      addressLine1: this.form.value.addressLine1,
+      addressLine2: this.form.value.addressLine2,
+      city: this.form.value.city,
+      state: this.form.value.state,
+      pincode: this.form.value.pincode,
+      country: this.form.value.shippingCountry,
+      addressType: this.form.value.shippingAddressType,
+      isDefault: false
+    };
+    this.addressService.addMyAddress(newAddress).subscribe({
+      next: (added) => {
+        this.selectedAddressId = added.id;
+        this.showAddressForm = false;
+        this.isEditMode = false;
+        this.loadSavedAddresses();
+      }
+    });
+  }
+
+  onEditAddress(addr: AddressDto) {
+    this.showAddressForm = true;
+    this.isEditMode = true;
+    this.selectedAddressId = null;
+    this.form.patchValue({
+      fullName: addr.fullName,
+      phone: addr.phone,
+      addressLine1: addr.addressLine1,
+      addressLine2: addr.addressLine2,
+      city: addr.city,
+      state: addr.state,
+      pincode: addr.pincode,
+      shippingCountry: addr.country,
+      shippingAddressType: addr.addressType
+    });
+  }
+
   ngOnInit() {
+    this.loadSavedAddresses();
     const state = history.state;
 
     if (state?.directBuyFromOrder) {
@@ -60,6 +139,20 @@ export class CheckoutComponent implements OnInit {
     else {
       this.loadCartItems();
     }
+  }
+
+  loadSavedAddresses() {
+    this.addressesLoading = true;
+    this.addressService.getMyAddresses().subscribe({
+      next: (addresses) => {
+        this.savedAddresses = addresses;
+        this.addressesLoading = false;
+      },
+      error: () => {
+        this.addressesError = 'Failed to load saved addresses.';
+        this.addressesLoading = false;
+      }
+    });
   }
 
   private loadCartItems() {
@@ -91,18 +184,39 @@ export class CheckoutComponent implements OnInit {
   }
 
   onPay() {
-    if (this.form.invalid) return;
-
-    const itemsForOrder: CheckoutItem[] = this.cartItems.map(i => ({
-      productId: i.productId,
-      quantity: i.quantity
-    }));
-
-    const shipping = this.form.value as ShippingAddress;
-
-    this.orderService.createOrder(itemsForOrder, shipping).subscribe((res: InitiatePaymentResponse) => {
-      this.openRazorpay(res);
-    });
+    if (this.selectedAddressId) {
+      const selected = this.savedAddresses.find(a => a.id === this.selectedAddressId);
+      if (!selected) return;
+      const shipping: ShippingAddress = {
+        fullName: selected.fullName,
+        phone: selected.phone,
+        addressLine1: selected.addressLine1,
+        addressLine2: selected.addressLine2,
+        city: selected.city,
+        state: selected.state,
+        pincode: selected.pincode,
+        shippingCountry: selected.country,
+        shippingAddressType: selected.addressType
+      };
+      const itemsForOrder: CheckoutItem[] = this.cartItems.map(i => ({
+        productId: i.productId,
+        quantity: i.quantity
+      }));
+      this.orderService.createOrder(itemsForOrder, shipping).subscribe((res: InitiatePaymentResponse) => {
+        this.openRazorpay(res);
+      });
+    } else {
+      // Use form values
+      if (this.form.invalid) return;
+      const itemsForOrder: CheckoutItem[] = this.cartItems.map(i => ({
+        productId: i.productId,
+        quantity: i.quantity
+      }));
+      const shipping = this.form.value as ShippingAddress;
+      this.orderService.createOrder(itemsForOrder, shipping).subscribe((res: InitiatePaymentResponse) => {
+        this.openRazorpay(res);
+      });
+    }
   }
   updateQty(index: number, change: number) {
     const newQty = this.cartItems[index].quantity + change;
