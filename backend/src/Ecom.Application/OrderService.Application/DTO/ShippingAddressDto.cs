@@ -13,6 +13,8 @@ namespace Ecom.Application.OrderService.Application.DTO
          string? AddressLine2,
          string City,
          string State,
-         string Pincode
+         string Pincode,
+        string ShippingAddressType,
+        string ShippingCountry
      );
 }

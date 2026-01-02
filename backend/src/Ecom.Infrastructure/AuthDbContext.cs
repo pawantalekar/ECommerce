@@ -243,6 +243,8 @@ namespace Ecom.Infrastructure
                 entity.Property(e => e.ShippingPincode).HasMaxLength(10);
                 entity.Property(e => e.ShippingState).HasMaxLength(50);
                 entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.ShippingCountry).HasMaxLength(100).HasDefaultValue("");
+                entity.Property(e => e.ShippingAddressType).HasMaxLength(50).HasDefaultValue("");
 
                 entity.HasOne(d => d.User).WithMany(p => p.Orders).HasForeignKey(d => d.UserId);
             });

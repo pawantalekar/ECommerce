@@ -128,19 +128,24 @@ export class Addresses implements OnInit {
     });
   }
 
-  getMenuItems(address: AddressDto): MenuItem[] {
-    return [
-      {
-        label: 'Edit',
-        icon: 'pi pi-pencil',
-        command: () => this.openEditForm(address)
-      },
-      {
-        label: 'Delete',
-        icon: 'pi pi-trash',
-        command: () => this.deleteAddress(address.id)
-      }
-    ];
+  menuItemsCache = new Map<string, MenuItem[]>();
+
+  getMenuItems(addr: AddressDto): MenuItem[] {
+    if (!this.menuItemsCache.has(addr.id)) {
+      this.menuItemsCache.set(addr.id, [
+        {
+          label: 'Edit',
+          icon: 'pi pi-pencil',
+          command: () => this.openEditForm(addr)
+        },
+        {
+          label: 'Delete',
+          icon: 'pi pi-trash',
+          command: () => this.deleteAddress(addr.id)
+        }
+      ]);
+    }
+    return this.menuItemsCache.get(addr.id)!;
   }
 
   deleteAddress(id: string) {
