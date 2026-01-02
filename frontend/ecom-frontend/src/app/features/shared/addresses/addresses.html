@@ -1,0 +1,104 @@
+<!-- eslint-disable @angular-eslint/template/elements-content -->
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="container py-5">
+	<div class="mb-4 d-flex justify-content-between align-items-center">
+		<h2 class="fw-bold">Manage Addresses</h2>
+		<button pButton label="ADD A NEW ADDRESS" icon="pi pi-plus" class="p-button-outlined p-button-primary"
+			(click)="openAddForm()"></button>
+	</div>
+
+	<!-- Addresses List - Horizontal Cards -->
+	<div class="row g-4" *ngIf="!loading && addresses.length > 0">
+		<div class="col-12" *ngFor="let addr of addresses">
+			<div class="card border rounded shadow-sm p-4 position-relative">
+				<div class="d-flex justify-content-between align-items-start">
+					<div class="flex-grow-1">
+						<div class="d-flex align-items-center gap-3 mb-2">
+							<span class="badge bg-light text-dark border px-3 py-2">{{ addr.addressType.toUpperCase()
+								}}</span>
+							<h5 class="mb-0">{{ addr.fullName }} {{ addr.phone }}</h5>
+						</div>
+						<p class="mb-1">{{ addr.addressLine1 }}</p>
+						<p class="mb-1" *ngIf="addr.addressLine2">{{ addr.addressLine2 }}</p>
+						<p class="mb-0 text-muted">
+							{{ addr.city }}, {{ addr.state }}, {{ addr.pincode }}, {{ addr.country }}
+						</p>
+					</div>
+					<p-menu #menu [model]="getMenuItems(addr)" [popup]="true" appendTo="body"></p-menu>
+					<button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded"
+						(click)="menu.toggle($event)"></button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Empty State -->
+	<div class="text-center py-5" *ngIf="!loading && addresses.length === 0">
+		<p class="text-muted">No addresses saved yet.</p>
+		<button pButton label="Add Your First Address" icon="pi pi-plus" (click)="openAddForm()"></button>
+	</div>
+
+	<!-- Loading -->
+	<div class="text-center py-5" *ngIf="loading">
+		<i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+	</div>
+
+	<!-- Add/Edit Form -->
+	<div class="mt-5" *ngIf="showForm">
+		<div class="card border rounded shadow p-4">
+			<h4 class="mb-4">{{ isEditing ? 'Edit Address' : 'Add New Address' }}</h4>
+			<form #addressForm="ngForm" (ngSubmit)="saveAddress(addressForm)" class="row g-3">
+				<div class="col-md-6">
+					<label class="form-label">Full Name *</label>
+					<input pInputText name="fullName" [(ngModel)]="addAddressCommand.fullName" required class="w-100" />
+				</div>
+				<div class="col-md-6">
+					<label class="form-label">Phone *</label>
+					<input pInputText name="phone" [(ngModel)]="addAddressCommand.phone" required class="w-100" />
+				</div>
+				<div class="col-12">
+					<label class="form-label">Address Line 1 *</label>
+					<input pInputText name="addressLine1" [(ngModel)]="addAddressCommand.addressLine1" required
+						class="w-100" />
+				</div>
+				<div class="col-12">
+					<label class="form-label">Address Line 2</label>
+					<input pInputText name="addressLine2" [(ngModel)]="addAddressCommand.addressLine2" class="w-100" />
+				</div>
+				<div class="col-md-4">
+					<label class="form-label">City *</label>
+					<input pInputText name="city" [(ngModel)]="addAddressCommand.city" required class="w-100" />
+				</div>
+				<div class="col-md-4">
+					<label class="form-label">State *</label>
+					<input pInputText name="state" [(ngModel)]="addAddressCommand.state" required class="w-100" />
+				</div>
+				<div class="col-md-4">
+					<label class="form-label">Pincode *</label>
+					<input pInputText name="pincode" [(ngModel)]="addAddressCommand.pincode" required class="w-100" />
+				</div>
+				<div class="col-md-8">
+					<label class="form-label">Country *</label>
+					<input pInputText name="country" [(ngModel)]="addAddressCommand.country" required class="w-100" />
+				</div>
+				<div class="col-md-4">
+					<label class="form-label">Address Type *</label>
+					<p-dropdown [options]="addressTypes" [(ngModel)]="addAddressCommand.addressType" name="addressType"
+						optionLabel="label" optionValue="value" placeholder="Select type" class="w-100"></p-dropdown>
+				</div>
+				<div class="col-12">
+					<p-checkbox name="isDefault" [(ngModel)]="addAddressCommand.isDefault" binary="true"
+						label="Set as default address"></p-checkbox>
+				</div>
+				<div class="col-12">
+					<button pButton type="submit" [label]="isEditing ? 'Update' : 'Save'"
+						[disabled]="submitting || addressForm.invalid" [loading]="submitting" class="me-2"></button>
+					<button pButton type="button" label="Cancel" class="p-button-secondary"
+						(click)="cancelForm(addressForm)"></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

@@ -1,10 +1,15 @@
-﻿using AuthService.Api.Commands.UpdateProfile;
+﻿using AuthService.Api.Commands.AddAddress;
+using AuthService.Api.Commands.DeleteAddress;
+using AuthService.Api.Commands.UpdateAddress;
+using AuthService.Api.Commands.UpdateProfile;
 using AuthService.Api.Queries;
+using AuthService.Api.Queries.GetAddress;
 using Ecom.Application.AuthService.Application.DTO;
 using Ecom.Application.AuthService.Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace Ecom.Gateway.Controllers
@@ -111,6 +116,36 @@ namespace Ecom.Gateway.Controllers
         {
             var result = await _mediator.Send(command, cancellationToken);
             return Ok(result);
+        }
+        [HttpGet("addresses")]
+        [Authorize]
+        public async Task<IActionResult> GetMyAddresses()
+        {
+            var addresses = await _mediator.Send(new GetAddressesQuery());
+            return Ok(addresses);
+        }
+
+        [HttpPost("addresses")]
+        [Authorize]
+        public async Task<IActionResult> AddMyAddress([FromBody] AddAddressCommand command)
+        {
+            var newAddress = await _mediator.Send(command);
+            return CreatedAtAction(nameof(GetMyAddresses), new { id = newAddress.Id }, newAddress);
+        }
+        [HttpPut("addresses/{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateMyAddress([FromRoute] Guid id, [FromBody] UpdateAddressCommand command, CancellationToken cancellationToken)
+        {
+            command.Id = id;
+            var result = await _mediator.Send(command, cancellationToken);
+            return Ok(new { success = result });
+        }
+        [HttpDelete("addresses/{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteMyAddress([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new DeleteAddressCommand(id), cancellationToken);
+            return Ok(new { success = result });
         }
     }
 }

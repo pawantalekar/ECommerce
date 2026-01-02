@@ -11,8 +11,22 @@ export const routes: Routes = [
     { path: 'home', component: Home, data: { breadcrumb: 'Home' } },
     { path: 'auth/login', component: Login, data: { breadcrumb: 'Login' } },
     { path: 'auth/callback', component: SsoCallback, data: { breadcrumb: 'SSO Callback' } },
-    { path: 'profile', loadComponent: () => import('./features/shared/my-profile/my-profile').then(m => m.MyProfileComponent), data: { breadcrumb: 'My Profile' }, canActivate: [AuthGuard] },
-
+    {
+        path: 'profile',
+        loadComponent: () => import('./features/shared/my-profile/my-profile').then(m => m.MyProfileComponent),
+        data: { breadcrumb: 'My Profile' },
+        canActivate: [AuthGuard],
+        children: [
+            {
+                path: '',
+                loadComponent: () => import('./features/shared/profile-details/profile-details').then(m => m.ProfileDetails),
+            },
+            {
+                path: 'addresses',
+                loadComponent: () => import('./features/shared/addresses/addresses').then(m => m.Addresses)
+            }
+        ]
+    },
     {
         path: 'catalog',
         loadChildren: () => import('./features/catalog/catalog.routes').then(m => m.CATALOG_ROUTES),
@@ -39,5 +53,6 @@ export const routes: Routes = [
         component: ApprovalsComponent,
         canActivate: [AdminGuard],
         data: { breadcrumb: 'Approvals' }
-    }
+    },
+    
 ];
