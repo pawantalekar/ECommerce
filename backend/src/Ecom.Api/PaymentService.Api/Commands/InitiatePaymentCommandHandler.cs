@@ -86,6 +86,8 @@ namespace Ecom.Application.Commands.InitiatePayment
                 ShippingAddressLine2 = request.ShippingAddress.AddressLine2,
                 ShippingCity = request.ShippingAddress.City,
                 ShippingState = request.ShippingAddress.State,
+                ShippingAddressType = request.ShippingAddress.ShippingAddressType,
+                ShippingCountry = request.ShippingAddress.ShippingCountry,
                 ShippingPincode = request.ShippingAddress.Pincode,
                 RazorpayOrderId = razorpayOrderId,
                 CreatedAt = DateTime.UtcNow,

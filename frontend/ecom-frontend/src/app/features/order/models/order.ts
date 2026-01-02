@@ -6,6 +6,8 @@ export interface ShippingAddress {
     city: string;
     state: string;
     pincode: string;
+    country: string;
+    addressType: string;
 }
 
 export interface CheckoutItem {
@@ -30,4 +32,5 @@ export interface Order {
     createdAt: Date;
     items: OrderItem[];
     shippingAddress: ShippingAddress;
+
 }

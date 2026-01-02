@@ -48,7 +48,10 @@ namespace Ecom.Application.Queries
                         o.ShippingAddressLine2,
                         o.ShippingCity,
                         o.ShippingState,
-                        o.ShippingPincode
+                        o.ShippingPincode,
+                        o.ShippingAddressType,
+                        o.ShippingCountry
+
                     )
                 ))
                 .ToListAsync(ct);
