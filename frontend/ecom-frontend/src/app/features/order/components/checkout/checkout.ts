@@ -25,6 +25,7 @@ interface CheckoutDisplayItem {
   templateUrl: './checkout.html'
 })
 export class CheckoutComponent implements OnInit {
+  editingAddressId?: string;
   private fb = inject(FormBuilder);
   private orderService = inject(Orderservice);
   private router = inject(Router);
@@ -76,17 +77,19 @@ export class CheckoutComponent implements OnInit {
   onAddNewAddress() {
     this.showAddressForm = true;
     this.isEditMode = false;
+    this.editingAddressId = undefined;
     this.form.reset();
   }
 
   onCancelAddressForm() {
     this.showAddressForm = false;
     this.isEditMode = false;
+    this.editingAddressId = undefined;
   }
 
   onSaveAndDeliverAddress() {
     if (this.form.invalid) return;
-    const newAddress = {
+    const addressPayload = {
       fullName: this.form.value.fullName,
       phone: this.form.value.phone,
       addressLine1: this.form.value.addressLine1,
@@ -98,19 +101,32 @@ export class CheckoutComponent implements OnInit {
       addressType: this.form.value.shippingAddressType,
       isDefault: false
     };
-    this.addressService.addMyAddress(newAddress).subscribe({
-      next: (added) => {
-        this.selectedAddressId = added.id;
-        this.showAddressForm = false;
-        this.isEditMode = false;
-        this.loadSavedAddresses();
-      }
-    });
+    if (this.isEditMode && this.editingAddressId) {
+      this.addressService.updateMyAddress(this.editingAddressId, addressPayload).subscribe({
+        next: (updated) => {
+          this.selectedAddressId = updated.id;
+          this.showAddressForm = false;
+          this.isEditMode = false;
+          this.editingAddressId = undefined;
+          this.loadSavedAddresses();
+        }
+      });
+    } else {
+      this.addressService.addMyAddress(addressPayload).subscribe({
+        next: (added) => {
+          this.selectedAddressId = added.id;
+          this.showAddressForm = false;
+          this.isEditMode = false;
+          this.loadSavedAddresses();
+        }
+      });
+    }
   }
 
   onEditAddress(addr: AddressDto) {
     this.showAddressForm = true;
     this.isEditMode = true;
+    this.editingAddressId = addr.id;
     this.selectedAddressId = null;
     this.form.patchValue({
       fullName: addr.fullName,
