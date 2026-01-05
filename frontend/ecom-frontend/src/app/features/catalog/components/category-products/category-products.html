@@ -1,0 +1,8 @@
+<div *ngIf="loading">Loading products...</div>
+<div *ngIf="error" class="text-danger">{{ error }}</div>
+
+<div class="row" *ngIf="!loading && !error">
+    <div class="col-md-4 mb-4" *ngFor="let product of products">
+        <app-product-card [product]="product"></app-product-card>
+    </div>
+</div>

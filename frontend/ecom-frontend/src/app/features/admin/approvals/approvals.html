@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/elements-content -->
 <div class="admin-approvals p-6 max-w-7xl mx-auto">
   <h1 class="text-3xl font-bold mb-6">Admin Approval Dashboard</h1>
 
@@ -14,7 +15,7 @@
 
   @if (activeTab === 'reviews') {
   <div class="card">
-    <p-table #reviewTable [value]="pendingReviews" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 25, 50]"
+    <p-table #reviewTable [value]="pendingReviews" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10, 25, 50]"
       [loading]="loading" [globalFilterFields]="['productName', 'userName', 'rating', 'comment']" dataKey="id"
       [tableStyle]="{ 'min-width': '70rem', 'table-layout': 'fixed' }">
 
@@ -78,7 +79,7 @@
 
   @if (activeTab === 'requests') {
   <div class="card">
-    <p-table #requestTable [value]="pendingRequests" [paginator]="true" [rows]="10"
+    <p-table #requestTable [value]="pendingRequests" [paginator]="true" [rows]="5"
       [rowsPerPageOptions]="[5, 10, 25, 50]" [loading]="loading" [globalFilterFields]="['userName', 'userEmail']"
       dataKey="id" [tableStyle]="{ 'min-width': '50rem', 'table-layout': 'fixed' }">
 

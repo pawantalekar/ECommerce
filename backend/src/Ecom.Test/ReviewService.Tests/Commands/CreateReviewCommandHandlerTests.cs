@@ -5,7 +5,7 @@ using Ecom.Domain.Entities;
 using Ecom.Infrastructure;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using MockQueryable.Moq;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using ReviewService.Api.Commands.CreateReview;
 using System.Security.Claims;
@@ -98,6 +98,20 @@ namespace Ecom.Test.ReviewService.Tests.Commands
             await handler.Invoking(h => h.Handle(command, CancellationToken.None))
                          .Should().ThrowAsync<InvalidOperationException>()
                          .WithMessage("Cannot review this product");
+        }
+    }
+
+    internal static class DbSetMockingExtensions
+    {
+        public static Mock<DbSet<T>> BuildMockDbSet<T>(this IEnumerable<T> source) where T : class
+        {
+            var queryable = source.AsQueryable();
+            var mockSet = new Mock<DbSet<T>>();
+            mockSet.As<IQueryable<T>>().Setup(m => m.Provider).Returns(queryable.Provider);
+            mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(queryable.Expression);
+            mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
+            mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
+            return mockSet;
         }
     }
 }

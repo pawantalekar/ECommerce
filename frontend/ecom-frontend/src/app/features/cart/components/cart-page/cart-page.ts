@@ -1,4 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CartStore } from '../../signals/cart.store';
 import { CartItemComponent } from '../cart-item/cart-item';
 import { CartSummaryComponent } from '../cart-summary/cart-summary';
@@ -7,7 +8,7 @@ import { CartSummaryComponent } from '../cart-summary/cart-summary';
 @Component({
   selector: 'app-cart-page',
   standalone: true,
-  imports: [CartItemComponent, CartSummaryComponent],
+  imports: [CartItemComponent, CartSummaryComponent, RouterLink],
   templateUrl: './cart-page.html',
   styleUrls: ['./cart-page.css']
 })

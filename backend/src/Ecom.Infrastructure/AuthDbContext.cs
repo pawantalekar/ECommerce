@@ -32,6 +32,9 @@ namespace Ecom.Infrastructure
         public virtual DbSet<Review> Reviews { get; set; }
 
         public virtual DbSet<SellerRequest> SellerRequests { get; set; }
+        public virtual DbSet<UserProfile> UserProfiles { get; set; }
+        public virtual DbSet<Address> Addresses { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -240,6 +243,8 @@ namespace Ecom.Infrastructure
                 entity.Property(e => e.ShippingPincode).HasMaxLength(10);
                 entity.Property(e => e.ShippingState).HasMaxLength(50);
                 entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.ShippingCountry).HasMaxLength(100).HasDefaultValue("");
+                entity.Property(e => e.ShippingAddressType).HasMaxLength(50).HasDefaultValue("");
 
                 entity.HasOne(d => d.User).WithMany(p => p.Orders).HasForeignKey(d => d.UserId);
             });
@@ -325,6 +330,67 @@ namespace Ecom.Infrastructure
                 entity.Property(e => e.Status)
                     .HasMaxLength(20)
                     .HasDefaultValue("Pending");
+            });
+
+            //userProfile
+            modelBuilder.Entity<UserProfile>(entity =>
+            {
+                entity.HasKey(e => e.UserId).HasName("PK__user_pro__B9BE370F7F0D6FA7");
+
+                entity.ToTable("user_profiles");
+
+                entity.Property(e => e.UserId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("user_id");
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("(getdate())")
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_at");
+                entity.Property(e => e.FirstName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("first_name");
+                entity.Property(e => e.Gender)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("gender");
+                entity.Property(e => e.LastName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("last_name");
+                entity.Property(e => e.MobileNumber)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("mobile_number");
+                entity.Property(e => e.UpdatedAt)
+                    .HasDefaultValueSql("(getdate())")
+                    .HasColumnType("datetime")
+                    .HasColumnName("updated_at");
+
+                entity.HasOne(d => d.User).WithOne(p => p.UserProfile)
+                    .HasForeignKey<UserProfile>(d => d.UserId)
+                    .HasConstraintName("FK__user_prof__user___1D7B6025");
+            });
+            //Addresses
+            modelBuilder.Entity<Address>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__Addresse__3214EC07DF476E31");
+
+                entity.HasIndex(e => e.UserProfileId, "IX_Addresses_UserProfileId");
+
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.AddressLine1).HasMaxLength(200);
+                entity.Property(e => e.AddressLine2).HasMaxLength(200);
+                entity.Property(e => e.AddressType)
+                    .HasMaxLength(50)
+                    .HasDefaultValue("Home");
+                entity.Property(e => e.City).HasMaxLength(100);
+                entity.Property(e => e.Country).HasMaxLength(100);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
+                entity.Property(e => e.FullName).HasMaxLength(100);
+                entity.Property(e => e.Phone).HasMaxLength(15);
+                entity.Property(e => e.Pincode).HasMaxLength(20);
+                entity.Property(e => e.State).HasMaxLength(100);
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Ecom.Application\Ecom.Application.csproj" />
     <ProjectReference Include="..\..\Ecom.Infrastructure\Ecom.Infrastructure.csproj" />
+    <ProjectReference Include="..\CatalogService.Api\CatalogService.Api.csproj" />
   </ItemGroup>
 
 </Project>

@@ -48,7 +48,9 @@ namespace OrderService.APi.Queries
                         o.ShippingAddressLine2,
                         o.ShippingCity,
                         o.ShippingState,
-                        o.ShippingPincode
+                        o.ShippingPincode,
+                        o.ShippingAddressType,
+                        o.ShippingCountry
                     )
                 ))
                 .FirstOrDefaultAsync(ct);

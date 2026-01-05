@@ -27,6 +27,9 @@ public partial class Order
     public string ShippingState { get; set; } = null!;
 
     public string ShippingPincode { get; set; } = null!;
+    public string ShippingCountry { get; set; } = null!;
+
+    public string ShippingAddressType { get; set; } = null!;
 
     public string? RazorpayPaymentId { get; set; }
 

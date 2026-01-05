@@ -9,7 +9,6 @@ using Ecom.Application.Commands.InitiatePayment;
 using Ecom.Application.ReviewService.Application.Interfaces;
 using Ecom.Infrastructure;
 using Ecom.Infrastructure.Repository;
-using Ecom.Infrastructure.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,7 +17,6 @@ using Microsoft.IdentityModel.Tokens;
 using OrderService.APi.Queries;
 using ReviewService.Api.Queries;
 using System.Text;
-using Microsoft.OpenApi.Models;
 
 namespace Ecom.Gateway
 {
@@ -37,7 +35,7 @@ namespace Ecom.Gateway
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAngularDev", p =>
-                    p.WithOrigins("http://localhost:4200")
+                    p.WithOrigins("http://localhost:4200", "http://172.30.220.12:4200")
                      .AllowAnyHeader()
                      .AllowAnyMethod()
                      .AllowCredentials());
@@ -76,8 +74,10 @@ namespace Ecom.Gateway
             builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-            
-            //builder.Services.AddScoped<ProductIndexer>();
+
+            //AutoMapper
+            builder.Services.AddAutoMapper(cfg => { }, AppDomain.CurrentDomain.GetAssemblies());
+           
             // DbContext
             builder.Services.AddDbContext<AuthDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DCS")));
@@ -86,6 +86,7 @@ namespace Ecom.Gateway
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AddToCartCommand>());
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AddToCartCommandHandler>());
             builder.Services.AddValidatorsFromAssemblyContaining<AddToCartCommandValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<AddToCartCommandResult>();
 
             // for the JWT Authentication part secret name use instead of key 
 
@@ -155,23 +156,8 @@ namespace Ecom.Gateway
 
 
             builder.Services.AddSwaggerGen();
-          
             var app = builder.Build();
 
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    try
-            //    {
-            //        var indexer = scope.ServiceProvider.GetRequiredService<ProductIndexer>();
-            //        await indexer.IndexAllProductsAsync();
-            //        Console.WriteLine("Typesense: All products indexed successfully!");
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine("TYPESENSE INDEXING FAILED:");
-            //        Console.WriteLine(ex.ToString());
-            //    }
-            //}
             app.UseStaticFiles();
 
             if (app.Environment.IsDevelopment())
@@ -179,12 +165,11 @@ namespace Ecom.Gateway
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseHttpsRedirection();
             app.UseCors("AllowAngularDev");
-            app.UseHttpsRedirection();
-            app.UseCookiePolicy();
             app.UseAuthentication();
+            app.UseHttpsRedirection();
             app.UseAuthorization();
+            app.UseCookiePolicy();
             app.MapControllers();
             app.Run();
         }

@@ -1,6 +1,8 @@
 ﻿using CatalogService.Api.Commands.AddProduct;
+using CatalogService.Api.Commands.DeleteProduct;
 using CatalogService.Api.Commands.UpdateProduct;
 using CatalogService.Api.Queries;
+using CatalogService.Api.Queries.ProductsByCategoryId;
 using Ecom.Infrastructure.Repository;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,9 +19,7 @@ namespace Ecom.Gateway.Controllers
         private readonly IMediator _mediator;
 
         private readonly IWebHostEnvironment _env; 
-       
-
-      
+        
         public CatalogServiceController( IMediator mediator, IWebHostEnvironment env)
         {
             _mediator = mediator;
@@ -59,7 +59,8 @@ namespace Ecom.Gateway.Controllers
             return Ok(result);
         }
 
-        [HttpPut("products/{id}")]
+        [HttpPut("my-products/{id}")]
+        [Authorize(Roles = "Seller,Admin")]
         public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductCommand command)
         {
             if (id != command.Id)
@@ -105,7 +106,44 @@ namespace Ecom.Gateway.Controllers
             return Ok(result);
         }
 
+        [HttpPatch("my-products/{id}/toggle-active")]
+        [Authorize(Roles = "Seller,Admin")]
+        public async Task<IActionResult> ToggleProductActive(Guid id)
+        {
+            var newState = await _mediator.Send(new ToggleProductActiveCommand(id));
+            return Ok(new { isActive = newState });
+        }
+        [HttpGet("my-products/{id}")]
+        [Authorize(Roles = "Seller,Admin")]
+        public async Task<IActionResult> GetProductForEdit(Guid id)
+        {
+            var result = await _mediator.Send(new GetProductByIdQuery(id));
+            return result == null ? NotFound() : Ok(result);
+        }
 
-
+        [HttpGet("featured-products")]
+        public async Task<IActionResult> GetFeaturedProducts()
+        {
+            var result = await _mediator.Send(new GetFeaturedProductsQuery());
+            return Ok(result);
+        }
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetAllCatogories()
+        {
+            var result = await _mediator.Send(new GetAllCategroiesQuery());
+            return Ok(result);
+        }
+        [HttpGet("brands")]
+        public async Task<IActionResult> GetAllBrands()
+        {
+            var result = await _mediator.Send(new GetAllBrandsQuery());
+            return Ok(result);
+        }
+        [HttpGet("categories/{categoryId}/products")]
+        public async Task<IActionResult> GetProductsByCategoryId(Guid categoryId)
+        {
+            var result = await _mediator.Send(new GetProductsByCategoryIdQuery(categoryId));
+            return Ok(result);
+        }
     }
 }

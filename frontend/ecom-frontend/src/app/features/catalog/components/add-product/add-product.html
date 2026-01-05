@@ -34,14 +34,22 @@
 
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
-                    <label class="form-label">Category Name *</label>
-                    <input [(ngModel)]="model.categoryName" name="categoryName" required class="form-control"
-                      placeholder="Smartphones" />
+                    <select class="form-control" (change)="onCategoryChange($event)" [ngModel]="selectedCategoryId" name="categorySelect">
+                      <option value="">Select Category</option>
+                      <option value="new">Add new...</option>
+                      <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+                    </select>
+                    <input *ngIf="showNewCategoryInput" [(ngModel)]="model.categoryName" name="categoryName" class="form-control"
+                      placeholder="New Category Name" />
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label">Brand Name *</label>
-                      <input [(ngModel)]="model.brandName" name="brandName" required class="form-control"
-                        placeholder="Apple" />
+                      <select class="form-control" (change)="onBrandChange($event)" [ngModel]="selectedBrandId" name="brandSelect">
+                        <option value="">Select Brand</option>
+                        <option value="new">Add new...</option>
+                        <option *ngFor="let brand of brands" [value]="brand.id">{{ brand.name }}</option>
+                      </select>
+                      <input *ngIf="showNewBrandInput" [(ngModel)]="model.brandName" name="brandName" class="form-control"
+                        placeholder="New Brand Name" />
                       </div>
                     </div>
 
