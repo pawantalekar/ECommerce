@@ -45,7 +45,7 @@ frontend-build:
   image: node:20
   script:
     - cd frontend/ecom-frontend
-    - npm ci
+    - npm ci --legacy-peer-deps
     - npm run build
   artifacts:
     paths:
