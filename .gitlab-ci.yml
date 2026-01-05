@@ -34,9 +34,7 @@ test:
 publish:
   stage: publish
   script:
-    - dotnet publish backend/src/Ecom.Gateway/Ecom.Gateway.csproj \
-        --configuration $BUILD_CONFIGURATION \
-        --output publish
+    - dotnet publish backend/src/Ecom.Gateway/Ecom.Gateway.csproj --configuration $BUILD_CONFIGURATION --output publish
   artifacts:
     paths:
       - publish/
@@ -47,7 +45,7 @@ frontend-build:
   image: node:20
   script:
     - cd frontend/ecom-frontend
-    - npm ci
+    - npm ci --legacy-peer-deps
     - npm run build
   artifacts:
     paths:
