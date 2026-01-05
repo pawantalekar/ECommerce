@@ -8,6 +8,7 @@ using MockQueryable.Moq;
 using Moq;
 using OrderService.APi.Queries;
 using System.Security.Claims;
+using Xunit;
 
 namespace Ecom.Test.OrderService.Tests
 {

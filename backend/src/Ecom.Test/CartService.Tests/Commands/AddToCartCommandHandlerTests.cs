@@ -7,6 +7,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using System.Security.Claims;
+using Xunit;
 
 namespace Ecom.Test.CartService.Tests.Commands
 {

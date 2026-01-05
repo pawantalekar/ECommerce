@@ -5,6 +5,7 @@ using Ecom.Infrastructure;
 using FluentAssertions;
 using Moq;
 using ReviewService.Api.Queries;
+using Xunit;
 
 namespace Ecom.Test.ReviewService.Tests.Queries
 {

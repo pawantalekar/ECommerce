@@ -9,6 +9,7 @@ using MockQueryable.Moq;
 using Moq;
 using ReviewService.Api.Commands.CreateReview;
 using System.Security.Claims;
+using Xunit;
 
 namespace Ecom.Test.ReviewService.Tests.Commands
 {
