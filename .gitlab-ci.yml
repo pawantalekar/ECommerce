@@ -16,19 +16,30 @@ restore:
   stage: restore
   script:
     - dotnet restore $SOLUTION_FILE
+  artifacts:
+    paths:
+      - backend/src/**/obj/
+      - backend/src/**/bin/
+    expire_in: 1 hour
 
 build:
   stage: build
+  dependencies:
+    - restore
   script:
     - dotnet build $SOLUTION_FILE --configuration $BUILD_CONFIGURATION --no-restore
 
 test:
   stage: test
+  dependencies:
+    - build
   script:
     - dotnet test $SOLUTION_FILE --configuration $BUILD_CONFIGURATION --no-build --no-restore
 
 publish:
   stage: publish
+  dependencies:
+    - build
   script:
     - dotnet publish backend/src/Ecom.Gateway/Ecom.Gateway.csproj --configuration $BUILD_CONFIGURATION --output publish --no-build --no-restore
   artifacts:
