@@ -34,9 +34,7 @@ test:
 publish:
   stage: publish
   script:
-    - dotnet publish backend/src/Ecom.Gateway/Ecom.Gateway.csproj \
-        --configuration $BUILD_CONFIGURATION \
-        --output publish
+    - dotnet publish backend/src/Ecom.Gateway/Ecom.Gateway.csproj --configuration $BUILD_CONFIGURATION --output publish
   artifacts:
     paths:
       - publish/
