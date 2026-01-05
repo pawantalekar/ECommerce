@@ -11,7 +11,11 @@ variables:
   BUILD_CONFIGURATION: "Release"
   SOLUTION_FILE: "backend/src/src.sln"
 
-# ---------------- BACKEND ----------------
+cache:
+  paths:
+    - .nuget/packages/
+
+# -------- BACKEND --------
 restore:
   stage: restore
   script:
@@ -20,28 +24,30 @@ restore:
 build:
   stage: build
   script:
-    - dotnet build $SOLUTION_FILE --configuration $BUILD_CONFIGURATION --no-restore
+    - dotnet build $SOLUTION_FILE --configuration $BUILD_CONFIGURATION
 
 test:
   stage: test
   script:
-    - dotnet test $SOLUTION_FILE --configuration $BUILD_CONFIGURATION --no-build --no-restore
+    - dotnet test $SOLUTION_FILE --configuration $BUILD_CONFIGURATION
 
 publish:
   stage: publish
   script:
-    - dotnet publish backend/src/Ecom.Gateway/Ecom.Gateway.csproj --configuration $BUILD_CONFIGURATION --output publish --no-build --no-restore
+    - dotnet publish backend/src/Ecom.Gateway/Ecom.Gateway.csproj \
+        --configuration $BUILD_CONFIGURATION \
+        --output publish
   artifacts:
     paths:
       - publish/
 
-# ---------------- FRONTEND ----------------
+# -------- FRONTEND --------
 frontend-build:
   stage: frontend-build
   image: node:20
   script:
     - cd frontend/ecom-frontend
-    - npm install
+    - npm ci
     - npm run build
   artifacts:
     paths:

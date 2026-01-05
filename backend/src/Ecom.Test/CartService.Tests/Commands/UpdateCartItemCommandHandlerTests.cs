@@ -6,13 +6,55 @@ using Ecom.Infrastructure;
 using Ecom.Test.ReviewService.Tests.Commands;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using Xunit;
 
-
 namespace Ecom.Test.CartService.Tests.Commands
 {
+    internal class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
+    {
+        private readonly IQueryProvider _inner;
+        public TestAsyncQueryProvider(IQueryProvider inner) { _inner = inner; }
+        public IQueryable CreateQuery(Expression expression) => new TestAsyncEnumerable<TEntity>(expression);
+        public IQueryable<TElement> CreateQuery<TElement>(Expression expression) => new TestAsyncEnumerable<TElement>(expression);
+        public object Execute(Expression expression) => _inner.Execute(expression);
+        public TResult Execute<TResult>(Expression expression) => _inner.Execute<TResult>(expression);
+        public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken = default)
+        {
+            var result = Execute(expression);
+            var taskType = typeof(TResult);
+            if (taskType.IsGenericType && taskType.GetGenericTypeDefinition() == typeof(Task<>))
+            {
+                var resultType = taskType.GetGenericArguments()[0];
+                return (TResult)typeof(Task).GetMethod(nameof(Task.FromResult))!
+                    .MakeGenericMethod(resultType)
+                    .Invoke(null, new[] { result })!;
+            }
+            return (TResult)(object)Task.FromResult(result);
+        }
+    }
+
+    internal class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
+    {
+        public TestAsyncEnumerable(IEnumerable<T> enumerable) : base(enumerable) { }
+        public TestAsyncEnumerable(Expression expression) : base(expression) { }
+        public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default) => new TestAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
+        IQueryProvider IQueryable.Provider => new TestAsyncQueryProvider<T>(this);
+    }
+
+    internal class TestAsyncEnumerator<T> : IAsyncEnumerator<T>
+    {
+        private readonly IEnumerator<T> _inner;
+        public TestAsyncEnumerator(IEnumerator<T> inner) { _inner = inner; }
+        public T Current => _inner.Current;
+        public ValueTask DisposeAsync() { _inner.Dispose(); return ValueTask.CompletedTask; }
+        public ValueTask<bool> MoveNextAsync() => new ValueTask<bool>(_inner.MoveNext());
+    }
+
     public class UpdateCartItemCommandHandlerTests
     {
         private readonly Fixture fixture = new();
@@ -58,9 +100,19 @@ namespace Ecom.Test.CartService.Tests.Commands
             cartRepo.Setup(r => r.GetByUserIdWithItemsAsync(userId))
                     .ReturnsAsync(cart);
 
-            var products = new List<Product> { product };
-            var productsDbSet = products.BuildMockDbSet();
-            db.Setup(d => d.Products).Returns(productsDbSet.Object);
+            // Manually mock DbSet<Product> with async support
+            var products = new List<Product> { product }.AsQueryable();
+            var mockSet = new Mock<DbSet<Product>>();
+            mockSet.As<IAsyncEnumerable<Product>>()
+                .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
+                .Returns(new TestAsyncEnumerator<Product>(products.GetEnumerator()));
+            mockSet.As<IQueryable<Product>>()
+                .Setup(m => m.Provider)
+                .Returns(new TestAsyncQueryProvider<Product>(products.Provider));
+            mockSet.As<IQueryable<Product>>().Setup(m => m.Expression).Returns(products.Expression);
+            mockSet.As<IQueryable<Product>>().Setup(m => m.ElementType).Returns(products.ElementType);
+            mockSet.As<IQueryable<Product>>().Setup(m => m.GetEnumerator()).Returns(products.GetEnumerator());
+            db.Setup(d => d.Products).Returns(mockSet.Object);
 
             cartRepo.Setup(r => r.UpdateAsync(It.IsAny<Cart>())).Returns(Task.CompletedTask);
 
@@ -109,7 +161,19 @@ namespace Ecom.Test.CartService.Tests.Commands
                 .Create();
 
             cartRepo.Setup(r => r.GetByUserIdWithItemsAsync(userId)).ReturnsAsync(cart);
-            db.Setup(d => d.Products).Returns(new List<Product>().BuildMockDbSet().Object);
+            // Mock empty DbSet<Product> with async support
+            var emptyProducts = new List<Product>().AsQueryable();
+            var mockSet = new Mock<DbSet<Product>>();
+            mockSet.As<IAsyncEnumerable<Product>>()
+                .Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
+                .Returns(new TestAsyncEnumerator<Product>(emptyProducts.GetEnumerator()));
+            mockSet.As<IQueryable<Product>>()
+                .Setup(m => m.Provider)
+                .Returns(new TestAsyncQueryProvider<Product>(emptyProducts.Provider));
+            mockSet.As<IQueryable<Product>>().Setup(m => m.Expression).Returns(emptyProducts.Expression);
+            mockSet.As<IQueryable<Product>>().Setup(m => m.ElementType).Returns(emptyProducts.ElementType);
+            mockSet.As<IQueryable<Product>>().Setup(m => m.GetEnumerator()).Returns(emptyProducts.GetEnumerator());
+            db.Setup(d => d.Products).Returns(mockSet.Object);
 
             var command = new UpdateCartItemCommand { ProductId = productId, Quantity = 1 };
 
