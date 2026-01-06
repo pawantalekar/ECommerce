@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MessageService } from 'primeng/api';
 import { ProfileDetails } from './profile-details';
 
 describe('ProfileDetails', () => {
@@ -8,9 +9,10 @@ describe('ProfileDetails', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProfileDetails]
+      imports: [ProfileDetails, HttpClientTestingModule],
+      providers: [MessageService]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ProfileDetails);
     component = fixture.componentInstance;

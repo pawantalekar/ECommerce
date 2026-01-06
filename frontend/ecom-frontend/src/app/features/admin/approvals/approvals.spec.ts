@@ -101,14 +101,18 @@ describe('ApprovalsComponent', () => {
       }, 0);
     });
 
-    it('should handle seller requests error silently', (done) => {
+    it('should load seller requests', (done) => {
+      const mockRequests: SellerRequest[] = [
+        { id: '1', userId: 'u1' } as SellerRequest
+      ];
       serviceSpy.getPendingReviews.and.returnValue(of([]));
-      serviceSpy.getPendingSellerRequests.and.returnValue(throwError(() => new Error()));
+      serviceSpy.getPendingSellerRequests.and.returnValue(of(mockRequests));
 
       component.loadData();
 
       setTimeout(() => {
         expect(serviceSpy.getPendingSellerRequests).toHaveBeenCalled();
+        expect(component.pendingRequests).toEqual(mockRequests);
         done();
       }, 0);
     });
