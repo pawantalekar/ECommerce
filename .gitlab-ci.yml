@@ -63,7 +63,7 @@ frontend-test:
     - export CHROME_BIN=/usr/bin/google-chrome
     - cd frontend/ecom-frontend
     - npm ci --legacy-peer-deps
-    - npm run test -- --watch=false --browsers=ChromeHeadless
+    - npm run test -- --watch=false --browsers=ChromeHeadless --no-sandbox
   artifacts:
     paths:
       - frontend/ecom-frontend/coverage/
