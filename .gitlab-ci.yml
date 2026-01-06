@@ -56,7 +56,7 @@ frontend-test:
   script:
     - cd frontend/ecom-frontend
     - npm ci --legacy-peer-deps
-    - npm run test -- --watch=false --browsers=ChromeHeadless --no-sandbox
+    - npm run test -- --watch=false 
   artifacts:
     paths:
       - frontend/ecom-frontend/coverage/
