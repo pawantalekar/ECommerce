@@ -6,6 +6,7 @@ stages:
   - test
   - publish
   - frontend-lint
+  - frontend-test
   - frontend-build
 
 variables:
@@ -48,6 +49,17 @@ frontend-lint:
     - cd frontend/ecom-frontend
     - npm ci --legacy-peer-deps
     - npm run lint
+
+frontend-test:
+  stage: frontend-test
+  image: node:20
+  script:
+    - cd frontend/ecom-frontend
+    - npm ci --legacy-peer-deps
+    - npm run test -- --watch=false --browsers=ChromeHeadless
+  artifacts:
+    paths:
+      - frontend/ecom-frontend/coverage/
 
 frontend-build:
   stage: frontend-build
