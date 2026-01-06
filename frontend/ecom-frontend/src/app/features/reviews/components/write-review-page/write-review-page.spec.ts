@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { WriteReviewPageComponent } from './write-review-page';
-import { ActivatedRoute, provideRouter, Router } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { ReviewService } from '../../services/review-service';
 import { of, throwError } from 'rxjs';
 import { Review } from '../../models/review.model';
@@ -30,23 +30,18 @@ describe('WriteReviewPageComponent', () => {
       'updateReview',
       'deleteReview'
     ]);
-    const mockActivatedRoute = {
-      snapshot: {
-        paramMap: {
-          get: (key: string) => key === 'productId' ? 'prod-1' : null
-        },
-        queryParamMap: {
-          get: (key: string) => key === 'productId' ? 'prod-1' : null
-        }
-      }
-    };
+
+    // Mock history.state
+    Object.defineProperty(window.history, 'state', {
+      writable: true,
+      value: { productId: 'prod-1' }
+    });
+
     await TestBed.configureTestingModule({
       imports: [WriteReviewPageComponent, HttpClientTestingModule],
       providers: [
         provideRouter([]),
-        { provide: ReviewService, useValue: reviewServiceSpy },
-        { provide: ActivatedRoute, useValue: mockActivatedRoute }
-
+        { provide: ReviewService, useValue: reviewServiceSpy }
       ]
     })
       .compileComponents();
@@ -67,8 +62,14 @@ describe('WriteReviewPageComponent', () => {
     it('should navigate to home if no productId is provided', () => {
       spyOn(window, 'alert');
       spyOn(router, 'navigate');
-      component.productId = '';
 
+      // Override history.state to have no productId
+      Object.defineProperty(window.history, 'state', {
+        writable: true,
+        value: {}
+      });
+
+      component.productId = '';
       component.ngOnInit();
 
       expect(window.alert).toHaveBeenCalledWith('No product selected for review');
@@ -129,10 +130,10 @@ describe('WriteReviewPageComponent', () => {
 
       component.submit();
 
-      expect(reviewService.updateReview).toHaveBeenCalledWith('review-1', {
+      expect(reviewService.updateReview).toHaveBeenCalledWith('review-1', jasmine.objectContaining({
         rating: 3,
         comment: 'Updated'
-      });
+      }));
       expect(router.navigate).toHaveBeenCalledWith(['/']);
     });
 
