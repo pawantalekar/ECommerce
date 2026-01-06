@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Catalog } from '../../services/catalog';
@@ -16,11 +16,11 @@ import { BreadcrumbService } from '../../../shared/breadcrumb/breadcrumb.service
   imports: [CommonModule, RouterModule, AddToCartButtonComponent],
   templateUrl: './product-detail.html'
 })
-export class ProductDetail implements OnInit {
+export class ProductDetail implements OnInit, OnDestroy {
   product: Product | null = null;
   loading = true;
   error: string | null = null;
-  primaryImage: string = 'https://via.placeholder.com/500';
+  primaryImage = 'https://via.placeholder.com/500';
 
   private route = inject(ActivatedRoute);
   private catalog = inject(Catalog);
