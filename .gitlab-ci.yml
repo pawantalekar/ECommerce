@@ -5,6 +5,7 @@ stages:
   - build
   - test
   - publish
+  - frontend-lint
   - frontend-build
 
 variables:
@@ -40,6 +41,14 @@ publish:
       - publish/
 
 # -------- FRONTEND --------
+frontend-lint:
+  stage: frontend-lint
+  image: node:20
+  script:
+    - cd frontend/ecom-frontend
+    - npm ci --legacy-peer-deps
+    - npm run lint
+
 frontend-build:
   stage: frontend-build
   image: node:20
