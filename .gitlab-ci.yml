@@ -42,7 +42,7 @@ publish:
 
 # -------- FRONTEND --------
 frontend-lint:
-  stage: lint
+  stage: frontend-lint
   image: node:20
   script:
     - cd frontend/ecom-frontend
