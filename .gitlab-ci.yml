@@ -33,17 +33,17 @@ restore:
 build:
   stage: build
   script:
-    - dotnet build $SOLUTION_FILE --configuration $BUILD_CONFIGURATION
+    - dotnet build $SOLUTION_FILE --configuration $BUILD_CONFIGURATION --no-restore
 
 test:
   stage: test
   script:
-    - dotnet test $SOLUTION_FILE --configuration $BUILD_CONFIGURATION
+    - dotnet test $SOLUTION_FILE --configuration $BUILD_CONFIGURATION --no-restore
 
 publish:
   stage: publish
   script:
-    - dotnet publish backend/src/Ecom.Gateway/Ecom.Gateway.csproj --configuration $BUILD_CONFIGURATION --output publish
+    - dotnet publish backend/src/Ecom.Gateway/Ecom.Gateway.csproj --configuration $BUILD_CONFIGURATION --output publish --no-restore
   artifacts:
     paths:
       - publish/
