@@ -14,8 +14,15 @@ variables:
   SOLUTION_FILE: "backend/src/src.sln"
 
 cache:
+  key:
+    files:
+      - backend/src/src.sln
+      - frontend/ecom-frontend/package-lock.json
   paths:
     - .nuget/packages/
+    - frontend/ecom-frontend/node_modules/
+    - frontend/ecom-frontend/.angular/cache/
+  policy: pull-push
 
 # -------- BACKEND --------
 restore:
