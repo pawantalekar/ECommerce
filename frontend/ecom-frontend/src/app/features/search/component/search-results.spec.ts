@@ -5,12 +5,14 @@ import { provideRouter } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { ProductSearchService } from '../services/product-search.service';
 
 describe('SearchResults', () => {
   let component: SearchResults;
   let fixture: ComponentFixture<SearchResults>;
   let httpMock: HttpTestingController;
   let activatedRoute: ActivatedRoute;
+  let searchService: ProductSearchService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -31,6 +33,7 @@ describe('SearchResults', () => {
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
     activatedRoute = TestBed.inject(ActivatedRoute);
+    searchService = TestBed.inject(ProductSearchService);
   });
 
   afterEach(() => {
@@ -42,22 +45,26 @@ describe('SearchResults', () => {
   });
 
   describe('ngOnInit', () => {
-    it('should perform search when query parameter is provided', () => {
+    it('should perform search when query parameter is provided', (done) => {
       fixture.detectChanges();
 
-      const req = httpMock.expectOne(`${environment.apiBaseUrl}/catalog/search?q=laptop`);
+      const req = httpMock.expectOne(`${environment.apiBaseUrl}/search?q=laptop`);
       expect(req.request.method).toBe('GET');
       expect(component.query).toBe('laptop');
-      expect(component.loading).toBe(true);
 
-      req.flush({ hits: [{ id: '1', name: 'Laptop' }], found: 1 });
+      req.flush({ products: [{ id: '1', name: 'Laptop' }], totalCount: 1 });
 
-      expect(component.products).toEqual([{ id: '1', name: 'Laptop' }]);
-      expect(component.total).toBe(1);
-      expect(component.loading).toBe(false);
+      component.result$.subscribe(result => {
+        if (result) {
+          expect(result.products.length).toBe(1);
+          expect(result.products[0]).toEqual(jasmine.objectContaining({ id: '1', name: 'Laptop' }));
+          expect(result.totalCount).toBe(1);
+          done();
+        }
+      });
     });
 
-    it('should not search when query parameter is empty', () => {
+    it('should not search when query parameter is empty', (done) => {
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
         imports: [SearchResults, HttpClientTestingModule],
@@ -71,11 +78,19 @@ describe('SearchResults', () => {
       });
       fixture = TestBed.createComponent(SearchResults);
       component = fixture.componentInstance;
+      searchService = TestBed.inject(ProductSearchService);
 
       fixture.detectChanges();
 
-      httpMock.expectNone(`${environment.apiBaseUrl}/catalog/search?q=`);
-      expect(component.loading).toBe(false);
+      httpMock.expectNone(`${environment.apiBaseUrl}/search?q=`);
+
+      component.result$.subscribe(result => {
+        if (result !== null) {
+          expect(result.products).toEqual([]);
+          expect(result.totalCount).toBe(0);
+          done();
+        }
+      });
     });
 
     it('should trim whitespace from query parameter', () => {
@@ -96,22 +111,26 @@ describe('SearchResults', () => {
 
       fixture.detectChanges();
 
-      const req = newHttpMock.expectOne(`${environment.apiBaseUrl}/catalog/search?q=laptop`);
-      req.flush({ hits: [], found: 0 });
+      const req = newHttpMock.expectOne(`${environment.apiBaseUrl}/search?q=laptop`);
+      req.flush({ products: [], totalCount: 0 });
       expect(component.query).toBe('laptop');
 
       newHttpMock.verify();
     });
 
-    it('should handle search errors gracefully', () => {
+    it('should handle search errors gracefully', (done) => {
       fixture.detectChanges();
 
-      const req = httpMock.expectOne(`${environment.apiBaseUrl}/catalog/search?q=laptop`);
+      const req = httpMock.expectOne(`${environment.apiBaseUrl}/search?q=laptop`);
       req.flush('Error', { status: 500, statusText: 'Server Error' });
 
-      expect(component.products).toEqual([]);
-      expect(component.total).toBe(0);
-      expect(component.loading).toBe(false);
+      component.result$.subscribe(result => {
+        if (result !== null) {
+          expect(result.products).toEqual([]);
+          expect(result.totalCount).toBe(0);
+          done();
+        }
+      });
     });
 
     it('should handle missing query parameter', () => {
@@ -131,9 +150,8 @@ describe('SearchResults', () => {
 
       fixture.detectChanges();
 
-      httpMock.expectNone(`${environment.apiBaseUrl}/catalog/search`);
+      httpMock.expectNone(`${environment.apiBaseUrl}/search`);
       expect(component.query).toBe('');
-      expect(component.loading).toBe(false);
     });
   });
 });
