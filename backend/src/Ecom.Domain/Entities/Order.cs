@@ -38,6 +38,6 @@ public partial class Order
     public DateTime CreatedAt { get; set; }
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
-
+    public virtual ICollection<OrderStatusHistory> StatusHistory { get; set; } = new List<OrderStatusHistory>();
     public virtual User User { get; set; } = null!;
 }

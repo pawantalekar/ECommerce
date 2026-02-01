@@ -1,15 +1,20 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Table, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { DropdownModule } from 'primeng/dropdown';
+import { TooltipModule } from 'primeng/tooltip';
 import { AdminApprovalService } from './services/admin-approval';
 import { PendingReview } from './models/pending-review.model';
 import { SellerRequest } from './models/seller-request.model';
+import { AdminOrderService } from '../admin-order-management.component/services/admin-order.service';
+import { AdminOrder } from '../admin-order-management.component/models/admin-order.model';
 import { FormsModule } from '@angular/forms';
+import { AdminOrderManagementComponent } from '../admin-order-management.component/admin-order-management.component';
 
 @Component({
   selector: 'app-approvals',
@@ -22,7 +27,9 @@ import { FormsModule } from '@angular/forms';
     IconFieldModule,
     InputIconModule,
     DropdownModule,
-    FormsModule
+    TooltipModule,
+    FormsModule,
+    AdminOrderManagementComponent
   ],
   templateUrl: './approvals.html',
   styleUrls: ['./approvals.css']
@@ -37,6 +44,7 @@ export class ApprovalsComponent implements OnInit {
   loading = true;
 
   private service = inject(AdminApprovalService);
+  private router = inject(Router);
 
   ngOnInit() {
     this.loadData();

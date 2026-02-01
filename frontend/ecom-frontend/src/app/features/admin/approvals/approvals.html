@@ -1,8 +1,8 @@
 <!-- eslint-disable @angular-eslint/template/elements-content -->
-<div class="admin-approvals p-6 max-w-7xl mx-auto">
-  <h1 class="text-3xl font-bold mb-6">Admin Approval Dashboard</h1>
+<div class="admin-approvals w-full" [class.p-6]="activeTab !== 'orders'">
+  <h1 class="text-3xl font-bold mb-6" [class.px-6]="activeTab === 'orders'">Admin Approval Dashboard</h1>
 
-  <div class="tabs mb-6 flex border-b">
+  <div class="tabs mb-6 flex border-b" [class.px-6]="activeTab === 'orders'">
     <button (click)="activeTab = 'reviews'" [class.border-primary]="activeTab === 'reviews'"
       [class.text-primary]="activeTab === 'reviews'" class="px-6 py-3 font-medium border-b-2 transition-colors">
       Pending Reviews ({{ pendingReviews.length }})
@@ -10,6 +10,10 @@
     <button (click)="activeTab = 'requests'" [class.border-primary]="activeTab === 'requests'"
       [class.text-primary]="activeTab === 'requests'" class="px-6 py-3 font-medium border-b-2 transition-colors">
       Seller Requests ({{ pendingRequests.length }})
+    </button>
+    <button (click)="activeTab = 'orders'" [class.border-primary]="activeTab === 'orders'"
+      [class.text-primary]="activeTab === 'orders'" class="px-6 py-3 font-medium border-b-2 transition-colors">
+      Order Management
     </button>
   </div>
 
@@ -58,10 +62,10 @@
           </td>
           <td style="word-wrap: break-word;">{{ review.createdAt | date:'medium' }}</td>
           <td style="white-space: nowrap;">
-            <button pButton icon="pi pi-check" class="p-button-success p-button-sm" style="margin-right: 0.5rem;"
+            <button pButton icon="pi pi-check" class="p-button-rounded p-button-sm action-btn-success mr-2"
               (click)="approveReview(review.id)" label="Approve"></button>
-            <button pButton icon="pi pi-times" class="p-button-danger p-button-sm" (click)="rejectReview(review.id)"
-              label="Reject"></button>
+            <button pButton icon="pi pi-times" class="p-button-rounded p-button-sm action-btn-danger"
+              (click)="rejectReview(review.id)" label="Reject"></button>
           </td>
         </tr>
       </ng-template>
@@ -111,10 +115,10 @@
           <td style="word-wrap: break-word; overflow-wrap: break-word;">{{ request.userEmail }}</td>
           <td style="word-wrap: break-word;">{{ request.requestedAt | date:'medium' }}</td>
           <td style="white-space: nowrap;">
-            <button pButton icon="pi pi-check" class="p-button-success p-button-sm" style="margin-right: 0.5rem;"
+            <button pButton icon="pi pi-check" class="p-button-rounded p-button-sm action-btn-success mr-2"
               (click)="approveSeller(request.id)" label="Approve"></button>
-            <button pButton icon="pi pi-times" class="p-button-danger p-button-sm" (click)="rejectSeller(request.id)"
-              label="Reject"></button>
+            <button pButton icon="pi pi-times" class="p-button-rounded p-button-sm action-btn-danger"
+              (click)="rejectSeller(request.id)" label="Reject"></button>
           </td>
         </tr>
       </ng-template>
@@ -128,5 +132,9 @@
       </ng-template>
     </p-table>
   </div>
+  }
+
+  @if (activeTab === 'orders') {
+  <app-admin-order-management></app-admin-order-management>
   }
 </div>
