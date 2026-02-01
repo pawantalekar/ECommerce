@@ -26,6 +26,7 @@ namespace OrderService.APi.Queries
 
             var order = await _context.Orders
                 .AsNoTracking()
+                .Include(o => o.StatusHistory)
                 .Where(o => o.Id == request.OrderId && o.UserId == userId)
                 .Select(o => new OrderDto(
                     o.Id,
@@ -51,7 +52,13 @@ namespace OrderService.APi.Queries
                         o.ShippingPincode,
                         o.ShippingAddressType,
                         o.ShippingCountry
-                    )
+                    ),
+                    o.StatusHistory.OrderBy(sh => sh.ChangedAt)
+                        .Select(sh => new OrderStatusHistoryDto(
+                            sh.Status,
+                            sh.ChangedAt,
+                            sh.Notes
+                        )).ToList()
                 ))
                 .FirstOrDefaultAsync(ct);
 

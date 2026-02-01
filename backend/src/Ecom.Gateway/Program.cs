@@ -1,4 +1,5 @@
 using AuthService.Api.Queries;
+using AuthService.Api.Queries.GetOrders;
 using CartService.Api.Commands.AddToCart;
 using CatalogService.Api.Commands.AddProduct;
 using CatalogService.Api.Queries;
@@ -6,6 +7,7 @@ using Ecom.Application.AuthService.Application.Interfaces;
 using Ecom.Application.CartService.Application.Interfaces;
 using Ecom.Application.CatalogService.Application.Interfaces;
 using Ecom.Application.Commands.InitiatePayment;
+using Ecom.Application.OrderService.Application.Interfaces;
 using Ecom.Application.ReviewService.Application.Interfaces;
 using Ecom.Infrastructure;
 using Ecom.Infrastructure.Repository;
@@ -59,7 +61,8 @@ namespace Ecom.Gateway
                 typeof(GetMyOrdersQuery).Assembly,
                 typeof(CanReviewProductQueryHandler).Assembly,
                 typeof(GetCurrentUserRoleQueryHandler).Assembly,
-                typeof(SearchProductsQueryHandler).Assembly
+                typeof(SearchProductsQueryHandler).Assembly,
+                typeof(GetAllOrdersForAdminQueryHandler).Assembly
                  )
              );
 
@@ -75,6 +78,7 @@ namespace Ecom.Gateway
             builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
             //AutoMapper
             builder.Services.AddAutoMapper(cfg => { }, AppDomain.CurrentDomain.GetAssemblies());

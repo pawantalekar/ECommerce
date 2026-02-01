@@ -1,0 +1,205 @@
+<!-- eslint-disable @angular-eslint/template/elements-content -->
+<div class="admin-order-management">
+  <div>
+    <div class="card">
+      <!-- Header -->
+      <div class="card-header">
+        <div>
+          <h4 class="mb-1">Order Management</h4>
+          <p class="text-muted small mb-0">Manage and track all customer orders</p>
+        </div>
+        <div>
+          <span class="badge badge-info">{{ totalRecords }} Total Orders</span>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Search and Filters -->
+        <div class="mb-3 d-flex gap-3 align-items-center flex-wrap" *ngIf="!loading">
+          <div style="flex: 0 0 auto; width: 350px;">
+            <span class="p-input-icon-left w-100">
+              <i class="pi pi-search"></i>
+              <input type="text" pInputText [(ngModel)]="searchTerm" (keyup.enter)="onSearch()"
+                placeholder="Search by order number, customer..." class="w-100" style="padding-left: 2.5rem;" />
+            </span>
+          </div>
+          <div style="flex: 0 0 auto; width: 200px;">
+            <p-calendar [(ngModel)]="fromDate" placeholder="From Date" dateFormat="dd/mm/yy" [showIcon]="true"
+              [showButtonBar]="true" appendTo="body" (ngModelChange)="onFilterChange()" styleClass="w-100"></p-calendar>
+          </div>
+          <div style="flex: 0 0 auto; width: 200px;">
+            <p-calendar [(ngModel)]="toDate" placeholder="To Date" dateFormat="dd/mm/yy" [showIcon]="true"
+              [showButtonBar]="true" appendTo="body" (ngModelChange)="onFilterChange()" styleClass="w-100"></p-calendar>
+          </div>
+          <button pButton type="button" label="Search" icon="pi pi-search" (click)="onSearch()"
+            class="p-button-primary"></button>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="loading" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-3 text-muted">Loading orders...</p>
+        </div>
+
+        <!-- Orders Table -->
+        <div *ngIf="!loading">
+          <p-table #dt [value]="orders" dataKey="orderNumber" styleClass="p-datatable-sm" [lazy]="true"
+            [paginator]="true" [rows]="pageSize" [totalRecords]="totalRecords" [(first)]="first"
+            (onPage)="onPageChange($event)" [rowsPerPageOptions]="[10, 20, 50, 100]" [showCurrentPageReport]="true"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} orders"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} orders"
+            [tableStyle]="{'width': '100%'}" [scrollable]="false">
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="orderNumber">
+                  ORDER NUMBER
+                  <p-sortIcon field="orderNumber"></p-sortIcon>
+                </th>
+                <th pSortableColumn="customerName">
+                  CUSTOMER
+                  <p-sortIcon field="customerName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="email">
+                  EMAIL
+                  <p-sortIcon field="email"></p-sortIcon>
+                </th>
+                <th pSortableColumn="createdAt">
+                  ORDER DATE
+                  <p-sortIcon field="createdAt"></p-sortIcon>
+                </th>
+                <th pSortableColumn="totalAmount" class="text-end">
+                  TOTAL AMOUNT
+                  <p-sortIcon field="totalAmount"></p-sortIcon>
+                </th>
+                <th class="text-center">
+                  <div class="header-with-filter">
+                    <div class="header-label">ORDER STATUS</div>
+                    <div class="header-filter">
+                      <p-multiSelect [options]="orderStatuses" optionLabel="label" optionValue="value" placeholder="Any"
+                        [style]="{'width': '100%', 'min-width': '150px'}" [maxSelectedLabels]="0"
+                        selectedItemsLabel="{0}" [(ngModel)]="selectedOrderStatuses" (ngModelChange)="onFilterChange()"
+                        [showClear]="true" appendTo="body">
+                      </p-multiSelect>
+                    </div>
+                  </div>
+                </th>
+                <th class="text-center">
+                  <div class="header-with-filter">
+                    <div class="header-label">PAYMENT STATUS</div>
+                    <div class="header-filter">
+                      <p-multiSelect [options]="paymentStatuses" optionLabel="label" optionValue="value"
+                        placeholder="Any" [style]="{'width': '100%', 'min-width': '150px'}" [maxSelectedLabels]="0"
+                        selectedItemsLabel="{0}" [(ngModel)]="selectedPaymentStatus" (ngModelChange)="onFilterChange()"
+                        [showClear]="true" appendTo="body">
+                      </p-multiSelect>
+                    </div>
+                  </div>
+                </th>
+                <th class="text-center">ACTIONS</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-order>
+              <tr>
+                <td>
+                  <span class="font-medium text-gray-900">{{ order.orderNumber }}</span>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="avatar-circle me-2">
+                      {{ order.customerName.charAt(0) }}
+                    </div>
+                    <span>{{ order.customerName }}</span>
+                  </div>
+                </td>
+                <td>
+                  <small class="text-muted">{{ order.email }}</small>
+                </td>
+                <td>
+                  <div>{{ formatDate(order.createdAt) }}</div>
+                </td>
+                <td class="text-end">
+                  <strong>{{ formatAmount(order.totalAmount) }}</strong>
+                </td>
+                <td class="text-center">
+                  <span class="badge {{ getOrderStatusClass(order.orderStatus) }}">
+                    {{ order.orderStatus }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <span class="badge {{ getPaymentStatusClass(order.paymentStatus) }}">
+                    {{ order.paymentStatus }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <button pButton type="button" icon="pi pi-pencil" class="p-button-sm p-button-text p-button-rounded"
+                    (click)="openStatusDialog(order)" pTooltip="Update Status" tooltipPosition="top">
+                  </button>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="8" class="text-center py-5">
+                  <i class="bi bi-inbox" style="font-size: 4rem; color: #ddd;"></i>
+                  <h5 class="mt-3 text-muted">No orders found</h5>
+                  <p class="text-muted">Try adjusting your filters or search criteria</p>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Status Update Dialog -->
+<p-dialog [(visible)]="showStatusDialog" [modal]="true" [closable]="true" [style]="{width: '500px'}"
+  header="Update Order Status" (onHide)="closeStatusDialog()">
+
+  <div class="dialog-content" *ngIf="selectedOrder">
+    <div class="mb-3">
+      <label class="form-label fw-bold">Order Number</label>
+      <p class="text-muted">{{ selectedOrder.orderNumber }}</p>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-bold">Current Status</label>
+      <p>
+        <span class="badge {{ getOrderStatusClass(selectedOrder.orderStatus) }}">
+          {{ selectedOrder.orderStatus }}
+        </span>
+      </p>
+    </div>
+
+    <div class="mb-3">
+      <label for="newStatus" class="form-label fw-bold">New Status <span class="text-danger">*</span></label>
+      <p-dropdown id="newStatus" [(ngModel)]="newStatus" [options]="availableStatuses" optionLabel="label"
+        optionValue="value" placeholder="Select new status" [style]="{'width': '100%'}" appendTo="body">
+      </p-dropdown>
+    </div>
+
+    <div class="mb-3">
+      <label for="statusNotes" class="form-label fw-bold">Notes (Optional)</label>
+      <textarea id="statusNotes" pInputTextarea [(ngModel)]="statusNotes" rows="3"
+        placeholder="Enter tracking number, reason, or additional notes..." class="w-100" [style]="{'width': '100%'}">
+      </textarea>
+      <small class="text-muted">e.g., Tracking: ABC123456</small>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Cancel" class="p-button-text" (click)="closeStatusDialog()"
+      [disabled]="updatingStatus">
+    </button>
+    <button pButton type="button" label="Update Status" icon="pi pi-check" class="p-button-primary"
+      (click)="updateOrderStatus()" [loading]="updatingStatus"
+      [disabled]="!newStatus || newStatus === selectedOrder?.orderStatus">
+    </button>
+  </ng-template>
+</p-dialog>
+
+<!-- Toast for notifications -->
+<p-toast></p-toast>

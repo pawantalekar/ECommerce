@@ -14,6 +14,13 @@ namespace Ecom.Application.OrderService.Application.DTO
         string OrderStatus,
         DateTime CreatedAt,
         List<OrderItemDto> Items,
-        ShippingAddressDto ShippingAddress
+        ShippingAddressDto ShippingAddress,
+        List<OrderStatusHistoryDto>? StatusHistory = null
+    );
+
+    public record OrderStatusHistoryDto(
+        string Status,
+        DateTime ChangedAt,
+        string? Notes
     );
 }

@@ -35,6 +35,7 @@ namespace Ecom.Infrastructure
         public virtual DbSet<UserProfile> UserProfiles { get; set; }
         public virtual DbSet<Address> Addresses { get; set; }
 
+        public virtual DbSet<OrderStatusHistory> OrderStatusHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -391,6 +392,32 @@ namespace Ecom.Infrastructure
                 entity.Property(e => e.Phone).HasMaxLength(15);
                 entity.Property(e => e.Pincode).HasMaxLength(20);
                 entity.Property(e => e.State).HasMaxLength(100);
+            });
+
+            //OrderHistory
+            modelBuilder.Entity<OrderStatusHistory>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PK__OrderSta__3214EC07DC8DE396");
+
+                entity.ToTable("OrderStatusHistory");
+
+                entity.HasIndex(e => e.ChangedAt, "IX_OrderStatusHistory_ChangedAt").IsDescending();
+
+                entity.HasIndex(e => e.ChangedByUserId, "IX_OrderStatusHistory_ChangedByUserId");
+
+                entity.HasIndex(e => e.OrderId, "IX_OrderStatusHistory_OrderId");
+
+                entity.HasIndex(e => e.Status, "IX_OrderStatusHistory_Status");
+
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.ChangedAt).HasDefaultValueSql("(getutcdate())");
+                entity.Property(e => e.Notes).HasMaxLength(500);
+                entity.Property(e => e.Status).HasMaxLength(50);
+
+                entity.HasOne(e => e.Order).WithMany(o => o.StatusHistory).HasForeignKey(e => e.OrderId).OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne<User>().WithMany().HasForeignKey(e => e.ChangedByUserId).OnDelete(DeleteBehavior.NoAction);
+
             });
 
             OnModelCreatingPartial(modelBuilder);
