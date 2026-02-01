@@ -1,0 +1,113 @@
+/* reuse main admin styles for consistency */
+.card {
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    box-shadow: none !important;
+    background: #fff;
+}
+
+/* Search Input */
+::ng-deep .p-input-icon-left i {
+    color: #9ca3af;
+}
+
+::ng-deep input[type="text"] {
+    font-size: 0.875rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-color: #e5e7eb;
+    border-radius: 6px;
+}
+
+::ng-deep input[type="text"]:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+}
+
+/* Table Styles - Compact & Professional */
+::ng-deep .p-datatable .p-datatable-thead>tr>th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+}
+
+::ng-deep .p-datatable .p-datatable-tbody>tr>td {
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+    white-space: normal;
+    word-break: break-word;
+}
+
+::ng-deep .p-datatable .p-datatable-tbody>tr:last-child>td {
+    border-bottom: none;
+}
+
+/* Pagination */
+::ng-deep .p-paginator {
+    border: none;
+    padding: 0.5rem;
+}
+
+::ng-deep .p-paginator .p-paginator-element {
+    font-size: 0.8125rem;
+    min-width: 2rem;
+    height: 2rem;
+    border-radius: 4px;
+}
+
+::ng-deep .p-paginator .p-dropdown {
+    height: 2rem;
+    align-items: center;
+    border-radius: 6px;
+    border-color: #e5e7eb;
+}
+
+/* Action Buttons - Aesthetic */
+::ng-deep .action-btn-success.p-button {
+    background-color: #ecfdf5;
+    color: #059669;
+    border: 1px solid transparent;
+    font-weight: 500;
+    padding: 0.3rem 0.75rem;
+    height: auto;
+    transition: all 0.2s;
+}
+
+::ng-deep .action-btn-success.p-button:hover {
+    background-color: #d1fae5;
+    color: #047857;
+    border-color: #a7f3d0;
+}
+
+::ng-deep .action-btn-danger.p-button {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border: 1px solid transparent;
+    font-weight: 500;
+    padding: 0.3rem 0.75rem;
+    height: auto;
+    transition: all 0.2s;
+}
+
+::ng-deep .action-btn-danger.p-button:hover {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border-color: #fecaca;
+}
+
+::ng-deep .p-button .p-button-icon {
+    font-size: 0.75rem;
+}
+
+::ng-deep .p-button.p-button-sm .p-button-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+}

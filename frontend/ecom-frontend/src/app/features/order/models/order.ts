@@ -23,6 +23,12 @@ export interface OrderItem {
     quantity: number;
 }
 
+export interface OrderStatusHistory {
+    status: string;
+    changedAt: Date;
+    notes?: string;
+}
+
 export interface Order {
     id: string;
     orderNumber: string;
@@ -32,5 +38,5 @@ export interface Order {
     createdAt: Date;
     items: OrderItem[];
     shippingAddress: ShippingAddress;
-
+    statusHistory?: OrderStatusHistory[];
 }

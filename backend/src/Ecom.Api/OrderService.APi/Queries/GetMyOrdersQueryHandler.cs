@@ -51,8 +51,8 @@ namespace Ecom.Application.Queries
                         o.ShippingPincode,
                         o.ShippingAddressType,
                         o.ShippingCountry
-
-                    )
+                    ),
+                    null
                 ))
                 .ToListAsync(ct);
         }
