@@ -10,22 +10,23 @@ import { environment } from '../../../../environments/environment';
   selector: 'app-navbar',
   standalone: true,
   imports: [RouterModule, CommonModule, FormsModule],
-  templateUrl: './navbar.html'
+  templateUrl: './navbar.html',
+  styleUrl: './navbar.css'
 })
-export class Navbar implements  OnInit {
+export class Navbar implements OnInit {
   isLoggedIn = false;
   userRole = 'User';
   searchTerm = '';
-  cartCount = 3; 
+  cartCount = 3;
 
-  constructor(public auth: AuthService, private router: Router,private http: HttpClient) {
-   
+  constructor(public auth: AuthService, private router: Router, private http: HttpClient) {
+
     this.auth.user$.subscribe(user => {
       this.isLoggedIn = !!user;
       if (user) {
-        this.auth.loadUserRole();   
+        this.auth.loadUserRole();
       }
-    });   
+    });
     this.auth.role$.subscribe(role => {
       this.userRole = role;
     });
@@ -47,11 +48,11 @@ export class Navbar implements  OnInit {
   }
   ngOnInit(): void {
     if (this.auth.isLoggedIn()) {
-      this.auth.loadUserRole();           
-      this.userRole = this.auth.getRole(); 
+      this.auth.loadUserRole();
+      this.userRole = this.auth.getRole();
     }
   }
   logout(): void {
-    this.auth.logout();  
+    this.auth.logout();
   }
 }
