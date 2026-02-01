@@ -1,0 +1,210 @@
+/* High-End Navbar Styles */
+.navbar {
+    padding: 0.75rem 1.5rem;
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(229, 231, 235, 0.5) !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
+    /* Soft diffused shadow */
+    transition: all 0.3s ease;
+    font-family: 'Outfit', sans-serif !important;
+    /* Premium Font */
+}
+
+/* Gradient Brand Text */
+.navbar-brand {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem !important;
+    background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+    padding: 0;
+    margin-right: 2rem;
+}
+
+/* Aesthetic Search Bar - Premium Circular */
+.search-container {
+    background-color: rgba(243, 244, 246, 0.8);
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    border-radius: 9999px;
+    /* Fully rounded "circular" pill */
+    padding: 0.15rem 0.25rem 0.15rem 1rem;
+    /* Reduced vertical padding */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 550px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+.search-container:hover {
+    background-color: #ffffff;
+    border-color: #d1d5db;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    /* Soft lift on hover */
+}
+
+.search-container:focus-within {
+    background-color: #ffffff;
+    border-color: #6366f1;
+    box-shadow: 0 8px 16px rgba(99, 102, 241, 0.15);
+    /* Premium glow */
+    transform: translateY(-1px);
+}
+
+.search-input {
+    border: none;
+    background: transparent;
+    font-size: 0.9rem;
+    color: #1f2937;
+    width: 100%;
+    outline: none;
+    padding-right: 0.5rem;
+    font-weight: 500;
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.search-btn {
+    width: 32px;
+    /* Smaller button height */
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #6b7280;
+    font-size: 1rem;
+    border: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-right: 0.1rem;
+    cursor: pointer;
+}
+
+.search-btn:hover {
+    color: #4f46e5;
+    transform: scale(1.1);
+    background: transparent;
+}
+
+/* Ghost Nav Buttons (Orders, Cart) */
+.nav-icon-btn {
+    color: #4b5563;
+    background: transparent;
+    border: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.nav-icon-btn i {
+    font-size: 1.1rem;
+    color: #6b7280;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.nav-icon-btn:hover {
+    background-color: rgba(99, 102, 241, 0.08);
+    /* Very subtle indigo tint */
+    color: #4f46e5;
+}
+
+.nav-icon-btn:hover i {
+    color: #4f46e5;
+    transform: translateY(-1px);
+}
+
+/* Profile Avatar */
+.profile-avatar {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+    color: white;
+    font-size: 1rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(99, 102, 241, 0.25);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid #ffffff;
+    /* Ring effect */
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.35);
+}
+
+.dropdown-menu {
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+    padding: 0.5rem;
+    margin-top: 0.75rem !important;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.dropdown-item {
+    border-radius: 8px;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.dropdown-item:hover {
+    background-color: #f3f4f6;
+    color: #111827;
+}
+
+.login-btn {
+    background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+    color: white !important;
+    border: none;
+    padding: 0.4rem 1.25rem;
+    border-radius: 9999px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.01em;
+    box-shadow: 0 4px 10px -1px rgba(147, 51, 234, 0.3), 0 2px 4px -1px rgba(79, 70, 229, 0.1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 15px -1px rgba(147, 51, 234, 0.4), 0 2px 4px -1px rgba(79, 70, 229, 0.15);
+    background: linear-gradient(135deg, #4338ca 0%, #7e22ce 100%);
+}
+
+.navbar-toggler {
+    border: none;
+    padding: 0.25rem;
+    color: #4b5563;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
