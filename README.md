@@ -26,17 +26,18 @@ The project follows a **Microservices Architecture** with a **Clean Architecture
 ECommerce/
 ├── backend/                  # .NET Backend Solution
 │   └── src/
-│       ├── Ecom.Api/         # Microservices API Projects
+│       ├── Ecom.Api/         # Commands and Queries & Handlers
 │       │   ├── AuthService.Api
 │       │   ├── CartService.Api
 │       │   ├── CatalogService.Api
 │       │   ├── OrderService.Api
 │       │   ├── PaymentService.Api
 │       │   └── ReviewService.Api
-│       ├── Ecom.Application/ # Core Business Logic
-│       ├── Ecom.Domain/      # Domain Entities & Interfaces
-│       ├── Ecom.Infrastructure/ # Data Access & External Services
-│       └── Ecom.Test/        # Unit & Integration Tests
+│       ├── Ecom.Application/ # DTO's &  Interfaces
+│       ├── Ecom.Domain/      # Domain Entities 
+│       ├── Ecom.Infrastructure/ # Data Access Layer --> Repositories
+│       ├── Ecom.Gateway/  #All Controllers
+│       └── Ecom.Test/        # Unit Tests
 │
 └── frontend/                 # Angular Frontend
     └── ecom-frontend/
@@ -49,7 +50,7 @@ ECommerce/
 Ensure you have the following installed locally:
 - **Node.js**: v20.7.0 or higher
 - **Angular CLI**: `npm install -g @angular/cli`
-- **.NET SDK**: .NET 8.0 or higher (Visual Studio 2022 recommended)
+- **.NET SDK**: .NET 9.0 or higher (Visual Studio 2022 recommended)
 - **SQL Server**: Local or remote instance
 
 ## 🏁 Getting Started
@@ -62,18 +63,12 @@ Ensure you have the following installed locally:
     ```
 2.  **Open in Visual Studio:**
     Open `src.sln` in Visual Studio 2022.
-3.  **Run Microservices:**
-    - You can run specific services (e.g., `AuthService.Api`) by setting them as the Startup Project in Visual Studio.
-    - Alternatively, using the CLI:
-      ```bash
-      dotnet run --project Ecom.Api/AuthService.Api
-      dotnet run --project Ecom.Api/CatalogService.Api
-      # ... run other services as needed
-      ```
-4.  **Database Configuration:**
-    Ensure your `appsettings.json` in each API project points to a valid SQL Server instance. You may need to run migrations:
+
+3.  **Database Configuration:**
+    Ensure your `appsettings.json` in each API project points to a valid SQL Server instance. You may need to run migrations; For the Database First approach the command is : 
     ```bash
-    dotnet ef database update --project Ecom.Infrastructure --startup-project Ecom.Api/AuthService.Api
+    Scaffold-DbContext "Server=Server_name;Database=Db-Name;Trusted_Connection=True;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -Tables TableNames -OutputDir Entities -Context AuthDbContext -ContextDir Persistence -Force
+
     ```
     *(Note: Migration commands may vary depending on where the DbContext is configured used.)*
 
@@ -106,5 +101,11 @@ dotnet test
 ```bash
 cd frontend/ecom-frontend
 ng test
+```
+### Frontend Lint
+```bash
+cd frontend/ecom-frontend
+ng lint
+ng lint --fix
 ```
 
