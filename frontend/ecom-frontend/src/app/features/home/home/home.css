@@ -1,0 +1,118 @@
+/* Section Titles */
+.section-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 2rem;
+    padding-left: 0.5rem;
+    border-left: 4px solid #4f46e5;
+}
+
+/* Featured Spotlight Card - Full Width Banner */
+.featured-card {
+    background: #ffffff;
+    border-radius: 0;
+    /* Full edge-to-edge */
+    padding: 1.5rem 0;
+    /* Reduced vertical space */
+    box-shadow: none;
+    border: none;
+    border-bottom: 1px solid rgba(243, 244, 246, 0.8);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+}
+
+.featured-card:hover {
+    background-color: #fafafa;
+    /* Subtle highlight on hover */
+    transform: none;
+    /* No lifting for full banner */
+    box-shadow: none;
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+.product-image-container {
+    transition: transform 0.5s ease;
+}
+
+.featured-card:hover .product-image-container {
+    transform: scale(1.05);
+}
+
+.badge-pill {
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    display: inline-block;
+}
+
+.badge-bg-soft {
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+
+::ng-deep .p-carousel .p-carousel-indicators {
+    padding: 1rem 0;
+}
+
+::ng-deep .p-carousel .p-carousel-indicators .p-carousel-indicator {
+    margin: 0 4px;
+}
+
+::ng-deep .p-carousel .p-carousel-indicators .p-carousel-indicator button {
+    background-color: #e5e7eb;
+    /* Light gray background */
+    width: 40px;
+    /* Long dash */
+    height: 4px;
+    /* Thin line */
+    border-radius: 2px;
+    opacity: 1;
+    border: none;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.2s;
+}
+
+/* The active indicator track */
+::ng-deep .p-carousel .p-carousel-indicators .p-carousel-indicator.p-highlight button {
+    background-color: #e5e7eb;
+    /* Keep track gray, fill with child */
+}
+
+/* The Progress Animation */
+::ng-deep .p-carousel .p-carousel-indicators .p-carousel-indicator.p-highlight button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: #4f46e5;
+    /* Primary Brand Color */
+    width: 0%;
+    animation: progressFill 6s linear infinite;
+    /* Matches autoplayInterval */
+}
+
+/* Smooth Slide Transition Override */
+::ng-deep .p-carousel .p-carousel-items-content {
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1) !important;
+    /* Luxurious soft landing */
+    transition-duration: 1000ms !important;
+    /* Slower, smoother glide */
+}
+
+@keyframes progressFill {
+    0% {
+        width: 0%;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
