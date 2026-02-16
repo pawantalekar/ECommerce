@@ -12,7 +12,7 @@
 
         <div *ngIf="error && !loading" class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ error }}
-            <button type="button" class="btn-close" (click)="error = undefined"></button>
+            <button type="button" class="btn-close" (click)="error = undefined">close</button>
         </div>
 
         <div *ngIf="userProfile && !loading">
