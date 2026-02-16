@@ -2,103 +2,175 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 
-<div class="container py-5">
-	<div class="mb-4 d-flex justify-content-between align-items-center">
-		<h2 class="fw-bold">Manage Addresses</h2>
-		<button pButton label="ADD A NEW ADDRESS" icon="pi pi-plus" class="p-button-outlined p-button-primary"
-			(click)="openAddForm()"></button>
+<div class="h-100">
+	<h6 class="fw-semibold mb-3 text-slate-800 ps-1">Manage Addresses</h6>
+
+	<!-- Add New Address Bar -->
+	<div class="add-address-bar bg-white p-3 rounded-2 border mb-3 cursor-pointer" (click)="toggleAddForm()">
+		<div class="d-flex align-items-center text-primary fw-semibold small">
+			<i class="pi pi-plus me-3"></i>
+			ADD A NEW ADDRESS
+		</div>
 	</div>
 
-	<!-- Addresses List - Horizontal Cards -->
-	<div class="row g-4" *ngIf="!loading && addresses.length > 0">
-		<div class="col-12" *ngFor="let addr of addresses">
-			<div class="card border rounded shadow-sm p-4 position-relative">
-				<div class="d-flex justify-content-between align-items-start">
-					<div class="flex-grow-1">
-						<div class="d-flex align-items-center gap-3 mb-2">
-							<span class="badge bg-light text-dark border px-3 py-2">{{ addr.addressType.toUpperCase()
-								}}</span>
-							<h5 class="mb-0">{{ addr.fullName }} {{ addr.phone }}</h5>
-						</div>
-						<p class="mb-1">{{ addr.addressLine1 }}</p>
-						<p class="mb-1" *ngIf="addr.addressLine2">{{ addr.addressLine2 }}</p>
-						<p class="mb-0 text-muted">
-							{{ addr.city }}, {{ addr.state }}, {{ addr.pincode }}, {{ addr.country }}
-						</p>
+	<!-- Add Address Form (Collapsible) -->
+	<div *ngIf="showAddForm" class="card border rounded-2 p-3 bg-white mb-3 shadow-sm">
+		<h6 class="mb-3 text-primary subheading fw-semibold">ADD A NEW ADDRESS</h6>
+
+		<form #addForm="ngForm" (ngSubmit)="saveAddress(addForm)" class="row g-2">
+			<div class="col-md-6">
+				<input pInputText name="fullName" [(ngModel)]="addAddressCommand.fullName" required placeholder="Name"
+					class="w-100 p-inputtext-sm custom-input" />
+			</div>
+			<div class="col-md-6">
+				<input pInputText name="phone" [(ngModel)]="addAddressCommand.phone" required
+					placeholder="10-digit mobile number" class="w-100 p-inputtext-sm custom-input" />
+			</div>
+			<div class="col-md-6">
+				<input pInputText name="pincode" [(ngModel)]="addAddressCommand.pincode" required placeholder="Pincode"
+					class="w-100 p-inputtext-sm custom-input" />
+			</div>
+			<div class="col-md-6">
+				<input pInputText name="city" [(ngModel)]="addAddressCommand.city" required
+					placeholder="City/District/Town" class="w-100 p-inputtext-sm custom-input" />
+			</div>
+			<div class="col-12">
+				<textarea pInputTextarea name="addressLine1" [(ngModel)]="addAddressCommand.addressLine1" required
+					placeholder="Address (Area and Street)" class="w-100 custom-input" rows="2"></textarea>
+			</div>
+			<div class="col-md-6">
+				<input pInputText name="state" [(ngModel)]="addAddressCommand.state" required placeholder="State"
+					class="w-100 p-inputtext-sm custom-input" />
+			</div>
+			<div class="col-md-6">
+				<input pInputText name="country" [(ngModel)]="addAddressCommand.country" required placeholder="Country"
+					class="w-100 p-inputtext-sm custom-input" />
+			</div>
+
+			<div class="col-12 mt-2">
+				<label class="d-block small text-muted mb-1">Address Type</label>
+				<div class="d-flex gap-3">
+					<div class="d-flex align-items-center gap-2">
+						<p-radioButton name="addressType" value="Home" [(ngModel)]="addAddressCommand.addressType"
+							inputId="at_home"></p-radioButton>
+						<label for="at_home" class="small">Home</label>
 					</div>
-					<p-menu #menu [model]="getMenuItems(addr)" [popup]="true" appendTo="body"></p-menu>
-					<button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded"
-						(click)="menu.toggle($event)"></button>
+					<div class="d-flex align-items-center gap-2">
+						<p-radioButton name="addressType" value="Work" [(ngModel)]="addAddressCommand.addressType"
+							inputId="at_work"></p-radioButton>
+						<label for="at_work" class="small">Work</label>
+					</div>
 				</div>
 			</div>
+
+			<div class="col-12 mt-3">
+				<button pButton type="submit" label="SAVE"
+					class="p-button-sm px-4 fw-bold me-2 rounded-1 save-btn"></button>
+				<button pButton type="button" label="CANCEL" class="p-button-text p-button-sm text-primary fw-bold"
+					(click)="cancelAddForm()"></button>
+			</div>
+		</form>
+	</div>
+
+	<!-- Address List -->
+	<div class="d-flex flex-column gap-2" *ngIf="!loading">
+		<div *ngFor="let addr of addresses" class="address-item-container">
+
+			<!-- VIEW MODE -->
+			<div class="address-card p-3 bg-white border rounded-2 position-relative"
+				*ngIf="editingAddressId !== addr.id">
+				<div class="d-flex align-items-start justify-content-between">
+					<div class="flex-grow-1">
+						<div class="d-flex align-items-center gap-2 mb-1">
+							<span
+								class="badge-type px-2 py-0 rounded-1 extra-small fw-bold text-muted bg-light border">{{
+								addr.addressType | uppercase }}</span>
+						</div>
+						<div class="mb-1 d-flex align-items-center gap-3">
+							<span class="fw-bold text-slate-800 small">{{ addr.fullName }}</span>
+							<span class="fw-bold text-slate-800 small">{{ addr.phone }}</span>
+						</div>
+						<div class="address-text text-slate-600 small">
+							{{ addr.addressLine1 }}, {{ addr.addressLine2 ? addr.addressLine2 + ', ' : '' }}
+							{{ addr.city }}, {{ addr.state }} - <span class="fw-bold">{{ addr.pincode }}</span>
+						</div>
+					</div>
+
+					<!-- Kebab Menu -->
+					<div class="menu-container">
+						<button pButton icon="pi pi-ellipsis-v"
+							class="p-button-text p-button-rounded p-button-sm text-slate-400"
+							style="width: 2rem; height: 2rem;" (click)="menu.toggle($event)"></button>
+						<p-menu #menu [model]="getMenuItems(addr)" [popup]="true" appendTo="body"
+							styleClass="custom-menu"></p-menu>
+					</div>
+				</div>
+			</div>
+
+			<!-- EDIT MODE (Inline Form) -->
+			<div class="card border rounded-2 p-3 bg-white shadow-sm" *ngIf="editingAddressId === addr.id">
+				<h6 class="mb-3 text-primary subheading fw-semibold">EDIT ADDRESS</h6>
+
+				<form #editForm="ngForm" (ngSubmit)="saveAddress(editForm)" class="row g-2">
+					<div class="col-md-6">
+						<input pInputText name="fullName" [(ngModel)]="addAddressCommand.fullName" required
+							placeholder="Name" class="w-100 p-inputtext-sm custom-input" />
+					</div>
+					<div class="col-md-6">
+						<input pInputText name="phone" [(ngModel)]="addAddressCommand.phone" required
+							placeholder="10-digit mobile number" class="w-100 p-inputtext-sm custom-input" />
+					</div>
+					<div class="col-md-6">
+						<input pInputText name="pincode" [(ngModel)]="addAddressCommand.pincode" required
+							placeholder="Pincode" class="w-100 p-inputtext-sm custom-input" />
+					</div>
+					<div class="col-md-6">
+						<input pInputText name="city" [(ngModel)]="addAddressCommand.city" required
+							placeholder="City/District/Town" class="w-100 p-inputtext-sm custom-input" />
+					</div>
+					<div class="col-12">
+						<textarea pInputTextarea name="addressLine1" [(ngModel)]="addAddressCommand.addressLine1"
+							required placeholder="Address (Area and Street)" class="w-100 custom-input"
+							rows="2"></textarea>
+					</div>
+					<div class="col-md-6">
+						<input pInputText name="state" [(ngModel)]="addAddressCommand.state" required
+							placeholder="State" class="w-100 p-inputtext-sm custom-input" />
+					</div>
+					<div class="col-md-6">
+						<input pInputText name="country" [(ngModel)]="addAddressCommand.country" required
+							placeholder="Country" class="w-100 p-inputtext-sm custom-input" />
+					</div>
+
+					<div class="col-12 mt-2">
+						<label class="d-block small text-muted mb-1">Address Type</label>
+						<div class="d-flex gap-3">
+							<div class="d-flex align-items-center gap-2">
+								<p-radioButton name="addressTypeEdit" value="Home"
+									[(ngModel)]="addAddressCommand.addressType" inputId="at_home_edit"></p-radioButton>
+								<label for="at_home_edit" class="small">Home</label>
+							</div>
+							<div class="d-flex align-items-center gap-2">
+								<p-radioButton name="addressTypeEdit" value="Work"
+									[(ngModel)]="addAddressCommand.addressType" inputId="at_work_edit"></p-radioButton>
+								<label for="at_work_edit" class="small">Work</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 mt-3">
+						<button pButton type="submit" label="SAVE"
+							class="p-button-sm px-4 fw-bold me-2 rounded-1 save-btn"></button>
+						<button pButton type="button" label="CANCEL"
+							class="p-button-text p-button-sm text-primary fw-bold" (click)="cancelEdit()"></button>
+					</div>
+				</form>
+			</div>
+
 		</div>
 	</div>
 
-	<!-- Empty State -->
 	<div class="text-center py-5" *ngIf="!loading && addresses.length === 0">
-		<p class="text-muted">No addresses saved yet.</p>
-		<button pButton label="Add Your First Address" icon="pi pi-plus" (click)="openAddForm()"></button>
-	</div>
-
-	<!-- Loading -->
-	<div class="text-center py-5" *ngIf="loading">
-		<i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-	</div>
-
-	<!-- Add/Edit Form -->
-	<div class="mt-5" *ngIf="showForm">
-		<div class="card border rounded shadow p-4">
-			<h4 class="mb-4">{{ isEditing ? 'Edit Address' : 'Add New Address' }}</h4>
-			<form #addressForm="ngForm" (ngSubmit)="saveAddress(addressForm)" class="row g-3">
-				<div class="col-md-6">
-					<label class="form-label">Full Name *</label>
-					<input pInputText name="fullName" [(ngModel)]="addAddressCommand.fullName" required class="w-100" />
-				</div>
-				<div class="col-md-6">
-					<label class="form-label">Phone *</label>
-					<input pInputText name="phone" [(ngModel)]="addAddressCommand.phone" required class="w-100" />
-				</div>
-				<div class="col-12">
-					<label class="form-label">Address Line 1 *</label>
-					<input pInputText name="addressLine1" [(ngModel)]="addAddressCommand.addressLine1" required
-						class="w-100" />
-				</div>
-				<div class="col-12">
-					<label class="form-label">Address Line 2</label>
-					<input pInputText name="addressLine2" [(ngModel)]="addAddressCommand.addressLine2" class="w-100" />
-				</div>
-				<div class="col-md-4">
-					<label class="form-label">City *</label>
-					<input pInputText name="city" [(ngModel)]="addAddressCommand.city" required class="w-100" />
-				</div>
-				<div class="col-md-4">
-					<label class="form-label">State *</label>
-					<input pInputText name="state" [(ngModel)]="addAddressCommand.state" required class="w-100" />
-				</div>
-				<div class="col-md-4">
-					<label class="form-label">Pincode *</label>
-					<input pInputText name="pincode" [(ngModel)]="addAddressCommand.pincode" required class="w-100" />
-				</div>
-				<div class="col-md-8">
-					<label class="form-label">Country *</label>
-					<input pInputText name="country" [(ngModel)]="addAddressCommand.country" required class="w-100" />
-				</div>
-				<div class="col-md-4">
-					<label class="form-label">Address Type *</label>
-					<p-dropdown [options]="addressTypes" [(ngModel)]="addAddressCommand.addressType" name="addressType"
-						optionLabel="label" optionValue="value" placeholder="Select type" class="w-100"></p-dropdown>
-				</div>
-				<div class="col-12">
-					<p-checkbox name="isDefault" [(ngModel)]="addAddressCommand.isDefault" binary="true"
-						label="Set as default address"></p-checkbox>
-				</div>
-				<div class="col-12">
-					<button pButton type="submit" [label]="isEditing ? 'Update' : 'Save'"
-						[disabled]="submitting || addressForm.invalid" [loading]="submitting" class="me-2"></button>
-					<button pButton type="button" label="Cancel" class="p-button-secondary"
-						(click)="cancelForm(addressForm)"></button>
-				</div>
-			</form>
-		</div>
+		<p class="text-slate-500 small">No addresses found.</p>
 	</div>
 </div>
