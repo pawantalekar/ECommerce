@@ -2,6 +2,7 @@
 using Ecom.Domain.Entities;
 using Ecom.Infrastructure.Repository;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
@@ -17,13 +18,20 @@ namespace Ecom.Infrastructure.Services
         private readonly IUserRepository _users;
         private readonly IRefreshTokenRepository _refresh;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IConfiguration config, IUserRepository users, IRefreshTokenRepository refresh, IHttpClientFactory httpClientFactory)
+        public AuthService(
+            IConfiguration config, 
+            IUserRepository users, 
+            IRefreshTokenRepository refresh, 
+            IHttpClientFactory httpClientFactory,
+            ILogger<AuthService> logger)
         {
             _config = config;
             _users = users;
             _refresh = refresh;
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
         }
 
         public async Task<(string accessToken, string refreshToken, DateTime expires)> SsoSignInAsync(string provider, string code, string redirectUri, string clientIp)
@@ -57,21 +65,67 @@ namespace Ecom.Infrastructure.Services
 
         public async Task<(string accessToken, string refreshToken, DateTime expires)> RefreshTokenAsync(string refreshToken, string clientIp)
         {
-            var normalizedToken = refreshToken?.Replace(" ", "+");
+            if (string.IsNullOrWhiteSpace(refreshToken))
+            {
+                _logger.LogWarning("Refresh token is null or empty");
+                throw new UnauthorizedAccessException("Refresh token is required");
+            }
+
+            var normalizedToken = refreshToken.Replace(" ", "+");
+            var currentTime = DateTime.UtcNow;
+
+            _logger.LogInformation("Attempting to refresh token. Current UTC time: {CurrentTime}", currentTime);
 
             var stored = await _refresh.GetByTokenAsync(normalizedToken);
-            if (stored == null || stored.ExpiresAt <= DateTime.UtcNow || stored.RevokedAt != null)
-                throw new Exception("Invalid refresh token");
-
             
+            if (stored == null)
+            {
+                _logger.LogWarning("Refresh token not found in database");
+                throw new UnauthorizedAccessException("Invalid refresh token");
+            }
+
+            _logger.LogInformation(
+                "Token found - Created: {Created}, Expires: {Expires}, Revoked: {Revoked}, Current: {Current}",
+                stored.CreatedAt, stored.ExpiresAt, stored.RevokedAt, currentTime);
+
+            if (stored.RevokedAt != null)
+            {
+                _logger.LogWarning("Token was already revoked at {RevokedAt}", stored.RevokedAt);
+                throw new UnauthorizedAccessException("Refresh token has been revoked");
+            }
+
+            if (stored.ExpiresAt < currentTime)
+            {
+                _logger.LogWarning(
+                    "Token has expired. Expires: {Expires}, Current: {Current}, Difference: {Diff} seconds",
+                    stored.ExpiresAt, currentTime, (currentTime - stored.ExpiresAt).TotalSeconds);
+                throw new UnauthorizedAccessException("Refresh token has expired");
+            }
 
             var user = stored.User;
+            if (user == null)
+            {
+                _logger.LogError("User not found for token. UserId: {UserId}", stored.UserId);
+                throw new UnauthorizedAccessException("User not found");
+            }
+
+            if (!user.IsActive)
+            {
+                _logger.LogWarning("User account is inactive. UserId: {UserId}", user.Id);
+                throw new UnauthorizedAccessException("User account is inactive");
+            }
+
+            _logger.LogInformation("Token validation passed. Generating new tokens for user: {UserId}", user.Id);
+
             var jwt = GenerateAccessToken(user);
             var newRefresh = CreateRefreshToken(user.Id, clientIp);
+            
             await _refresh.AddAsync(newRefresh);
-
+            
             stored.RevokedAt = DateTime.UtcNow;
             await _refresh.SaveChangesAsync();
+
+            _logger.LogInformation("Successfully refreshed token for user: {UserId}", user.Id);
 
             return (jwt.token, newRefresh.Token, jwt.expires);
         }
@@ -99,7 +153,12 @@ namespace Ecom.Infrastructure.Services
         {
             var random = RandomNumberGenerator.GetBytes(64);
             var token = Convert.ToBase64String(random);
-            var expires = DateTime.UtcNow.AddMinutes(int.Parse(_config["Jwt:RefreshTokenExpiryMinutes"]));
+            var expiryMinutes = int.Parse(_config["Jwt:RefreshTokenExpiryMinutes"] ?? "10080"); // Default 7 days
+            var expires = DateTime.UtcNow.AddMinutes(expiryMinutes);
+
+            _logger.LogInformation(
+                "Creating refresh token for user {UserId}. Expires at: {Expires} (in {Minutes} minutes)",
+                userId, expires, expiryMinutes);
 
             return new RefreshToken
             {

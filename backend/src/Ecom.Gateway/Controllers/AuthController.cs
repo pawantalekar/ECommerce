@@ -86,14 +86,25 @@ namespace Ecom.Gateway.Controllers
         [HttpPost("token/refresh")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshRequest request)
         {
-            var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-            var result = await _auth.RefreshTokenAsync(request.RefreshToken, clientIp);
-            return Ok(new TokenResponse
+            try
             {
-                AccessToken = result.accessToken,
-                RefreshToken = result.refreshToken,
-                Expires = result.expires
-            });
+                var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+                var result = await _auth.RefreshTokenAsync(request.RefreshToken, clientIp);
+                return Ok(new TokenResponse
+                {
+                    AccessToken = result.accessToken,
+                    RefreshToken = result.refreshToken,
+                    Expires = result.expires
+                });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while refreshing the token" });
+            }
         }
         
         [HttpGet("me")]
