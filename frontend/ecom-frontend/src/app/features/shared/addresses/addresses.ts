@@ -11,6 +11,10 @@ import { MenuItem } from 'primeng/api';
 import { AddressService } from '../services/address-service';
 import { AddAddressCommand, AddressDto } from '../models/address-model';
 import { DropdownModule } from 'primeng/dropdown';
+import { CheckboxModule } from 'primeng/checkbox';
+import { InputTextModule } from 'primeng/inputtext';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 
 @Component({
@@ -24,7 +28,11 @@ import { DropdownModule } from 'primeng/dropdown';
     MenuModule,
     ToastModule,
     ConfirmDialogModule,
-    DropdownModule
+    DropdownModule,
+    CheckboxModule,
+    InputTextModule,
+    RadioButtonModule,
+    InputTextareaModule
   ],
   templateUrl: './addresses.html',
   styleUrl: './addresses.css',
@@ -41,8 +49,10 @@ export class Addresses implements OnInit {
   error?: string;
   addAddressCommand: AddAddressCommand = this.getEmptyForm();
   submitting = false;
-  isEditing = false;
-  showForm = false;
+
+  // UI State
+  showAddForm = false;
+  editingAddressId: string | null = null; // Track which address is being edited
 
   constructor(
     private addressService: AddressService,
@@ -83,21 +93,31 @@ export class Addresses implements OnInit {
     });
   }
 
-  openAddForm() {
-    this.isEditing = false;
+  toggleAddForm() {
+    if (this.showAddForm) {
+      this.cancelAddForm();
+    } else {
+      this.showAddForm = true;
+      this.editingAddressId = null; // Close any open edits
+      this.addAddressCommand = this.getEmptyForm();
+    }
+  }
+
+  cancelAddForm() {
+    this.showAddForm = false;
     this.addAddressCommand = this.getEmptyForm();
-    this.showForm = true;
   }
 
-  openEditForm(address: AddressDto) {
-    this.isEditing = true;
+  // Edit Logic
+  startEditing(address: AddressDto) {
+    this.editingAddressId = address.id;
+    this.showAddForm = false; // Close add form
+    // create a copy for the form
     this.addAddressCommand = { ...address };
-    this.showForm = true;
   }
 
-  cancelForm(form: NgForm) {
-    this.showForm = false;
-    form.resetForm();
+  cancelEdit() {
+    this.editingAddressId = null;
     this.addAddressCommand = this.getEmptyForm();
   }
 
@@ -105,8 +125,11 @@ export class Addresses implements OnInit {
     if (form.invalid) return;
 
     this.submitting = true;
-    const request = this.isEditing
-      ? this.addressService.updateMyAddress((this.addAddressCommand as any).id, this.addAddressCommand)
+    const isEdit = !!this.editingAddressId;
+
+    // For edit, we use editingAddressId, for add we use addAddressCommand
+    const request = isEdit
+      ? this.addressService.updateMyAddress(this.editingAddressId!, this.addAddressCommand)
       : this.addressService.addMyAddress(this.addAddressCommand);
 
     request.subscribe({
@@ -114,11 +137,16 @@ export class Addresses implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: this.isEditing ? 'Address updated' : 'Address added'
+          detail: isEdit ? 'Address updated' : 'Address added'
         });
         this.loadAddresses();
-        this.showForm = false;
+
+        // Reset state
+        this.showAddForm = false;
+        this.editingAddressId = null;
+        this.addAddressCommand = this.getEmptyForm();
         form.resetForm();
+
         this.submitting = false;
       },
       error: () => {
@@ -131,21 +159,17 @@ export class Addresses implements OnInit {
   menuItemsCache = new Map<string, MenuItem[]>();
 
   getMenuItems(addr: AddressDto): MenuItem[] {
-    if (!this.menuItemsCache.has(addr.id)) {
-      this.menuItemsCache.set(addr.id, [
-        {
-          label: 'Edit',
-          icon: 'pi pi-pencil',
-          command: () => this.openEditForm(addr)
-        },
-        {
-          label: 'Delete',
-          icon: 'pi pi-trash',
-          command: () => this.deleteAddress(addr.id)
-        }
-      ]);
-    }
-    return this.menuItemsCache.get(addr.id)!;
+    // Always return fresh items to ensure closure captures current addr
+    return [
+      {
+        label: 'Edit',
+        command: () => this.startEditing(addr)
+      },
+      {
+        label: 'Delete',
+        command: () => this.deleteAddress(addr.id)
+      }
+    ];
   }
 
   deleteAddress(id: string) {
