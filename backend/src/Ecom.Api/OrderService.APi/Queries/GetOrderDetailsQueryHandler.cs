@@ -32,8 +32,8 @@ namespace OrderService.APi.Queries
                     o.Id,
                     o.OrderNumber,
                     o.TotalAmount,
-                    o.PaymentStatus,
-                    o.OrderStatus,
+                    o.PaymentStatus.ToString(),
+                    o.OrderStatus.ToString(),
                     o.CreatedAt,
                     o.OrderItems.Select(oi => new OrderItemDto(
                         oi.ProductId.ToString(),
@@ -55,7 +55,7 @@ namespace OrderService.APi.Queries
                     ),
                     o.StatusHistory.OrderBy(sh => sh.ChangedAt)
                         .Select(sh => new OrderStatusHistoryDto(
-                            sh.Status,
+                            sh.Status.ToString(),
                             sh.ChangedAt,
                             sh.Notes
                         )).ToList()

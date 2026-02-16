@@ -230,10 +230,10 @@ namespace Ecom.Infrastructure
                 entity.Property(e => e.OrderNumber).HasMaxLength(30);
                 entity.Property(e => e.OrderStatus)
                     .HasMaxLength(20)
-                    .HasDefaultValue("Confirmed");
+                    .HasConversion<string>();
                 entity.Property(e => e.PaymentStatus)
                     .HasMaxLength(20)
-                    .HasDefaultValue("Pending");
+                    .HasConversion<string>();
                 entity.Property(e => e.RazorpayOrderId).HasMaxLength(50);
                 entity.Property(e => e.RazorpayPaymentId).HasMaxLength(50);
                 entity.Property(e => e.ShippingAddressLine1).HasMaxLength(200);
@@ -412,7 +412,9 @@ namespace Ecom.Infrastructure
                 entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
                 entity.Property(e => e.ChangedAt).HasDefaultValueSql("(getutcdate())");
                 entity.Property(e => e.Notes).HasMaxLength(500);
-                entity.Property(e => e.Status).HasMaxLength(50);
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .HasConversion<string>();
 
                 entity.HasOne(e => e.Order).WithMany(o => o.StatusHistory).HasForeignKey(e => e.OrderId).OnDelete(DeleteBehavior.Cascade);
 

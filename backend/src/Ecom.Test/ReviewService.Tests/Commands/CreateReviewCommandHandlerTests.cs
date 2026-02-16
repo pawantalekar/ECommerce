@@ -2,6 +2,7 @@
 using Ecom.Application.ReviewService.Application.DTO;
 using Ecom.Application.ReviewService.Application.Interfaces;
 using Ecom.Domain.Entities;
+using Ecom.Domain.Enums;
 using Ecom.Infrastructure;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -48,7 +49,7 @@ namespace Ecom.Test.ReviewService.Tests.Commands
             {
                 ProductId = productId,
                 OrderId = orderId,
-                Order = new Order { UserId = userId, PaymentStatus = "Paid", Id = orderId }
+                Order = new Order { UserId = userId, PaymentStatus = PaymentStatusEnum.Paid, Id = orderId }
             };
 
             var orderItems = new[] { orderItem }.BuildMockDbSet();

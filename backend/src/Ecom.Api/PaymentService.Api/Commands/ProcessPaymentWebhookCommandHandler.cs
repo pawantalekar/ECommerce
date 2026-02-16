@@ -1,4 +1,5 @@
-﻿using Ecom.Infrastructure;
+﻿using Ecom.Domain.Enums;
+using Ecom.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -47,8 +48,8 @@ namespace PaymentService.Api.Commands
 
             if (@event == "payment.captured")
             {
-                order.PaymentStatus = "Paid";
-                order.OrderStatus = "Confirmed";
+                order.PaymentStatus = PaymentStatusEnum.Paid;
+                order.OrderStatus = OrderStatusEnum.Confirmed;
                 order.RazorpayPaymentId = json.GetProperty("payload")
                     .GetProperty("payment")
                     .GetProperty("entity")
@@ -64,8 +65,8 @@ namespace PaymentService.Api.Commands
             }
             else if (@event == "payment.failed")
             {
-                order.PaymentStatus = "Failed";
-                order.OrderStatus = "Failed";
+                order.PaymentStatus = PaymentStatusEnum.Failed;
+                order.OrderStatus = OrderStatusEnum.Failed;
             }
 
             await _context.SaveChangesAsync(ct);

@@ -1,4 +1,5 @@
 ﻿using Ecom.Domain.Entities;
+using Ecom.Domain.Enums;
 
 namespace Ecom.Application.OrderService.Application.Interfaces
 {
@@ -8,6 +9,6 @@ namespace Ecom.Application.OrderService.Application.Interfaces
 
         Task<Order?> GetOrderByNumberAsync(string orderNumber, CancellationToken ct);
 
-        Task UpdateOrderStatusAsync(Order order, string newStatus, Guid? adminUserId, string? notes, CancellationToken ct);
+        Task UpdateOrderStatusAsync(Order order, OrderStatusEnum newStatus, Guid? adminUserId, string? notes, CancellationToken ct);
     }
 }

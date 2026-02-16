@@ -1,4 +1,5 @@
 ﻿using Ecom.Application.OrderService.Application.Interfaces;
+using Ecom.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
@@ -10,12 +11,6 @@ namespace OrderService.APi.Commands.OrderStatus
         private readonly IOrderRepository _orderRepository;
         private readonly IHttpContextAccessor _http;
 
-        private static readonly string[] ValidStatuses =
-        [
-            "Pending", "Confirmed", "Processing", "Shipped",
-            "OutForDelivery", "Delivered", "Cancelled", "Failed"
-        ];
-
         public UpdateOrderStatusCommandHandler(IOrderRepository orderRepository, IHttpContextAccessor http)
         {
             _orderRepository = orderRepository;
@@ -24,8 +19,8 @@ namespace OrderService.APi.Commands.OrderStatus
 
         public async Task<UpdateOrderStatusResult> Handle(UpdateOrderStatusCommand request, CancellationToken ct)
         {
-            if (!ValidStatuses.Contains(request.NewStatus))
-                throw new ArgumentException($"Invalid status. Allowed: {string.Join(", ", ValidStatuses)}");
+            if (!Enum.TryParse<OrderStatusEnum>(request.NewStatus, out var newStatusEnum))
+                throw new ArgumentException($"Invalid status. Allowed: {string.Join(", ", Enum.GetNames<OrderStatusEnum>())}");
 
             var userIdClaim = _http.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             Guid? adminUserId = userIdClaim != null && Guid.TryParse(userIdClaim, out var uid) ? uid : null;
@@ -33,14 +28,14 @@ namespace OrderService.APi.Commands.OrderStatus
             var order = await _orderRepository.GetOrderByNumberAsync(request.OrderNumber, ct)
                 ?? throw new KeyNotFoundException($"Order {request.OrderNumber} not found");
 
-            if (order.OrderStatus == request.NewStatus)
+            if (order.OrderStatus == newStatusEnum)
                 throw new InvalidOperationException($"Order is already in {request.NewStatus} status");
 
-            await _orderRepository.UpdateOrderStatusAsync(order, request.NewStatus, adminUserId, request.Notes, ct);
+            await _orderRepository.UpdateOrderStatusAsync(order, newStatusEnum, adminUserId, request.Notes, ct);
 
             return new UpdateOrderStatusResult(
                 order.OrderNumber,
-                order.OrderStatus,
+                order.OrderStatus.ToString(),
                 DateTime.UtcNow
             );
         }

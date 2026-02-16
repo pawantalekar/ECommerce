@@ -1,4 +1,6 @@
-﻿namespace Ecom.Domain.Entities;
+﻿using Ecom.Domain.Enums;
+
+namespace Ecom.Domain.Entities;
 
 public partial class Order
 {
@@ -10,9 +12,9 @@ public partial class Order
 
     public decimal TotalAmount { get; set; }
 
-    public string PaymentStatus { get; set; } = null!;
+    public PaymentStatusEnum PaymentStatus { get; set; }
 
-    public string OrderStatus { get; set; } = null!;
+    public OrderStatusEnum OrderStatus { get; set; }
 
     public string ShippingFullName { get; set; } = null!;
 
