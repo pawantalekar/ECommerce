@@ -1,47 +1,47 @@
 <p-toast></p-toast>
-<div class="container-fluid mt-4">
-    <div class="row g-4">
+<div class="container-fluid mt-3">
+    <div class="row g-3">
         <!-- Sidebar -->
-        <div class="col-md-3 col-lg-3 mb-4 mb-md-0">
-            <div class="card shadow-lg border-0 h-100 rounded-4 overflow-hidden">
-                <div class="card-body d-flex flex-column text-center p-4">
-                    <div class="mb-4">
-                        <svg width="120" height="120" viewBox="0 0 120 120" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
+        <div class="col-md-3 col-lg-3">
+            <div class="profile-card card border-0 h-100">
+                <div class="card-body d-flex flex-column text-center p-3">
+                    <div class="mb-3 avatar-container mx-auto">
+                        <svg width="80" height="80" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            class="profile-avatar">
                             <circle cx="60" cy="60" r="60" fill="#e3f2fd" />
-                            <circle cx="60" cy="44" r="24" fill="#1976d2" />
-                            <path d="M60 80C38 80 20 98 20 120H100C100 98 82 80 60 80Z" fill="#1976d2" />
-                            <circle cx="60" cy="44" r="16" fill="#bbdefb" />
+                            <circle cx="60" cy="44" r="24" fill="#1e293b" />
+                            <path d="M60 80C38 80 20 98 20 120H100C100 98 82 80 60 80Z" fill="#1e293b" />
+                            <circle cx="60" cy="44" r="16" fill="#f8fafc" />
                         </svg>
                     </div>
 
-                    <h5 class="card-title mb-1 fw-bold fs-4 text-dark">
+                    <h6 class="profile-name mb-1">
                         {{ (userProfile?.firstName || 'User') + ' ' + (userProfile?.lastName || '') }}
-                    </h5>
-                    <p class="text-muted small mb-4">{{ userProfile?.email || 'No email provided' }}</p>
+                    </h6>
+                    <p class="profile-email mb-3">{{ userProfile?.email || 'No email provided' }}</p>
 
-                    <hr class="my-4 border-secondary-subtle">
+                    <div class="divider my-3"></div>
 
-                    <ul class="nav flex-column gap-2">
+                    <ul class="nav flex-column gap-1 nav-pills">
                         <li class="nav-item">
-                            <a class="nav-link active d-flex align-items-center fw-semibold py-3 px-3 rounded-3 bg-primary bg-opacity-10 text-primary"
-                                routerLink="/profile">
-                                <i class="bi bi-person-fill fs-5 me-3"></i>
-                                Profile
+                            <a class="nav-link d-flex align-items-center" routerLink="/profile"
+                                routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                                <i class="bi bi-person-fill me-3"></i>
+                                <span>Profile</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center text-dark py-3 px-3 rounded-3 hover-bg-light"
-                               routerLink="addresses">
-                                <i class="bi bi-house-door-fill fs-5 me-3 text-secondary"></i>
-                                Addresses
+                            <a class="nav-link d-flex align-items-center" routerLink="addresses"
+                                routerLinkActive="active">
+                                <i class="bi bi-geo-alt-fill me-3"></i>
+                                <span>Addresses</span>
                             </a>
                         </li>
-                        <li class="nav-item mt-auto">
-                            <a class="nav-link d-flex align-items-center text-danger py-3 px-3 rounded-3 hover-bg-danger"
-                                routerLink="/login" (click)="logout()">
-                                <i class="bi bi-box-arrow-right fs-5 me-3"></i>
-                                Log Out
+                        <li class="nav-item mt-auto pt-2">
+                            <a class="nav-link d-flex align-items-center text-danger logout-link" routerLink="/login"
+                                (click)="logout()">
+                                <i class="bi bi-box-arrow-right me-3"></i>
+                                <span>Log Out</span>
                             </a>
                         </li>
                     </ul>
@@ -49,26 +49,9 @@
             </div>
         </div>
         <div class="col-md-9 col-lg-9">
-            <router-outlet></router-outlet>
+            <div class="content-area">
+                <router-outlet></router-outlet>
+            </div>
         </div>
     </div>
 </div>
-
-<style>
-    .bg-gradient-primary {
-        background: linear-gradient(90deg, #0d6efd, #0b5ed7);
-    }
-
-    .hover-bg-light:hover {
-        background-color: #f8f9fa !important;
-    }
-
-    .hover-bg-danger:hover {
-        background-color: #f8d7da !important;
-    }
-
-    .form-control:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-    }
-</style>

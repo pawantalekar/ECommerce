@@ -1,116 +1,91 @@
-<!-- Main Content -->
-<div class="col-md-9 col-lg-9">
-    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-        <div class="card-header bg-gradient-primary text-white py-4 border-0">
-            <h5 class="mb-0 fs-4 fw-semibold">My Profile</h5>
+<div class="card profile-details-card border-0 rounded-4 overflow-hidden h-100">
+    <div class="profile-card-header text-white py-3 px-4 border-0">
+        <h6 class="mb-0 fw-semibold">My Profile</h6>
+    </div>
+
+    <div class="card-body p-4">
+        <div *ngIf="loading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
         </div>
 
-        <div class="card-body p-4 p-md-5">
-            <!-- Loading -->
-            <div *ngIf="loading" class="text-center py-5">
-                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                    <span class="visually-hidden">Loading...</span>
+        <div *ngIf="error && !loading" class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ error }}
+            <button type="button" class="btn-close" (click)="error = undefined"></button>
+        </div>
+
+        <div *ngIf="userProfile && !loading">
+            <form #profileForm="ngForm" (ngSubmit)="updateProfile(profileForm)">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-muted mb-1">First Name</label>
+                        <input type="text" class="form-control rounded-3" [(ngModel)]="updateCommand.firstName"
+                            name="firstName" required maxlength="50" pattern="[A-Za-z\s]+"
+                            (keypress)="onlyLetters($event)" (input)="sanitizeName($event)" #firstNameCtrl="ngModel">
+                        <div *ngIf="firstNameCtrl.invalid && (firstNameCtrl.dirty || firstNameCtrl.touched)"
+                            class="text-danger small mt-1">
+                            <div *ngIf="firstNameCtrl.errors?.['required']">First name is required</div>
+                            <div *ngIf="firstNameCtrl.errors?.['maxlength']">Maximum 50 characters allowed</div>
+                            <div *ngIf="firstNameCtrl.errors?.['pattern']">Only letters and spaces allowed</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-muted mb-1">Last Name</label>
+                        <input type="text" class="form-control rounded-3" [(ngModel)]="updateCommand.lastName"
+                            name="lastName" required maxlength="50" pattern="[A-Za-z\s]+"
+                            (keypress)="onlyLetters($event)" (input)="sanitizeName($event)" #lastNameCtrl="ngModel">
+                        <div *ngIf="lastNameCtrl.invalid && (lastNameCtrl.dirty || lastNameCtrl.touched)"
+                            class="text-danger small mt-1">
+                            <div *ngIf="lastNameCtrl.errors?.['required']">Last name is required</div>
+                            <div *ngIf="lastNameCtrl.errors?.['maxlength']">Maximum 50 characters allowed</div>
+                            <div *ngIf="lastNameCtrl.errors?.['pattern']">Only letters and spaces allowed</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-muted mb-1">Gender</label>
+                        <select class="form-select rounded-3" [(ngModel)]="updateCommand.gender" name="gender">
+                            <option value="">Prefer not to say</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-muted mb-1">Mobile Number</label>
+                        <input type="tel" class="form-control rounded-3" [(ngModel)]="updateCommand.mobileNumber"
+                            name="mobileNumber" required pattern="^[0-9]{10}$" maxlength="10"
+                            (keypress)="onlyNumbers($event)" (input)="limitTo10Digits($event)" #mobileCtrl="ngModel">
+                        <div *ngIf="mobileCtrl.invalid && (mobileCtrl.dirty || mobileCtrl.touched)"
+                            class="text-danger small mt-1">
+                            <div *ngIf="mobileCtrl.errors?.['required']">Mobile number is required</div>
+                            <div *ngIf="mobileCtrl.errors?.['pattern']">Exactly 10 digits required</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-muted mb-1">Email</label>
+                        <input type="email" class="form-control rounded-3 bg-light" [value]="userProfile.email"
+                            disabled>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-muted mb-1">Role</label>
+                        <input type="text" class="form-control rounded-3 bg-light" [value]="userProfile.role" disabled>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Error -->
-            <div *ngIf="error && !loading" class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ error }}
-                <button type="button" class="btn-close" (click)="error = undefined">
-                    <span class="visually-hidden">Close</span>
-                </button>
-            </div>
-
-            <!-- Profile Form -->
-            <div *ngIf="userProfile && !loading">
-                <form #profileForm="ngForm" (ngSubmit)="updateProfile(profileForm)">
-                    <div class="row g-4">
-                        <!-- First Name -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-dark">First Name</label>
-                            <input type="text" class="form-control form-control-lg rounded-3"
-                                [(ngModel)]="updateCommand.firstName" name="firstName" required maxlength="50"
-                                pattern="[A-Za-z\s]+" (keypress)="onlyLetters($event)" (input)="sanitizeName($event)"
-                                #firstNameCtrl="ngModel">
-                            <div *ngIf="firstNameCtrl.invalid && (firstNameCtrl.dirty || firstNameCtrl.touched)"
-                                class="text-danger small mt-1">
-                                <div *ngIf="firstNameCtrl.errors?.['required']">First name is required</div>
-                                <div *ngIf="firstNameCtrl.errors?.['maxlength']">Maximum 50 characters allowed
-                                </div>
-                                <div *ngIf="firstNameCtrl.errors?.['pattern']">Only letters and spaces allowed
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Last Name -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-dark">Last Name</label>
-                            <input type="text" class="form-control form-control-lg rounded-3"
-                                [(ngModel)]="updateCommand.lastName" name="lastName" required maxlength="50"
-                                pattern="[A-Za-z\s]+" (keypress)="onlyLetters($event)" (input)="sanitizeName($event)"
-                                #lastNameCtrl="ngModel">
-                            <div *ngIf="lastNameCtrl.invalid && (lastNameCtrl.dirty || lastNameCtrl.touched)"
-                                class="text-danger small mt-1">
-                                <div *ngIf="lastNameCtrl.errors?.['required']">Last name is required</div>
-                                <div *ngIf="lastNameCtrl.errors?.['maxlength']">Maximum 50 characters allowed
-                                </div>
-                                <div *ngIf="lastNameCtrl.errors?.['pattern']">Only letters and spaces allowed
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Gender -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-dark">Gender</label>
-                            <select class="form-select form-select-lg rounded-3" [(ngModel)]="updateCommand.gender"
-                                name="gender">
-                                <option value="">Prefer not to say</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-
-                        <!-- Mobile Number -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-dark">Mobile Number</label>
-                            <input type="tel" class="form-control form-control-lg rounded-3"
-                                [(ngModel)]="updateCommand.mobileNumber" name="mobileNumber" required
-                                pattern="^[0-9]{10}$" maxlength="10" (keypress)="onlyNumbers($event)"
-                                (input)="limitTo10Digits($event)" #mobileCtrl="ngModel">
-                            <div *ngIf="mobileCtrl.invalid && (mobileCtrl.dirty || mobileCtrl.touched)"
-                                class="text-danger small mt-1">
-                                <div *ngIf="mobileCtrl.errors?.['required']">Mobile number is required</div>
-                                <div *ngIf="mobileCtrl.errors?.['pattern']">Exactly 10 digits required (no
-                                    spaces, no +)</div>
-                            </div>
-                        </div>
-
-                        <!-- Email (disabled) -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-dark">Email</label>
-                            <input type="email" class="form-control form-control-lg rounded-3 bg-light"
-                                [value]="userProfile.email" disabled>
-                        </div>
-
-                        <!-- Role (disabled) -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-dark">Role</label>
-                            <input type="text" class="form-control form-control-lg rounded-3 bg-light"
-                                [value]="userProfile.role" disabled>
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="mt-5 text-end">
-                        <button type="submit" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-semibold"
-                            [disabled]="loading || profileForm.invalid || !hasChanges()">
-                            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                            {{ loading ? 'Updating...' : 'Update Profile' }}
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div class="mt-4 text-end">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 fw-medium update-btn"
+                        [disabled]="loading || profileForm.invalid || !hasChanges()">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        {{ loading ? 'Updating...' : 'Update Profile' }}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

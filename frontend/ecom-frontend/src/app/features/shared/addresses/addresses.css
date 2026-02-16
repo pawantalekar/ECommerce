@@ -1,0 +1,114 @@
+:host {
+    display: block;
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Colors */
+.text-slate-800 {
+    color: #1e293b;
+}
+
+.text-slate-600 {
+    color: #475569;
+}
+
+.text-muted {
+    color: #64748b !important;
+}
+
+/* Add Address Bar */
+.add-address-bar {
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+}
+
+.add-address-bar:hover {
+    background-color: #f8fafc;
+    border-color: #2563eb;
+}
+
+.add-address-bar .text-primary {
+    color: #2874f0 !important;
+    /* Flipkart Blue */
+}
+
+.subheading {
+    font-size: 0.9rem;
+    color: #2874f0 !important;
+}
+
+/* Address Card */
+.address-card {
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.address-text {
+    line-height: 1.4;
+    font-size: 0.85rem;
+}
+
+.extra-small {
+    font-size: 0.65rem !important;
+}
+
+.badge-type {
+    background-color: #f0f0f0 !important;
+    color: #878787 !important;
+    letter-spacing: 0.05em;
+    border: 1px solid #e0e0e0;
+}
+
+/* Forms */
+.custom-input {
+    border-radius: 2px;
+    border: 1px solid #e0e0e0;
+    padding: 0.6rem 0.75rem;
+}
+
+.custom-input:focus {
+    border-color: #2874f0;
+    box-shadow: none;
+}
+
+.save-btn {
+    background: #2874f0;
+    border: none;
+    font-size: 0.9rem;
+}
+
+.save-btn:hover {
+    background: #1e6fd8;
+}
+
+/* Custom Menu Styling to match reference (small background, fit text) */
+::ng-deep .custom-menu {
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    width: auto !important;
+    min-width: 120px;
+}
+
+::ng-deep .custom-menu .p-menuitem-link {
+    padding: 0.5rem 1rem !important;
+}
+
+::ng-deep .custom-menu .p-menuitem-text {
+    font-size: 0.85rem;
+    color: #212121;
+}
+
+::ng-deep .custom-menu .p-menuitem-link:hover {
+    background-color: #f5faff !important;
+    color: #2874f0 !important;
+}
+
+::ng-deep .custom-menu .p-menuitem-link:hover .p-menuitem-text {
+    color: #2874f0;
+}
+
+/* Cursor */
+.cursor-pointer {
+    cursor: pointer;
+}
