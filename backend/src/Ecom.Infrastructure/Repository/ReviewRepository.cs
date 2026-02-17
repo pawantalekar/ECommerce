@@ -1,5 +1,6 @@
 ﻿using Ecom.Application.ReviewService.Application.Interfaces;
 using Ecom.Domain.Entities;
+using Ecom.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecom.Infrastructure.Repository
@@ -33,7 +34,7 @@ namespace Ecom.Infrastructure.Repository
             var purchased = await _context.OrderItems
                 .AnyAsync(oi => oi.Order.UserId == userId &&
                                 oi.ProductId == productId &&
-                                oi.Order.PaymentStatus == "Paid");
+                                oi.Order.PaymentStatus == PaymentStatusEnum.Paid);
 
             if (!purchased) return false;
 

@@ -1,5 +1,6 @@
 ﻿using Ecom.Application.OrderService.Application.DTO;
 using Ecom.Domain.Entities;
+using Ecom.Domain.Enums;
 using Ecom.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -78,8 +79,8 @@ namespace Ecom.Application.Commands.InitiatePayment
                 UserId = userId,
                 OrderNumber = $"ORD-{DateTime.Now:yyyyMMddHHmmss}{Guid.NewGuid().ToString("N").Substring(0, 4)}",
                 TotalAmount = totalAmount,
-                PaymentStatus = "Pending",
-                OrderStatus = "Pending",
+                PaymentStatus = PaymentStatusEnum.Pending,
+                OrderStatus = OrderStatusEnum.Pending,
                 ShippingFullName = request.ShippingAddress.FullName,
                 ShippingPhone = request.ShippingAddress.Phone,
                 ShippingAddressLine1 = request.ShippingAddress.AddressLine1,

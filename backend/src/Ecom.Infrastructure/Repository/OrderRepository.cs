@@ -1,5 +1,6 @@
 ﻿using Ecom.Application.OrderService.Application.Interfaces;
 using Ecom.Domain.Entities;
+using Ecom.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecom.Infrastructure.Repository
@@ -30,12 +31,20 @@ namespace Ecom.Infrastructure.Repository
 
             if (orderStatus != null && orderStatus.Length > 0)
             {
-                query = query.Where(o => orderStatus.Contains(o.OrderStatus));
+                var statusEnums = orderStatus
+                    .Where(s => Enum.TryParse<OrderStatusEnum>(s, out _))
+                    .Select(s => Enum.Parse<OrderStatusEnum>(s))
+                    .ToList();
+                query = query.Where(o => statusEnums.Contains(o.OrderStatus));
             }
 
             if (paymentStatus != null && paymentStatus.Length > 0)
             {
-                query = query.Where(o => paymentStatus.Contains(o.PaymentStatus));
+                var statusEnums = paymentStatus
+                    .Where(s => Enum.TryParse<PaymentStatusEnum>(s, out _))
+                    .Select(s => Enum.Parse<PaymentStatusEnum>(s))
+                    .ToList();
+                query = query.Where(o => statusEnums.Contains(o.PaymentStatus));
             }
 
             if (fromDate.HasValue)
@@ -76,7 +85,7 @@ namespace Ecom.Infrastructure.Repository
                 .FirstOrDefaultAsync(o => o.OrderNumber == orderNumber, ct);
         }
 
-        public async Task UpdateOrderStatusAsync(Order order, string newStatus, Guid? adminUserId, string? notes, CancellationToken ct)
+        public async Task UpdateOrderStatusAsync(Order order, OrderStatusEnum newStatus, Guid? adminUserId, string? notes, CancellationToken ct)
         {
             var oldStatus = order.OrderStatus;
             order.OrderStatus = newStatus;
