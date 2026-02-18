@@ -111,7 +111,19 @@
   font-size: 0.9375rem;
   font-weight: 500;
   color: #0f172a;
+  color: #0f172a;
   margin-bottom: 0.15rem;
+}
+
+.product-link {
+  color: #0f172a;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.product-link:hover {
+  color: #4f46e5;
+  text-decoration: underline;
 }
 
 .item-quantity {

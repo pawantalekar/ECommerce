@@ -45,7 +45,11 @@
                         </div>
 
                         <div class="item-details">
-                            <h6 class="item-name">{{ item.productName }}</h6>
+                            <h6 class="item-name">
+                                <a [routerLink]="['/catalog/products', item.slug]" class="product-link">
+                                    {{ item.productName }}
+                                </a>
+                            </h6>
                             <p class="item-quantity">
                                 Qty: {{ item.quantity }} × ₹{{ item.unitPrice | number:'1.0-0' }}
                             </p>
