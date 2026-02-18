@@ -1,6 +1,7 @@
 ﻿using Ecom.Application.ReviewService.Application.DTO;
 using Ecom.Application.ReviewService.Application.Interfaces;
 using Ecom.Domain.Entities;
+using Ecom.Domain.Enums;
 using Ecom.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +30,7 @@ namespace ReviewService.Api.Commands.CreateReview
                 throw new InvalidOperationException("Cannot review this product");
 
             var orderId = await _context.OrderItems
-                .Where(oi => oi.Order.UserId == userId && oi.ProductId == req.ProductId && oi.Order.PaymentStatus == "Paid")
+                .Where(oi => oi.Order.UserId == userId && oi.ProductId == req.ProductId && oi.Order.PaymentStatus == PaymentStatusEnum.Paid)
                 .Select(oi => oi.OrderId)
                 .FirstAsync(ct);
 

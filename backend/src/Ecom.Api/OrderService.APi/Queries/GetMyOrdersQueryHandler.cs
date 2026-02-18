@@ -31,8 +31,8 @@ namespace Ecom.Application.Queries
                     o.Id,
                     o.OrderNumber,
                     o.TotalAmount,
-                    o.PaymentStatus,
-                    o.OrderStatus,
+                    o.PaymentStatus.ToString(),
+                    o.OrderStatus.ToString(),
                     o.CreatedAt,
                     o.OrderItems.Select(oi => new OrderItemDto(
                         oi.ProductId.ToString(),

@@ -33,8 +33,8 @@ namespace AuthService.Api.Queries.GetOrders
                 o.User.Email,
                 o.CreatedAt,
                 o.TotalAmount,
-                o.OrderStatus,
-                o.PaymentStatus
+                o.OrderStatus.ToString(),
+                o.PaymentStatus.ToString()
             )).ToList();
 
             return new PagedOrdersDto(orderDtos, total, request.PageNumber, request.PageSize);

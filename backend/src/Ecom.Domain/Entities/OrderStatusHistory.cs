@@ -1,4 +1,6 @@
-﻿namespace Ecom.Domain.Entities;
+﻿using Ecom.Domain.Enums;
+
+namespace Ecom.Domain.Entities;
 
 public partial class OrderStatusHistory
 {
@@ -6,7 +8,7 @@ public partial class OrderStatusHistory
 
     public Guid OrderId { get; set; }
 
-    public string Status { get; set; } = null!;
+    public OrderStatusEnum Status { get; set; }
 
     public DateTime ChangedAt { get; set; }
 
