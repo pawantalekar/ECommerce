@@ -1,19 +1,36 @@
-<div class="card border-0 shadow-sm">
-    <div class="card-body">
-        <h5 class="card-title mb-4">Order Summary</h5>
+<div class="cart-summary-card">
+    <div class="summary-header">
+        <h5 class="summary-title">Order Summary</h5>
+    </div>
 
-        <div class="d-flex justify-content-between mb-2">
-            <span>Items ({{ store.itemCount() }})</span>
-            <strong>₹{{ store.total() | number:'1.0-0' }}</strong>
+    <div class="summary-content">
+        <div class="summary-row">
+            <span class="label">Items ({{ store.itemCount() }})</span>
+            <span class="value">₹{{ store.total() | number:'1.0-0' }}</span>
         </div>
 
-        <hr>
-
-        <div class="d-flex justify-content-between mb-4">
-            <h6 class="fw-bold">Total Amount</h6>
-            <h5 class="text-primary fw-bold">₹{{ store.total() | number:'1.0-0' }}</h5>
+        <div class="summary-row">
+            <span class="label">Shipping</span>
+            <span class="value text-success">Free</span>
         </div>
 
-    <a routerLink="/checkout" class="btn btn-primary mt-3">Proceed to Checkout</a>
+        <div class="summary-divider"></div>
+
+        <div class="summary-total">
+            <span class="label">Total Amount</span>
+            <span class="value">₹{{ store.total() | number:'1.0-0' }}</span>
+        </div>
+
+        <div class="summary-actions">
+            <a routerLink="/checkout" class="btn-checkout">
+                Proceed to Checkout
+                <i class="bi bi-arrow-right"></i>
+            </a>
+
+            <div class="secure-checkout-badge">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>Secure Checkout</span>
+            </div>
+        </div>
     </div>
 </div>
