@@ -1,55 +1,81 @@
 <div class="container py-5">
-  <h2 class="mb-4">My Orders</h2>
+  <div class="page-header mb-4">
+    <h2 class="page-title">My Orders</h2>
+    <p class="text-muted">View and track your orders</p>
+  </div>
 
   @for (order of orders; track order) {
-    <div class="card mb-3 shadow-sm border-0 rounded-3">
-      <div class="row g-0 align-items-center">
-        <div class="col-3 col-md-2 col-lg-1">
-          <div class="p-2">
-            <img [src]="order.items[0]?.thumbnailUrl || 'https://via.placeholder.com/100'"
-              class="img-fluid rounded w-100" style="height: 80px; object-fit: cover;" alt="Product">
-            </div>
+  <div class="order-card">
+    <div class="order-card-header">
+      <div class="header-left">
+        <h5 class="order-number">Order #{{ order.orderNumber }}</h5>
+        <span class="order-date">
+          <i class="bi bi-calendar3 me-2"></i>
+          {{ order.createdAt | date:'dd MMM yyyy, h:mm a' }}
+        </span>
+      </div>
+      <div class="header-right">
+        <span class="status-badge" [ngClass]="{
+                  'status-paid': order.paymentStatus === 'Paid',
+                  'status-failed': order.paymentStatus === 'Failed',
+                  'status-pending': order.paymentStatus === 'Pending'
+                }">
+          <i class="bi" [ngClass]="{
+                    'bi-check-circle-fill': order.paymentStatus === 'Paid',
+                    'bi-x-circle-fill': order.paymentStatus === 'Failed',
+                    'bi-clock-fill': order.paymentStatus === 'Pending'
+                  }"></i>
+          {{ order.paymentStatus }}
+        </span>
+      </div>
+    </div>
+
+    <div class="order-card-body">
+      <div class="order-items-preview">
+        <!-- Show first item as preview -->
+        <div class="item-preview">
+          <div class="item-image-wrapper">
+            <img [src]="order.items[0]?.thumbnailUrl || 'https://via.placeholder.com/100'" class="item-image"
+              [alt]="order.items[0]?.productName">
           </div>
-          <div class="col-9 col-md-10 col-lg-11">
-            <div class="card-body py-4 px-4">
-              <div class="row align-items-center g-3">
-                <div class="col-lg-5">
-                  <h5 class="mb-1 fw-bold">{{ order.items[0]?.productName }}</h5>
-                  <p class="text-muted small mb-0">
-                    <strong>Order:</strong> {{ order.orderNumber }}
-                    <span class="mx-2">•</span>
-                    {{ order.createdAt | date:'dd MMM yyyy' }}
-                  </p>
-                </div>
-                <div class="col-lg-2 text-center">
-                  <h5 class="mb-0 text-primary fw-bold">₹{{ order.totalAmount }}</h5>
-                </div>
-                <div class="col-lg-3 text-center">
-                            <span class="badge fs-6 px-4 py-2" [ngClass]="{
-                      'bg-success': order.paymentStatus === 'Paid',
-                      'bg-danger': order.paymentStatus === 'Failed',
-                      'bg-warning text-dark': order.paymentStatus === 'Pending'
-                    }">
-                    {{ order.paymentStatus }}
-                  </span>
-                </div>
-                <div class="col-lg-2 text-end">
-                  <button class="btn btn-outline-primary btn-sm px-4" (click)="viewDetail(order.id)">
-                    View Details
-                  </button>
-                </div>
-              </div>
-            </div>
+          <div class="item-info">
+            <h6 class="item-name">
+              <a [routerLink]="['/catalog/products', order.items[0]?.slug]" class="product-link">
+                {{ order.items[0]?.productName }}
+              </a>
+            </h6>
+            @if (order.items.length > 1) {
+            <p class="more-items text-muted">+ {{ order.items.length - 1 }} more item(s)</p>
+            }
           </div>
         </div>
       </div>
-    }
 
-    @if (orders.length === 0) {
-      <div class="text-center py-5 text-muted">
-        <i class="bi bi-receipt display-1"></i>
-        <h4 class="mt-3">No orders yet</h4>
-        <a routerLink="/catalog" class="btn btn-primary mt-3">Start Shopping</a>
+      <div class="order-summary">
+        <div class="total-section">
+          <span class="label">Total Amount</span>
+          <span class="amount">₹{{ order.totalAmount | number:'1.0-0' }}</span>
+        </div>
+        <button class="view-details-btn" (click)="viewDetail(order.id)">
+          View Details
+          <i class="bi bi-arrow-right ms-2"></i>
+        </button>
       </div>
-    }
+    </div>
   </div>
+  }
+
+  @if (orders.length === 0) {
+  <div class="empty-state">
+    <div class="empty-icon">
+      <i class="bi bi-bag-x"></i>
+    </div>
+    <h4>No orders yet</h4>
+    <p class="text-muted">Looks like you haven't placed any orders yet.</p>
+    <a routerLink="/catalog" class="btn-shop-now">
+      <i class="bi bi-cart3 me-2"></i>
+      Start Shopping
+    </a>
+  </div>
+  }
+</div>

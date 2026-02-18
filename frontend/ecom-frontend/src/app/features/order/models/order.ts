@@ -21,6 +21,7 @@ export interface OrderItem {
     thumbnailUrl?: string;
     unitPrice: number;
     quantity: number;
+    slug?: string;
 }
 
 export interface OrderStatusHistory {
