@@ -39,7 +39,8 @@ namespace Ecom.Application.Queries
                         oi.ProductName,
                         oi.ThumbnailUrl,
                         oi.UnitPrice,
-                        oi.Quantity
+                        oi.Quantity,
+                        oi.Product.Slug
                     )).ToList(),
                     new ShippingAddressDto(
                         o.ShippingFullName,
