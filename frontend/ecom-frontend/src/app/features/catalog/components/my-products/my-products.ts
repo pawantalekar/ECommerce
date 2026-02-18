@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Table, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -32,17 +33,20 @@ import { ChipsModule } from 'primeng/chips';
     InputNumberModule,
     ProgressSpinnerModule,
     FileUploadModule,
-    ChipsModule
+    FileUploadModule,
+    ChipsModule,
+    RouterModule
   ],
   templateUrl: './my-products.html',
   styleUrls: ['./my-products.css']
 })
 export class MyProductsComponent implements OnInit {
-  @ViewChild('dt') table!: Table;
 
   products: ProductResult[] = [];
+  filteredProducts: ProductResult[] = [];
   loading = true;
   error: string | null = null;
+  searchValue = '';
 
   editDialogVisible = false;
   editingProduct: ProductForEdit | null = null;
@@ -62,6 +66,7 @@ export class MyProductsComponent implements OnInit {
     this.catalogService.getMyProducts().subscribe({
       next: (data: ProductResult[]) => {
         this.products = data;
+        this.filteredProducts = data;
         this.loading = false;
       },
       error: () => {
@@ -84,8 +89,20 @@ export class MyProductsComponent implements OnInit {
   }
 
   onGlobalFilter(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.table.filterGlobal(value, 'contains');
+    const value = (event.target as HTMLInputElement).value.toLowerCase();
+    this.searchValue = value;
+
+    if (!value) {
+      this.filteredProducts = this.products;
+      return;
+    }
+
+    this.filteredProducts = this.products.filter(product =>
+      product.name.toLowerCase().includes(value) ||
+      product.sku.toLowerCase().includes(value) ||
+      (product.categoryName && product.categoryName.toLowerCase().includes(value)) ||
+      (product.brandName && product.brandName.toLowerCase().includes(value))
+    );
   }
 
   openEditModal(product: ProductResult): void {

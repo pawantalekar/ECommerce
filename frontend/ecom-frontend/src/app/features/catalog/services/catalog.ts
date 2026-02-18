@@ -16,6 +16,10 @@ export interface ProductResult {
   tags: string[];
   isActive: boolean;
   isFeatured: boolean;
+  sku: string;
+  stockQuantity: number;
+  categoryName: string;
+  brandName?: string;
 }
 
 interface ToggleResponse {
@@ -54,7 +58,7 @@ export class Catalog {
       `${this.api}/my-products/${productId}/toggle-active`,
       {}
     );
-  }  
+  }
   updateProduct(productId: string, payload: UpdateProductPayload): Observable<void> {
     return this.http.put<void>(`${this.api}/my-products/${productId}`, payload);
   }
@@ -79,5 +83,5 @@ export class Catalog {
       })))
     );
   }
-  
+
 }
