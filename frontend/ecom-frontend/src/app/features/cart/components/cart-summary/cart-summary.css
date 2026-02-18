@@ -1,4 +1,111 @@
-button {
-    height: 48px;
+.cart-summary-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+    overflow: hidden;
+    position: sticky;
+    top: 100px;
+    /* Adjust based on navbar height */
+}
+
+.summary-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    background: #fcfcfc;
+}
+
+.summary-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.summary-content {
+    padding: 1.5rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.9375rem;
+}
+
+.summary-row .label {
+    color: #64748b;
+}
+
+.summary-row .value {
     font-weight: 600;
+    color: #334155;
+}
+
+.text-success {
+    color: #10b981 !important;
+}
+
+.summary-divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 1.25rem 0;
+    border: none;
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.summary-total .label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.summary-total .value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.btn-checkout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.875rem;
+    background: #0f172a;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -1px rgba(15, 23, 42, 0.06);
+}
+
+.btn-checkout:hover {
+    background: #1e293b;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+    color: white;
+}
+
+.secure-checkout-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.secure-checkout-badge i {
+    color: #10b981;
 }
