@@ -23,14 +23,15 @@ export const routes: Routes = [
             },
             {
                 path: 'addresses',
-                loadComponent: () => import('./features/shared/addresses/addresses').then(m => m.Addresses)
+                loadComponent: () => import('./features/shared/addresses/addresses').then(m => m.Addresses),
+                data: { breadcrumb: 'Addresses' }
             }
         ]
     },
     {
         path: 'catalog',
         loadChildren: () => import('./features/catalog/catalog.routes').then(m => m.CATALOG_ROUTES),
-       data: { breadcrumb: 'Catalog' }
+        data: { breadcrumb: 'Catalog' }
     },
     {
         path: 'cart',
@@ -54,5 +55,5 @@ export const routes: Routes = [
         canActivate: [AdminGuard],
         data: { breadcrumb: 'Approvals' }
     },
-    
+
 ];
