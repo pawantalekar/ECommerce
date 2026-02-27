@@ -20,6 +20,7 @@ using Microsoft.OpenApi.Models;
 using OrderService.APi.Queries;
 using ReviewService.Api.Queries;
 using System.Text;
+using Ecom.Gateway.Middleware;
 
 namespace Ecom.Gateway
 {
@@ -95,7 +96,7 @@ namespace Ecom.Gateway
 
             // for the JWT Authentication part secret name use instead of key 
 
-            var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]);
+            var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!);
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -196,6 +197,8 @@ namespace Ecom.Gateway
                 });
             });
             var app = builder.Build();
+
+            app.UseGlobalExceptionHandler();
 
             app.UseStaticFiles();
 
