@@ -1,0 +1,87 @@
+image: mcr.microsoft.com/dotnet/sdk:9.0
+
+stages:
+  - restore
+  - build
+  - test
+  - publish
+  - frontend-lint
+  - frontend-test
+  - frontend-build
+
+variables:
+  BUILD_CONFIGURATION: "Release"
+  SOLUTION_FILE: "backend/src/src.sln"
+
+cache:
+  key:
+    files:
+      - backend/src/src.sln
+      - frontend/ecom-frontend/package-lock.json
+  paths:
+    - .nuget/packages/
+    - frontend/ecom-frontend/node_modules/
+    - frontend/ecom-frontend/.angular/cache/
+  policy: pull-push
+
+# -------- BACKEND --------
+restore:
+  stage: restore
+  script:
+    - dotnet restore $SOLUTION_FILE
+
+build:
+  stage: build
+  script:
+    - dotnet build $SOLUTION_FILE --configuration $BUILD_CONFIGURATION
+
+test:
+  stage: test
+  script:
+    - dotnet test $SOLUTION_FILE --configuration $BUILD_CONFIGURATION
+
+publish:
+  stage: publish
+  script:
+    - dotnet publish backend/src/Ecom.Gateway/Ecom.Gateway.csproj --configuration $BUILD_CONFIGURATION --output publish
+  artifacts:
+    paths:
+      - publish/
+
+# -------- FRONTEND --------
+frontend-lint:
+  stage: frontend-lint
+  image: node:20
+  script:
+    - cd frontend/ecom-frontend
+    - npm ci --legacy-peer-deps
+    - npm run lint
+
+frontend-test:
+  stage: frontend-test
+  image: node:20
+  script:
+    - apt-get update
+    - apt-get install -y wget gnupg
+    - wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+    - sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+    - apt-get update
+    - apt-get install -y google-chrome-stable
+    - export CHROME_BIN=/usr/bin/google-chrome
+    - cd frontend/ecom-frontend
+    - npm ci --legacy-peer-deps
+    - npm run test -- --watch=false 
+  artifacts:
+    paths:
+      - frontend/ecom-frontend/coverage/
+
+frontend-build:
+  stage: frontend-build
+  image: node:20
+  script:
+    - cd frontend/ecom-frontend
+    - npm ci --legacy-peer-deps
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/ecom-frontend/dist/
